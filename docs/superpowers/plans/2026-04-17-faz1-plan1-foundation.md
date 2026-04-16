@@ -1409,11 +1409,13 @@ describe("Header", () => {
   it("Teklif İste CTA butonu görünür", () => {
     render(<Header />);
     expect(
-      screen.getByRole("link", { name: /teklif iste/i }),
+      screen.getByRole("link", { name: /teklif/i }),
     ).toBeInTheDocument();
   });
 });
 ```
+
+> Not: `/teklif/i` (sadece "teklif") kullanıyoruz çünkü JS regex `i` flag'i Türkçe `İ` (U+0130) → `i` case-fold yapamaz. "Teklif İste" visible text ile aria-label aynı kalsın — WCAG SC 2.5.3 "Label in Name" uyumlu.
 
 - [ ] **Step 2: Test fail doğrula**
 

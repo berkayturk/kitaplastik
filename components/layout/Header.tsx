@@ -37,7 +37,6 @@ export function Header() {
           </nav>
           <Link
             href="/teklif-iste"
-            aria-label="Teklif iste"
             className="rounded-sm bg-[var(--color-accent-red)] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
             Teklif İste

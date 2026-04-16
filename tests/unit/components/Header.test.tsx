@@ -17,6 +17,6 @@ describe("Header", () => {
 
   it("Teklif İste CTA butonu görünür", () => {
     render(<Header />);
-    expect(screen.getByRole("link", { name: /teklif iste/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /teklif/i })).toBeInTheDocument();
   });
 });
