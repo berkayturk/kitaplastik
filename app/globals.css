@@ -51,3 +51,29 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@layer base {
+  :root {
+    /* shadcn baseColor: slate, dark mode varsayılan */
+    --background: 220 47% 10%;
+    --foreground: 217 25% 92%;
+    --card: 218 42% 15%;
+    --card-foreground: 217 25% 92%;
+    --popover: 218 42% 15%;
+    --popover-foreground: 217 25% 92%;
+    --primary: 357 67% 44%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 218 42% 20%;
+    --secondary-foreground: 217 25% 92%;
+    --muted: 218 30% 18%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 218 42% 25%;
+    --accent-foreground: 217 25% 92%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 218 25% 25%;
+    --input: 218 25% 22%;
+    --ring: 211 53% 57%;
+    --radius: 0.125rem;
+  }
+}
