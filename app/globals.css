@@ -1,0 +1,10 @@
+/* Tailwind 4 import Task 7'de eklenecek */
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
