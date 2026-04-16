@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Misc
+.DS_Store
+*.pem
+.vercel
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+.playwright/
+
+# Editor
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Superpowers brainstorming artifacts
+.superpowers/
+
+# OS
+Thumbs.db
