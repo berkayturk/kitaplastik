@@ -174,7 +174,7 @@ Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. (Bursa, 1989'dan beri) için kurum
 
 ## Geliştirme
 
-Önkoşul: Node 20, pnpm 9.
+Önkoşul: Node 22, pnpm 9.
 
 ```bash
 pnpm install
@@ -222,7 +222,7 @@ Expected: `[main (root-commit) ...] chore: initial repo bootstrap`
 node --version
 ```
 
-Expected: `v20.x.x`. Eğer farklıysa: `nvm install 20 && nvm use 20`
+Expected: `v22.x.x`. Eğer farklıysa: `nvm install 22 && nvm use 22`
 
 - [ ] **Step 2: pnpm kurulu mu kontrol et**
 
@@ -250,7 +250,7 @@ Create `package.json`:
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20",
+    "node": ">=22",
     "pnpm": ">=9"
   },
   "packageManager": "pnpm@9.12.0",
@@ -273,7 +273,7 @@ Create `package.json`:
 
 ```bash
 git add .nvmrc package.json
-git commit -m "chore: lock node 20 and pnpm 9"
+git commit -m "chore: lock node 22 and pnpm 9"
 ```
 
 ---
@@ -2206,10 +2206,10 @@ jobs:
         with:
           version: 9
 
-      - name: Setup Node 20
+      - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
@@ -2249,10 +2249,10 @@ jobs:
         with:
           version: 9
 
-      - name: Setup Node 20
+      - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
