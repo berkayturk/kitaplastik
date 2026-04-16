@@ -7,11 +7,11 @@ node_modules/
 out/
 build/
 dist/
+.turbo/
+.swc/
 
 # Environment
-.env
-.env.local
-.env.*.local
+.env*
 !.env.example
 
 # Misc
