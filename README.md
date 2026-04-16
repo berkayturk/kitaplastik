@@ -12,7 +12,7 @@ Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. (Bursa, 1989'dan beri) için kurum
 
 ## Geliştirme
 
-Önkoşul: Node 20, pnpm 9.
+Önkoşul: Node 22 LTS, pnpm 9.
 
 ```bash
 pnpm install
