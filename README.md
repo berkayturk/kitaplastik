@@ -39,3 +39,14 @@ Tarayıcıda: http://localhost:3000
 
 - Spec: `docs/superpowers/specs/`
 - Planlar: `docs/superpowers/plans/`
+
+## Deploy
+
+Vercel'e deploy:
+
+1. Vercel hesabı oluştur ve GitHub repo'yu import et.
+2. Project Settings → Environment Variables → `.env.example`'daki değerleri ekle (gerçek değerler).
+3. Build command: `pnpm build` (otomatik algılanır).
+4. Domain: kitaplastik.com → Vercel'e CNAME / A record (Vercel dashboard'dan DNS talimatları gösterir).
+
+İlk deploy sonrası SSL otomatik aktive olur.
