@@ -1,0 +1,10 @@
+.next/
+node_modules/
+pnpm-lock.yaml
+public/
+*.min.js
+*.min.css
+playwright-report/
+test-results/
+.superpowers/
+docs/

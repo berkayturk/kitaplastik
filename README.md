@@ -3,6 +3,7 @@
 Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. (Bursa, 1989'dan beri) için kurumsal web sitesi.
 
 ## Stack
+
 - Next.js 15 (App Router) + React 19 + TypeScript
 - Tailwind CSS 4 + shadcn/ui
 - Supabase (Postgres + Storage + Auth)
@@ -23,6 +24,7 @@ pnpm dev
 Tarayıcıda: http://localhost:3000
 
 ## Komutlar
+
 - `pnpm dev` — dev server (Turbopack)
 - `pnpm build` — üretim build
 - `pnpm start` — üretim sunucusu
@@ -34,5 +36,6 @@ Tarayıcıda: http://localhost:3000
 - `pnpm format` — Prettier ile biçimlendir
 
 ## Dokümantasyon
+
 - Spec: `docs/superpowers/specs/`
 - Planlar: `docs/superpowers/plans/`
