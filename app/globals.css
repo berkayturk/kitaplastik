@@ -1,5 +1,39 @@
 @import "tailwindcss";
 
+@theme {
+  /* Industrial Precision palette — spec Bölüm 5.2 */
+  --color-bg-primary: #0a1628;
+  --color-bg-secondary: #1a2540;
+  --color-bg-elevated: #1f3a5f;
+  --color-surface-light: #f7f8fa;
+  --color-surface-card: #ffffff;
+  --color-border-subtle-dark: #2a3a52;
+  --color-border-subtle-light: #d8dde5;
+  --color-text-primary: #e6ebf2;
+  --color-text-primary-light: #0a1628;
+  --color-text-secondary: #8ba4c5;
+  --color-text-secondary-light: #5a6878;
+  --color-accent-blue: #5b8fc7;
+  --color-accent-cyan: #7fb0e0;
+  --color-accent-red: #b8252e;
+  --color-accent-green: #1f9e6b;
+
+  /* Sektör temaları */
+  --color-sector-cam: #5b8fc7;
+  --color-sector-kapak: #b8a040;
+  --color-sector-tekstil: #8a5fb8;
+
+  /* Tipografi (font-face Task 8'de yüklenecek) */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;
+  --font-arabic: "IBM Plex Sans Arabic", "Inter", sans-serif;
+
+  /* Border radius — Industrial Precision keskin köşeler */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+}
+
 :root {
   color-scheme: dark;
 }
@@ -8,4 +42,12 @@ html,
 body {
   margin: 0;
   padding: 0;
+  font-family: var(--font-sans);
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
