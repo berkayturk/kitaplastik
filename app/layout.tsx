@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 
 const inter = localFont({
@@ -25,7 +27,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="bg-bg-primary text-text-primary antialiased">
+        <Header />
+        <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }
