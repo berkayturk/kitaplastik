@@ -21,9 +21,7 @@ export function ReferenceCard({ reference, clientName, sectorLabel }: ReferenceC
       </div>
       <div>
         <h3 className="text-text-primary text-base font-semibold">{clientName}</h3>
-        <p className="text-text-secondary mt-1 font-mono text-xs tracking-wider uppercase">
-          {sectorLabel}
-        </p>
+        <p className="eyebrow mt-1">{sectorLabel}</p>
       </div>
     </article>
   );

@@ -9,9 +9,7 @@ export function Hero() {
     >
       <Container>
         <div className="relative py-24 md:py-32 lg:py-40">
-          <div className="text-accent-cyan font-mono text-xs tracking-[0.25em] uppercase">
-            — 1989'dan beri / Bursa, Türkiye
-          </div>
+          <div className="eyebrow text-accent-cyan">— 1989'dan beri / Bursa, Türkiye</div>
           <h1
             id="hero-title"
             className="mt-6 max-w-3xl text-4xl leading-[1.1] font-bold tracking-tight md:text-6xl lg:text-7xl"

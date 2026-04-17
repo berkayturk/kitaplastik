@@ -17,9 +17,7 @@ export function ReferencesStrip() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-text-secondary font-mono text-xs tracking-wider uppercase">
-              {tHome("eyebrow")}
-            </p>
+            <p className="eyebrow">{tHome("eyebrow")}</p>
             <h2
               id="references-strip-title"
               className="text-text-primary mt-1 text-lg font-semibold tracking-tight md:text-xl"

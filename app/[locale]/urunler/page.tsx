@@ -32,9 +32,7 @@ export default async function UrunlerPage({ params }: PageProps) {
   return (
     <section className="container mx-auto px-6 py-16 md:py-24">
       <header className="max-w-3xl">
-        <p className="text-text-secondary font-mono text-xs tracking-wider uppercase">
-          {t("hero.eyebrow")}
-        </p>
+        <p className="eyebrow">{t("hero.eyebrow")}</p>
         <h1 className="text-text-primary mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
           {t("hero.title")}
         </h1>

@@ -37,9 +37,7 @@ export default async function SectorsHubPage({ params }: PageProps) {
   return (
     <section className="container mx-auto px-6 py-16 md:py-24">
       <header className="max-w-3xl">
-        <p className="text-text-secondary font-mono text-xs tracking-wider uppercase">
-          {t("hero.eyebrow")}
-        </p>
+        <p className="eyebrow">{t("hero.eyebrow")}</p>
         <h1 className="text-text-primary mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
           {t("hero.title")}
         </h1>
@@ -57,7 +55,10 @@ export default async function SectorsHubPage({ params }: PageProps) {
               {t(`${sector.nsKey}.title`)}
             </h2>
             <p className="text-text-secondary">{t(`${sector.nsKey}.description`)}</p>
-            <span className="text-text-secondary group-hover:text-text-primary mt-auto pt-2 font-mono text-xs uppercase">
+            <span
+              aria-hidden="true"
+              className="text-text-secondary group-hover:text-text-primary mt-auto pt-2 text-xs"
+            >
               →
             </span>
           </Link>

@@ -41,9 +41,7 @@ export default async function IletisimPage({ params }: PageProps) {
   return (
     <section className="container mx-auto px-6 py-16 md:py-24">
       <header className="max-w-3xl">
-        <p className="text-text-secondary font-mono text-xs tracking-wider uppercase">
-          {t("hero.eyebrow")}
-        </p>
+        <p className="eyebrow">{t("hero.eyebrow")}</p>
         <h1 className="text-text-primary mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
           {t("hero.title")}
         </h1>
@@ -53,9 +51,7 @@ export default async function IletisimPage({ params }: PageProps) {
       <dl className="mt-16 max-w-2xl divide-y divide-[var(--color-border-subtle-dark)]">
         {rows.map((row) => (
           <div key={row.label} className="grid grid-cols-3 gap-4 py-4">
-            <dt className="text-text-secondary font-mono text-xs tracking-wider uppercase">
-              {row.label}
-            </dt>
+            <dt className="eyebrow">{row.label}</dt>
             <dd className="text-text-primary col-span-2">
               {row.href ? (
                 <a href={row.href} className="underline underline-offset-4">

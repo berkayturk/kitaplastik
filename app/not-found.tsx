@@ -5,9 +5,7 @@ export default function NotFound() {
   return (
     <Container>
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <div className="text-accent-blue font-mono text-xs tracking-widest uppercase">
-          Error · 404
-        </div>
+        <div className="eyebrow text-accent-blue">Error · 404</div>
         <h1 className="mt-4 text-5xl font-bold tracking-tight">Sayfa bulunamadı</h1>
         <p className="text-text-secondary mt-4 max-w-md">
           Aradığınız sayfa taşınmış, silinmiş ya da hiç var olmamış olabilir.

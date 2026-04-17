@@ -99,3 +99,24 @@ body {
     transform: scaleX(-1);
   }
 }
+
+@layer components {
+  /* Reusable eyebrow label: sans-serif with wide tracking reads well across
+     Latin, Latin-Extended (TR diacritics: İ Ş Ğ), Cyrillic and Arabic scripts.
+     Replaces prior `font-mono text-xs tracking-wider uppercase` pattern,
+     which rendered awkwardly for Turkish diacritics in JetBrains Mono. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 500; /* medium */
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  /* Arabic shaping breaks when Latin-wide tracking is applied to a joined
+     script. Dial back to near-zero spacing under RTL so letterforms connect. */
+  html[dir="rtl"] .eyebrow {
+    letter-spacing: 0.02em;
+  }
+}
