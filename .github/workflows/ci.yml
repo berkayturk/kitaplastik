@@ -44,6 +44,13 @@ jobs:
         continue-on-error: false
 
       - name: Build
+        env:
+          # Hardcoded placeholder values so zod env validation passes during static build.
+          # Real Supabase credentials are injected on Vercel at deploy time.
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+          NEXT_PUBLIC_SITE_URL: https://kitaplastik.com
         run: pnpm build
 
   e2e:
@@ -72,6 +79,11 @@ jobs:
         run: pnpm dlx playwright install --with-deps chromium
 
       - name: Run E2E tests
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
         run: pnpm test:e2e
 
       - name: Upload Playwright report
