@@ -1,1 +1,26 @@
-{}
+{
+  "strip": {
+    "eyebrow": "Güvenilen üretim partneri",
+    "title": "36 yıldır üreten markaların yanında",
+    "viewAll": "Tüm referanslar"
+  },
+  "page": {
+    "hero": {
+      "eyebrow": "Referanslar",
+      "title": "Üç sektörde, 3 kıtada",
+      "subtitle": "Yurt içi ve ihracat müşterilerimizin bir kısmı. Ticari gizlilik nedeniyle müşteri detayları anonim tutulmuştur; detaylı bilgi için iletişime geçiniz."
+    },
+    "sectionTitle": "Seçkin müşterilerimiz",
+    "empty": "Henüz referans eklenmemiş."
+  },
+  "clients": {
+    "c1": { "name": "Anadolu Şişeleme A.Ş.", "sector": "Cam Yıkama" },
+    "c2": { "name": "Marmara Ambalaj", "sector": "Kapak" },
+    "c3": { "name": "Ege Tekstil Makine", "sector": "Tekstil" },
+    "c4": { "name": "Bosphorus Glass Co.", "sector": "Cam Yıkama" },
+    "c5": { "name": "NordPack GmbH", "sector": "Kapak" },
+    "c6": { "name": "Textile Pro LLC", "sector": "Tekstil" },
+    "c7": { "name": "BalkanBottling d.o.o.", "sector": "Cam Yıkama" },
+    "c8": { "name": "Cosmopack Intl.", "sector": "Kapak" }
+  }
+}

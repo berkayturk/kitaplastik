@@ -1,1 +1,99 @@
-{}
+{
+  "hub": {
+    "hero": {
+      "eyebrow": "Sektörler",
+      "title": "Üç sektör, tek mühendislik disiplini",
+      "subtitle": "Cam yıkama, kapak ve tekstil sektörlerinde 36 yıllık üretim tecrübesi."
+    },
+    "camYikama": {
+      "title": "Cam Yıkama",
+      "description": "Şişeleme ve yıkama hatlarında kullanılan dayanıklı plastik parçalar."
+    },
+    "kapak": {
+      "title": "Kapak",
+      "description": "Gıda, kozmetik ve kimya ambalajı için yüksek hacimli kapak üretimi."
+    },
+    "tekstil": {
+      "title": "Tekstil",
+      "description": "Tekstil makineleri için hassas toleranslı plastik aksesuarlar."
+    }
+  },
+  "camYikama": {
+    "hero": {
+      "eyebrow": "Sektör",
+      "title": "Cam yıkama hatlarının görünmeyen omurgası",
+      "subtitle": "Şişe yıkama makineleri, şişeleme hatları ve CIP sistemleri için polimer parçalar."
+    },
+    "solutions": {
+      "title": "Çözümler",
+      "items": [
+        {
+          "title": "Şişe tutma kolları",
+          "description": "Yıkama sırasında şişeyi sabitleyen, aşınmaya dayanıklı kollar."
+        },
+        {
+          "title": "Kılavuz profiller",
+          "description": "Konveyör hatları için düşük sürtünmeli plastik profiller."
+        },
+        {
+          "title": "Püskürtme nozulları",
+          "description": "Yüksek basınca dayanıklı polimer nozul gövdeleri."
+        }
+      ]
+    },
+    "materials": {
+      "title": "Malzeme seçenekleri",
+      "items": ["HDPE", "POM (asetal)", "PP", "PA6 (naylon)"]
+    }
+  },
+  "kapak": {
+    "hero": {
+      "eyebrow": "Sektör",
+      "title": "Kapakta ölçek ve tutarlılık",
+      "subtitle": "Yüksek hacimli seri üretim — gıda, kozmetik ve kimya ambalajı için kapak ve kapatma çözümleri."
+    },
+    "solutions": {
+      "title": "Çözümler",
+      "items": [
+        {
+          "title": "Standart vida kapak",
+          "description": "PP / HDPE malzemede 20–80 mm çap aralığı."
+        },
+        { "title": "Flip-top kapak", "description": "Şampuan, sıvı sabun ve gıda yağı için." },
+        {
+          "title": "Çocuk emniyetli kapak",
+          "description": "Kimya ve ilaç sektörü için güvenlik standardı uyumlu."
+        }
+      ]
+    },
+    "materials": {
+      "title": "Malzeme seçenekleri",
+      "items": ["PP", "HDPE", "LDPE"]
+    }
+  },
+  "tekstil": {
+    "hero": {
+      "eyebrow": "Sektör",
+      "title": "Tekstil makinelerinin hassas parçaları",
+      "subtitle": "Dokuma, örme ve konfeksiyon makineleri için düşük toleranslı plastik aksesuarlar."
+    },
+    "solutions": {
+      "title": "Çözümler",
+      "items": [
+        {
+          "title": "Mekik kılavuzları",
+          "description": "Dokuma tezgahlarında iplik akışını yönlendiren parçalar."
+        },
+        { "title": "Masura ve bobin", "description": "İplik sarma makineleri için." },
+        {
+          "title": "Gergi çerçeveleri",
+          "description": "Kumaş gergi hatlarında kullanılan polimer bileşenler."
+        }
+      ]
+    },
+    "materials": {
+      "title": "Malzeme seçenekleri",
+      "items": ["POM (asetal)", "PA6", "PBT", "PP"]
+    }
+  }
+}
