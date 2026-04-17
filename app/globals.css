@@ -45,11 +45,18 @@ body {
   font-family: var(--font-sans);
 }
 
-body {
+html {
+  /* Fallback background in case the site-wide canvas fails to mount (SSR, WebGL error).
+     The SiteBackground canvas sits at z-index: -10 and paints over this color. */
   background-color: var(--color-bg-primary);
+}
+
+body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Transparent so the fixed -z-10 SiteBackground canvas bleeds through. */
+  background-color: transparent;
 }
 
 @layer base {

@@ -3,22 +3,19 @@
 import { Canvas } from "@react-three/fiber";
 import { AtmosphericMesh } from "./AtmosphericMesh";
 
-interface HeroCanvasProps {
+interface SiteBackgroundCanvasProps {
   reduced?: boolean;
 }
 
-export function HeroCanvas({ reduced = false }: HeroCanvasProps) {
+export function SiteBackgroundCanvas({ reduced = false }: SiteBackgroundCanvasProps) {
   return (
     <Canvas
       aria-hidden="true"
-      className="absolute inset-0"
+      className="pointer-events-none"
+      style={{ position: "fixed", inset: 0, zIndex: -10 }}
       camera={{ position: [0, 0, 1], fov: 50 }}
       dpr={[1, 1.5]}
-      gl={{
-        antialias: false,
-        powerPreference: "low-power",
-        alpha: false,
-      }}
+      gl={{ antialias: false, powerPreference: "low-power", alpha: false }}
       frameloop={reduced ? "never" : "always"}
     >
       <AtmosphericMesh reduced={reduced} />
@@ -26,4 +23,4 @@ export function HeroCanvas({ reduced = false }: HeroCanvasProps) {
   );
 }
 
-export default HeroCanvas;
+export default SiteBackgroundCanvas;

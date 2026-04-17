@@ -12,7 +12,7 @@ export function ReferencesStrip() {
   return (
     <section
       aria-labelledby="references-strip-title"
-      className="bg-bg-secondary/30 border-y border-[var(--color-border-subtle-dark)] py-10 md:py-14"
+      className="bg-bg-primary/80 border-y border-[var(--color-border-subtle-dark)] py-10 backdrop-blur-sm md:py-14"
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">

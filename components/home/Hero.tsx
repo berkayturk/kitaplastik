@@ -1,35 +1,21 @@
-"use client";
-
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Container } from "../layout/Container";
-import { HeroFallback } from "@/components/three/HeroFallback";
-import { useShouldReduceMotion } from "@/components/three/useReducedMotion";
-
-const HeroCanvas = dynamic(
-  () => import("@/components/three/HeroCanvas").then((mod) => mod.HeroCanvas),
-  {
-    ssr: false,
-    loading: () => <HeroFallback />,
-  },
-);
 
 export function Hero() {
-  const reduced = useShouldReduceMotion();
-
   return (
     <section
       aria-label="Anasayfa hero"
-      className="relative min-h-[72dvh] overflow-hidden border-b border-[var(--color-border-subtle-dark)]"
+      className="relative flex min-h-[72dvh] items-center overflow-hidden border-b border-[var(--color-border-subtle-dark)] bg-transparent"
     >
-      {/* Atmosferik arka plan — reduce-motion / saveData / zayıf GPU'da CSS fallback */}
-      {reduced ? <HeroFallback /> : <HeroCanvas reduced={false} />}
       <Container>
         <div className="relative py-24 md:py-32 lg:py-40">
           <div className="text-accent-cyan font-mono text-xs tracking-[0.25em] uppercase">
             — 1989'dan beri / Bursa, Türkiye
           </div>
-          <h1 className="mt-6 max-w-3xl text-4xl leading-[1.1] font-bold tracking-tight md:text-6xl lg:text-7xl">
+          <h1
+            id="hero-title"
+            className="mt-6 max-w-3xl text-4xl leading-[1.1] font-bold tracking-tight md:text-6xl lg:text-7xl"
+          >
             Plastik enjeksiyonun{" "}
             <span className="text-[var(--color-accent-cyan)]">mühendislik partneri.</span>
           </h1>

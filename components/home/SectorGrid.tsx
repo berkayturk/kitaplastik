@@ -41,7 +41,7 @@ export function SectorGrid() {
             <Link
               key={sector.slug}
               href={`/sektorler/${sector.slug}`}
-              className="group bg-bg-secondary block rounded-sm border border-[var(--color-border-subtle-dark)] p-6 transition-colors hover:border-[var(--color-accent-blue)]"
+              className="group bg-bg-primary/80 block rounded-sm border border-[var(--color-border-subtle-dark)] p-6 backdrop-blur-sm transition-colors hover:border-[var(--color-accent-blue)]"
             >
               <div
                 className="font-mono text-[10px] tracking-[0.2em] uppercase"
