@@ -1,1 +1,135 @@
-{}
+{
+  "products": {
+    "hero": {
+      "eyebrow": "Ürünler",
+      "title": "Standart ürün katalogumuz",
+      "subtitle": "Üç sektör için stoklu ve hızlı teslim edilebilen standart parçalarımız. Detaylı katalog için iletişime geçiniz."
+    },
+    "notice": "Tam kataloğumuz Plan 3 kapsamında eklenecektir — şu anda talepleri iletişim formundan alıyoruz."
+  },
+  "engineering": {
+    "hero": {
+      "eyebrow": "Özel Üretim",
+      "title": "Bursa'dan global B2B mühendislik partneri",
+      "subtitle": "Kendi ürününüzü tasarlayıp ürettirmek istiyorsanız — brief'ten seri üretime kadar tek ekip."
+    },
+    "process": {
+      "title": "Dört adımda projeniz",
+      "steps": [
+        {
+          "title": "1. Brief & NDA",
+          "description": "Gereksinimlerinizi dinler, gerekiyorsa NDA imzalarız."
+        },
+        {
+          "title": "2. Fizibilite",
+          "description": "Malzeme seçimi, kalıp yapısı ve maliyet öngörüsü — tipik 5 iş günü."
+        },
+        {
+          "title": "3. Kalıp tasarımı",
+          "description": "3D model, tolerans şeması ve numune üretimi."
+        },
+        {
+          "title": "4. Seri üretim",
+          "description": "Onaylı numuneden sonra kalibre edilmiş, tekrarlanabilir üretim."
+        }
+      ]
+    },
+    "capabilities": {
+      "title": "Yetkinliklerimiz",
+      "items": [
+        { "label": "Malzeme", "value": "HDPE, LDPE, PP, POM, PA6, PBT, ABS" },
+        { "label": "Enjeksiyon tonajı", "value": "50–450 ton" },
+        { "label": "Tolerans", "value": "±0.05 mm (standart), ±0.02 mm (hassas)" },
+        { "label": "Aylık kapasite", "value": "Yaklaşık 8 milyon parça" }
+      ]
+    },
+    "confidentiality": {
+      "title": "Gizlilik",
+      "body": "Her proje NDA çerçevesinde yürütülür; müşteri kalıpları ve tasarımları üçüncü taraflara kapalıdır."
+    }
+  },
+  "workshop": {
+    "hero": {
+      "eyebrow": "Atölye",
+      "title": "Bursa Organize Sanayi'de üretim",
+      "subtitle": "3.500 m² kapalı alan, 14 enjeksiyon makinesi ve tam donanımlı kalite laboratuvarı."
+    },
+    "stats": {
+      "area": "3.500 m²",
+      "machines": "14 enjeksiyon makinesi",
+      "capacity": "Aylık 8M parça",
+      "staff": "42 kişi"
+    }
+  },
+  "quality": {
+    "hero": {
+      "eyebrow": "Kalite",
+      "title": "Her partide aynı tolerans",
+      "subtitle": "Kalite yönetim sistemimiz, ihracat için gereken sertifikalar ve her partide boyut / görsel denetim süreçlerimiz."
+    },
+    "certificates": {
+      "title": "Sertifikalar",
+      "items": [
+        { "name": "ISO 9001", "description": "Kalite Yönetim Sistemi — 2008'den beri." },
+        { "name": "ISO 14001", "description": "Çevre Yönetim Sistemi." },
+        { "name": "Gıda temas uyumluluğu", "description": "EU 10/2011 ve FDA 21 CFR 177." }
+      ]
+    },
+    "process": {
+      "title": "Kalite kontrol süreci",
+      "items": [
+        "Gelen malzeme giriş kontrolü (MFI, nem testi)",
+        "Kalıp ilk parça onayı (FAI)",
+        "Parti başı ve parti içi örnekleme",
+        "Boyutsal ölçüm (kumpas, CMM)",
+        "Görsel / renk kontrolü"
+      ]
+    }
+  },
+  "about": {
+    "hero": {
+      "eyebrow": "Hakkımızda",
+      "title": "1989'dan beri Bursa'dan dünyaya",
+      "subtitle": "Kıta Plastik ve Tekstil, üç kuşak mühendislik birikimiyle 36 yıldır plastik enjeksiyon üretiminde."
+    },
+    "story": {
+      "title": "Hikâyemiz",
+      "body": "1989'da Bursa'da küçük bir atölye olarak kurulduk. İlk yıllarda tekstil sektörü için makine parçaları ürettik. 2000'lerde cam yıkama ve ambalaj sektörlerine genişledik. Bugün 42 kişilik bir ekiple, üç sektörde yerli ve ihracat müşterilerimize özel ve standart çözümler sunuyoruz."
+    },
+    "values": {
+      "title": "Değerlerimiz",
+      "items": [
+        {
+          "title": "Mühendislik disiplini",
+          "description": "Her proje ölçülebilir toleranslarla teslim edilir."
+        },
+        {
+          "title": "Uzun soluklu ortaklık",
+          "description": "Müşterilerimizin çoğuyla 10+ yıldır çalışıyoruz."
+        },
+        {
+          "title": "Şeffaf süreç",
+          "description": "Fizibiliteden teslimata kadar her aşamada net iletişim."
+        }
+      ]
+    }
+  },
+  "contact": {
+    "hero": {
+      "eyebrow": "İletişim",
+      "title": "Projenizi konuşalım",
+      "subtitle": "Brief'inizi paylaşın, 48 saat içinde fizibilite ile dönelim."
+    },
+    "details": {
+      "addressLabel": "Adres",
+      "address": "Bursa Organize Sanayi Bölgesi, Nilüfer / Bursa, Türkiye",
+      "phoneLabel": "Telefon",
+      "phone": "+90 224 XXX XX XX",
+      "emailLabel": "E-posta",
+      "email": "info@kitaplastik.com",
+      "hoursLabel": "Çalışma saatleri",
+      "hours": "Pazartesi–Cuma 08:00–18:00 (UTC+3)"
+    },
+    "formNotice": "Detaylı RFQ formu Plan 3 kapsamında eklenecektir — şu anda e-posta ile talep alıyoruz."
+  }
+}
