@@ -1,1 +1,49 @@
-{}
+{
+  "hero": {
+    "eyebrow": "1989'dan beri",
+    "title": "Plastik enjeksiyonun mühendislik partneri",
+    "subtitle": "Bursa'dan dünyaya. Cam yıkama, kapak ve tekstil sektörlerine standart ürünler ve müşteriye özel mühendislik çözümleri.",
+    "primaryCta": "Teklif İste",
+    "secondaryCta": "Sektörleri Keşfet"
+  },
+  "references": {
+    "eyebrow": "Güvenilen üretim partneri",
+    "title": "Bizi seçen markalar",
+    "subtitle": "36 yıllık tecrübe, 3 kıtada teslimat.",
+    "viewAll": "Tüm referanslar"
+  },
+  "sectors": {
+    "eyebrow": "Sektörler",
+    "title": "Üç sektör, tek mühendislik disiplini",
+    "camYikama": {
+      "title": "Cam Yıkama",
+      "description": "Şişeleme hatlarına dayanıklı yıkama ekipmanı parçaları."
+    },
+    "kapak": {
+      "title": "Kapak",
+      "description": "Yüksek hacimli kapak üretimi — gıda, kozmetik, kimya ambalaj."
+    },
+    "tekstil": {
+      "title": "Tekstil",
+      "description": "Tekstil makineleri ve aksesuarları için hassas plastik parçalar."
+    }
+  },
+  "capabilities": {
+    "eyebrow": "Yetkinlikler",
+    "title": "Kalıp tasarımından seri üretime",
+    "items": [
+      {
+        "title": "Kalıp Tasarımı",
+        "description": "Müşteri brief'inden 3D model ve tolerans şemasına."
+      },
+      { "title": "Fizibilite", "description": "Malzeme, maliyet ve süreç analizi." },
+      { "title": "Seri Üretim", "description": "Çok kalıplı, kalibreli, tekrarlanabilir hatlar." },
+      { "title": "Kalite Kontrol", "description": "Her partide boyut ve görsel denetim." }
+    ]
+  },
+  "cta": {
+    "title": "Projenizi konuşalım",
+    "subtitle": "Brief'inizi paylaşın, 48 saat içinde fizibilite ile dönelim.",
+    "button": "Teklif İste"
+  }
+}
