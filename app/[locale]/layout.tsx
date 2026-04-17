@@ -1,0 +1,67 @@
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
+import localFont from "next/font/local";
+import { NextIntlClientProvider } from "next-intl";
+import { setRequestLocale, getMessages } from "next-intl/server";
+import { routing, type Locale } from "@/i18n/routing";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import "@/app/globals.css";
+
+const inter = localFont({
+  src: "../../public/fonts/Inter-Variable.woff2",
+  variable: "--font-inter",
+  display: "swap",
+  weight: "100 900",
+});
+
+const jetbrainsMono = localFont({
+  src: "../../public/fonts/JetBrainsMono-Variable.woff2",
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+  weight: "100 800",
+});
+
+export const metadata: Metadata = {
+  title: "Kıta Plastik · 1989'dan beri Bursa",
+  description:
+    "Plastik enjeksiyonun mühendislik partneri. Cam yıkama, kapak ve tekstil sektörlerine üretim.",
+};
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+interface LocaleLayoutProps {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
+// v3-compatible locale guard (hasLocale is v4-only; Task 1 established this pattern in i18n/request.ts).
+function isValidLocale(value: string): value is Locale {
+  return (routing.locales as readonly string[]).includes(value);
+}
+
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale } = await params;
+  if (!isValidLocale(locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+  const messages = await getMessages();
+  const dir = locale === "ar" ? "rtl" : "ltr";
+
+  return (
+    <html lang={locale} dir={dir} className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="bg-bg-primary text-text-primary antialiased">
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Header />
+          <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+          <Footer />
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
