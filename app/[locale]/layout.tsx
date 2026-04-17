@@ -33,6 +33,8 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+// Next.js 15 LayoutConfig validator constrains `params.locale` to `string` (no `& any` bivariance
+// escape hatch that page.tsx gets from AppPageConfig). We narrow back to Locale via isValidLocale.
 interface LocaleLayoutProps {
   children: ReactNode;
   params: Promise<{ locale: string }>;
