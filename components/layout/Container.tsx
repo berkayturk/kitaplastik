@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { HTMLAttributes, ElementType } from "react";
+import type { HTMLAttributes, ElementType, ComponentType, PropsWithChildren } from "react";
 
 type ContainerProps<T extends ElementType = "div"> = {
   as?: T;
@@ -13,7 +13,12 @@ export function Container<T extends ElementType = "div">({
   children,
   ...rest
 }: ContainerProps<T>) {
-  const Component = (as ?? "div") as ElementType;
+  // Cast through ComponentType to sidestep JSX IntrinsicElements pollution
+  // from @react-three/fiber's global augmentation, which collapses the
+  // children type of polymorphic `ElementType` renders to `never`.
+  const Component = (as ?? "div") as unknown as ComponentType<
+    PropsWithChildren<HTMLAttributes<HTMLElement>>
+  >;
   return (
     <Component className={cn("mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8", className)} {...rest}>
       {children}
