@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
-import { setRequestLocale, getMessages } from "next-intl/server";
+import { setRequestLocale, getMessages, getTranslations } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -27,11 +27,20 @@ const jetbrainsMono = localFont({
   weight: "100 800",
 });
 
-export const metadata: Metadata = {
-  title: "Kıta Plastik · 1989'dan beri Bursa",
-  description:
-    "Plastik enjeksiyonun mühendislik partneri. Cam yıkama, kapak ve tekstil sektörlerine üretim.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isValidLocale(locale)) return {};
+  const tBrand = await getTranslations({ locale, namespace: "common.brand" });
+  const tHero = await getTranslations({ locale, namespace: "home.hero" });
+  return {
+    title: `${tBrand("name")} · ${tBrand("tagline")}`,
+    description: tHero("subtitle"),
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

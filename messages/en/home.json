@@ -1,8 +1,9 @@
 {
   "hero": {
-    "eyebrow": "Since 1989",
-    "title": "Engineering partner in plastic injection moulding",
-    "subtitle": "From Bursa to the world. Standard products and custom-engineered solutions for the glass washing, caps and textile sectors.",
+    "eyebrow": "Since 1989 · Bursa, Türkiye",
+    "titleLead": "Engineering partner in",
+    "titleAccent": "plastic injection moulding.",
+    "subtitle": "36 years of production experience · 3 sectors · Global B2B supply in 4 languages. From our Bursa workshop to the glass-washing, caps and textile sectors — production and custom engineering.",
     "primaryCta": "Request a Quote",
     "secondaryCta": "Explore Sectors"
   },

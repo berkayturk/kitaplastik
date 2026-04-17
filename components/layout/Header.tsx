@@ -6,6 +6,7 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 
 export function Header() {
   const t = useTranslations("nav");
+  const tCta = useTranslations("common.cta");
 
   return (
     <header className="bg-bg-primary/95 sticky top-0 z-40 border-b border-[var(--color-border-subtle-dark)] backdrop-blur-sm">
@@ -49,10 +50,10 @@ export function Header() {
           <div className="flex items-center gap-4">
             <LocaleSwitcher />
             <Link
-              href="/teklif-iste"
+              href="/iletisim"
               className="rounded-sm bg-[var(--color-accent-red)] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
-              Teklif İste
+              {tCta("requestQuote")}
             </Link>
           </div>
         </div>

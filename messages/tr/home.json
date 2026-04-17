@@ -1,8 +1,9 @@
 {
   "hero": {
-    "eyebrow": "1989'dan beri",
-    "title": "Plastik enjeksiyonun mühendislik partneri",
-    "subtitle": "Bursa'dan dünyaya. Cam yıkama, kapak ve tekstil sektörlerine standart ürünler ve müşteriye özel mühendislik çözümleri.",
+    "eyebrow": "1989'dan beri · Bursa, Türkiye",
+    "titleLead": "Plastik enjeksiyonun",
+    "titleAccent": "mühendislik partneri.",
+    "subtitle": "36 yıllık üretim deneyimi · 3 sektör · 4 dilde küresel B2B tedarik. Bursa atölyemizden cam yıkama, kapak ve tekstil sektörlerine üretim ve özel mühendislik.",
     "primaryCta": "Teklif İste",
     "secondaryCta": "Sektörleri Keşfet"
   },

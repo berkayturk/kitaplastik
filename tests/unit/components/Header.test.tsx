@@ -32,6 +32,11 @@ const messages = {
     contact: "İletişim",
     language: "Dil",
   },
+  common: {
+    cta: {
+      requestQuote: "Teklif İste",
+    },
+  },
 };
 
 function renderHeader(locale: "tr" | "en" | "ru" | "ar" = "tr") {
