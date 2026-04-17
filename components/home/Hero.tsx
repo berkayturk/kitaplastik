@@ -5,7 +5,7 @@ export function Hero() {
   return (
     <section
       aria-label="Anasayfa hero"
-      className="relative overflow-hidden border-b border-[var(--color-border-subtle-dark)]"
+      className="relative min-h-[72dvh] overflow-hidden border-b border-[var(--color-border-subtle-dark)]"
     >
       {/* Atmosferik 3D placeholder — Plan 2'de R3F + custom shader ile değişecek */}
       <div
