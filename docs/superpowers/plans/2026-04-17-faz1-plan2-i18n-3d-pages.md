@@ -1,5 +1,7 @@
 # Faz 1 — Plan 2: i18n + 3D Hero + Referanslar + 8 Public Sayfa
 
+> **Status:** ✅ Completed 2026-04-17
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Kıta Plastik sitesini 4 dilli (TR/EN/RU/AR, AR RTL) hâle getir, atmosferik 3D hero ekle, anasayfa ilk açılışta görünür **Referanslar** şeridi ver, 8 public sayfayı tamamla ve logoyu cilala.
