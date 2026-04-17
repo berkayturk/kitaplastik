@@ -20,6 +20,25 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
+// next-intl's navigation wrappers rely on a Next.js runtime; stub them so that
+// Header/Footer/LocaleSwitcher render as plain links under Vitest.
+vi.mock("@/i18n/navigation", async () => {
+  const React = await import("react");
+  type LinkProps = {
+    href: string;
+    locale?: string;
+    children?: React.ReactNode;
+    className?: string;
+    "aria-label"?: string;
+    "aria-current"?: string;
+  };
+  return {
+    Link: ({ href, locale, children, ...rest }: LinkProps) =>
+      React.createElement("a", { href: locale ? `/${locale}${href}` : href, ...rest }, children),
+    usePathname: () => "/",
+  };
+});
+
 import LocaleLayout from "@/app/[locale]/layout";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
