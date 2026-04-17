@@ -1,1 +1,31 @@
-{}
+{
+  "brand": {
+    "name": "Kıta Plastik",
+    "tagline": "شريكك الهندسي في حقن البلاستيك"
+  },
+  "cta": {
+    "requestQuote": "اطلب عرض سعر",
+    "learnMore": "اعرف المزيد",
+    "contactUs": "تواصل معنا",
+    "exploreSectors": "استكشف القطاعات",
+    "backToHome": "العودة إلى الصفحة الرئيسية"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو ربما تم نقلها.",
+    "home": "العودة إلى الصفحة الرئيسية"
+  },
+  "form": {
+    "required": "حقل إلزامي",
+    "submit": "إرسال",
+    "cancel": "إلغاء"
+  },
+  "footer": {
+    "copyright": "© {year} Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.",
+    "since": "من بورصة منذ 1989",
+    "address": "منطقة بورصة الصناعية المنظمة",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "links": "روابط"
+  }
+}

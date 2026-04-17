@@ -1,1 +1,26 @@
-{}
+{
+  "strip": {
+    "eyebrow": "شريك تصنيع موثوق",
+    "title": "إلى جانب العلامات التجارية التي ننتج لها منذ 36 عامًا",
+    "viewAll": "جميع المراجع"
+  },
+  "page": {
+    "hero": {
+      "eyebrow": "المراجع",
+      "title": "في ثلاثة قطاعات، وعلى ثلاث قارات",
+      "subtitle": "عيّنة من عملائنا المحليين والتصديريين. تُحفظ بيانات العملاء بشكل مجهول حفاظًا على السرية التجارية؛ يُرجى التواصل معنا للحصول على مزيد من المعلومات."
+    },
+    "sectionTitle": "عملاؤنا المميزون",
+    "empty": "لم تتم إضافة مراجع بعد."
+  },
+  "clients": {
+    "c1": { "name": "Anadolu Şişeleme A.Ş.", "sector": "غسيل الزجاج" },
+    "c2": { "name": "Marmara Ambalaj", "sector": "الأغطية" },
+    "c3": { "name": "Ege Tekstil Makine", "sector": "النسيج" },
+    "c4": { "name": "Bosphorus Glass Co.", "sector": "غسيل الزجاج" },
+    "c5": { "name": "NordPack GmbH", "sector": "الأغطية" },
+    "c6": { "name": "Textile Pro LLC", "sector": "النسيج" },
+    "c7": { "name": "BalkanBottling d.o.o.", "sector": "غسيل الزجاج" },
+    "c8": { "name": "Cosmopack Intl.", "sector": "الأغطية" }
+  }
+}

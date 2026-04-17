@@ -1,1 +1,12 @@
-{}
+{
+  "primary": "القائمة الرئيسية",
+  "sectors": "القطاعات",
+  "products": "المنتجات",
+  "engineering": "الهندسة",
+  "workshop": "الورشة",
+  "quality": "الجودة",
+  "references": "المراجع",
+  "about": "من نحن",
+  "contact": "اتصل بنا",
+  "language": "اللغة"
+}
