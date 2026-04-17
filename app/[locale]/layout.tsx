@@ -7,6 +7,9 @@ import { setRequestLocale, getMessages } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { getDir } from "@/lib/rtl";
+import { cn } from "@/lib/utils";
+import "@fontsource-variable/noto-sans-arabic/wght.css";
 import "@/app/globals.css";
 
 const inter = localFont({
@@ -53,11 +56,16 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   setRequestLocale(locale);
   const messages = await getMessages();
-  const dir = locale === "ar" ? "rtl" : "ltr";
+  const dir = getDir(locale);
 
   return (
     <html lang={locale} dir={dir} className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-bg-primary text-text-primary antialiased">
+      <body
+        className={cn(
+          "bg-bg-primary text-text-primary antialiased",
+          locale === "ar" && "font-arabic",
+        )}
+      >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>

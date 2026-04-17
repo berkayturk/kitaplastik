@@ -21,6 +21,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@fontsource-variable/noto-sans-arabic": "^5",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
     "class-variance-authority": "^0.7.1",

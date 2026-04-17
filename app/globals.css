@@ -77,3 +77,18 @@ body {
     --radius: 0.125rem;
   }
 }
+
+@layer base {
+  :root {
+    --font-arabic: "Noto Sans Arabic Variable", "Noto Sans Arabic", system-ui, sans-serif;
+  }
+
+  html[dir="rtl"] body,
+  .font-arabic {
+    font-family: var(--font-arabic);
+  }
+
+  html[dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+}
