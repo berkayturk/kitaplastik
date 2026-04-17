@@ -28,22 +28,10 @@ export function Header() {
               {t("products")}
             </Link>
             <Link
-              href="/muhendislik"
+              href="/referanslar"
               className="text-text-secondary hover:text-text-primary text-sm transition-colors"
             >
-              {t("engineering")}
-            </Link>
-            <Link
-              href="/atolye"
-              className="text-text-secondary hover:text-text-primary text-sm transition-colors"
-            >
-              {t("workshop")}
-            </Link>
-            <Link
-              href="/kalite"
-              className="text-text-secondary hover:text-text-primary text-sm transition-colors"
-            >
-              {t("quality")}
+              {t("references")}
             </Link>
             <Link
               href="/hakkimizda"

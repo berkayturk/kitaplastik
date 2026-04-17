@@ -36,11 +36,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/muhendislik" className="hover:text-text-primary">
-                  Mühendislik
-                </Link>
-              </li>
-              <li>
                 <Link href="/hakkimizda" className="hover:text-text-primary">
                   Hakkımızda
                 </Link>

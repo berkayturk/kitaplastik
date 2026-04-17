@@ -9,13 +9,10 @@ describe("seo routes", () => {
     expect(PUBLIC_ROUTES).toContain("/sektorler/kapak");
     expect(PUBLIC_ROUTES).toContain("/sektorler/tekstil");
     expect(PUBLIC_ROUTES).toContain("/urunler");
-    expect(PUBLIC_ROUTES).toContain("/muhendislik");
-    expect(PUBLIC_ROUTES).toContain("/atolye");
-    expect(PUBLIC_ROUTES).toContain("/kalite");
     expect(PUBLIC_ROUTES).toContain("/hakkimizda");
     expect(PUBLIC_ROUTES).toContain("/iletisim");
     expect(PUBLIC_ROUTES).toContain("/referanslar");
-    expect(PUBLIC_ROUTES).toHaveLength(12);
+    expect(PUBLIC_ROUTES).toHaveLength(9);
   });
 
   it("buildAlternates produces hreflang map with x-default", () => {
