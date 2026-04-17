@@ -1,1 +1,26 @@
-{}
+{
+  "strip": {
+    "eyebrow": "Надёжный производственный партнёр",
+    "title": "Рядом с брендами, для которых мы производим уже 36 лет",
+    "viewAll": "Все отзывы"
+  },
+  "page": {
+    "hero": {
+      "eyebrow": "Отзывы клиентов",
+      "title": "В трёх отраслях, на трёх континентах",
+      "subtitle": "Часть наших отечественных и экспортных клиентов. В целях коммерческой конфиденциальности данные клиентов обезличены; для подробной информации свяжитесь с нами."
+    },
+    "sectionTitle": "Избранные клиенты",
+    "empty": "Отзывы пока не добавлены."
+  },
+  "clients": {
+    "c1": { "name": "Anadolu Şişeleme A.Ş.", "sector": "Мойка стекла" },
+    "c2": { "name": "Marmara Ambalaj", "sector": "Колпачки" },
+    "c3": { "name": "Ege Tekstil Makine", "sector": "Текстиль" },
+    "c4": { "name": "Bosphorus Glass Co.", "sector": "Мойка стекла" },
+    "c5": { "name": "NordPack GmbH", "sector": "Колпачки" },
+    "c6": { "name": "Textile Pro LLC", "sector": "Текстиль" },
+    "c7": { "name": "BalkanBottling d.o.o.", "sector": "Мойка стекла" },
+    "c8": { "name": "Cosmopack Intl.", "sector": "Колпачки" }
+  }
+}
