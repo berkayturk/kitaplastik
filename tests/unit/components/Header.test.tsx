@@ -49,7 +49,7 @@ describe("Header", () => {
   it("logo veya marka adı görünür", () => {
     renderHeader();
     expect(screen.getByRole("banner")).toBeInTheDocument();
-    expect(screen.getByText(/KITA/i)).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /kıta plastik/i })).toBeInTheDocument();
   });
 
   it("ana navigasyon link'leri içerir", () => {
