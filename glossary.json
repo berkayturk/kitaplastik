@@ -1,0 +1,116 @@
+{
+  "plastik enjeksiyon": {
+    "en": "plastic injection moulding",
+    "ru": "литьё пластмасс под давлением",
+    "ar": "حقن البلاستيك"
+  },
+  "kalıp tasarımı": {
+    "en": "mould design",
+    "ru": "проектирование пресс-форм",
+    "ar": "تصميم القوالب"
+  },
+  "tolerans": { "en": "tolerance", "ru": "допуск", "ar": "التفاوت" },
+  "cam yıkama makinesi": {
+    "en": "glass-washing machine",
+    "ru": "стекломоечная машина",
+    "ar": "آلة غسيل الزجاج"
+  },
+  "kapak": { "en": "cap", "ru": "колпачок", "ar": "غطاء" },
+  "tekstil aksesuarı": {
+    "en": "textile accessory",
+    "ru": "текстильный аксессуар",
+    "ar": "ملحق نسيج"
+  },
+  "fizibilite": {
+    "en": "feasibility",
+    "ru": "технико-экономическое обоснование",
+    "ar": "دراسة الجدوى"
+  },
+  "seri üretim": {
+    "en": "serial production",
+    "ru": "серийное производство",
+    "ar": "الإنتاج التسلسلي"
+  },
+  "ön üretim": {
+    "en": "pre-production",
+    "ru": "предсерийное производство",
+    "ar": "ما قبل الإنتاج"
+  },
+  "numune": { "en": "sample", "ru": "образец", "ar": "عينة" },
+  "teklif iste": { "en": "request a quote", "ru": "запросить предложение", "ar": "اطلب عرض سعر" },
+  "teklif": { "en": "quote", "ru": "коммерческое предложение", "ar": "عرض سعر" },
+  "özel üretim": { "en": "custom production", "ru": "производство под заказ", "ar": "إنتاج خاص" },
+  "mühendislik partneri": {
+    "en": "engineering partner",
+    "ru": "инженерный партнёр",
+    "ar": "شريك هندسي"
+  },
+  "kalite yönetim sistemi": {
+    "en": "quality management system",
+    "ru": "система менеджмента качества",
+    "ar": "نظام إدارة الجودة"
+  },
+  "sertifika": { "en": "certification", "ru": "сертификат", "ar": "شهادة" },
+  "üretim kapasitesi": {
+    "en": "production capacity",
+    "ru": "производственная мощность",
+    "ar": "الطاقة الإنتاجية"
+  },
+  "atölye": { "en": "workshop", "ru": "цех", "ar": "ورشة" },
+  "referanslar": { "en": "references", "ru": "отзывы клиентов", "ar": "المراجع" },
+  "müşteri": { "en": "customer", "ru": "клиент", "ar": "عميل" },
+  "tedarikçi": { "en": "supplier", "ru": "поставщик", "ar": "مورد" },
+  "NDA (gizlilik)": {
+    "en": "NDA (confidentiality)",
+    "ru": "соглашение о неразглашении",
+    "ar": "اتفاقية عدم الإفصاح"
+  },
+  "hakkımızda": { "en": "about us", "ru": "о нас", "ar": "من نحن" },
+  "iletişim": { "en": "contact", "ru": "контакты", "ar": "اتصل بنا" },
+  "sektör": { "en": "sector", "ru": "отрасль", "ar": "قطاع" },
+  "ürün kataloğu": { "en": "product catalog", "ru": "каталог продукции", "ar": "كتالوج المنتجات" },
+  "malzeme": { "en": "material", "ru": "материал", "ar": "مادة" },
+  "polimer": { "en": "polymer", "ru": "полимер", "ar": "بوليمر" },
+  "HDPE": { "en": "HDPE", "ru": "ПЭВП", "ar": "HDPE" },
+  "LDPE": { "en": "LDPE", "ru": "ПЭНП", "ar": "LDPE" },
+  "PP": { "en": "PP (polypropylene)", "ru": "ПП (полипропилен)", "ar": "PP (بولي بروبيلين)" },
+  "PET": { "en": "PET", "ru": "ПЭТ", "ar": "PET" },
+  "1989'dan beri": { "en": "since 1989", "ru": "с 1989 года", "ar": "منذ 1989" },
+  "Bursa'dan dünyaya": {
+    "en": "from Bursa to the world",
+    "ru": "из Бурсы во весь мир",
+    "ar": "من بورصة إلى العالم"
+  },
+  "36 yıllık tecrübe": {
+    "en": "36 years of experience",
+    "ru": "36 лет опыта",
+    "ar": "36 عامًا من الخبرة"
+  },
+  "hibrit üretim": {
+    "en": "hybrid production",
+    "ru": "гибридное производство",
+    "ar": "إنتاج هجين"
+  },
+  "B2B": { "en": "B2B", "ru": "B2B", "ar": "B2B" },
+  "proje brief": { "en": "project brief", "ru": "техническое задание", "ar": "ملخص المشروع" },
+  "ihracat": { "en": "export", "ru": "экспорт", "ar": "تصدير" },
+  "yerli": { "en": "domestic", "ru": "отечественный", "ar": "محلي" },
+  "KVKK": {
+    "en": "KVKK (Turkish GDPR)",
+    "ru": "KVKK (закон о защите персональных данных Турции)",
+    "ar": "KVKK (قانون حماية البيانات التركي)"
+  },
+  "GDPR": { "en": "GDPR", "ru": "GDPR", "ar": "اللائحة العامة لحماية البيانات" },
+  "aksesuar": { "en": "accessory", "ru": "аксессуар", "ar": "ملحق" },
+  "mesh": { "en": "mesh", "ru": "сетка", "ar": "شبكة" },
+  "çerçeve": { "en": "frame", "ru": "рамка", "ar": "إطار" },
+  "conta": { "en": "seal / gasket", "ru": "уплотнитель", "ar": "جلبة" },
+  "enjeksiyon makinesi": {
+    "en": "injection moulding machine",
+    "ru": "термопластавтомат",
+    "ar": "آلة حقن البلاستيك"
+  },
+  "dişli": { "en": "gear", "ru": "шестерня", "ar": "ترس" },
+  "şişeleme hattı": { "en": "bottling line", "ru": "линия розлива", "ar": "خط التعبئة" },
+  "ambalaj": { "en": "packaging", "ru": "упаковка", "ar": "تغليف" }
+}
