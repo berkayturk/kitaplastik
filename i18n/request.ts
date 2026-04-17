@@ -1,6 +1,8 @@
 import { getRequestConfig } from "next-intl/server";
 import { routing, type Locale } from "./routing";
 
+// Replaces v4-only `hasLocale(routing.locales, value)`. When upgrading to next-intl v4,
+// swap this inline guard back to the library-provided helper.
 function isValidLocale(value: string | undefined): value is Locale {
   return typeof value === "string" && (routing.locales as readonly string[]).includes(value);
 }
