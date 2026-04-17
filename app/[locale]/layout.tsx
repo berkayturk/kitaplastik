@@ -8,6 +8,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SiteBackground } from "@/components/three/SiteBackground";
+import { WhatsAppFab } from "@/components/contact/WhatsAppFab";
 import { getDir } from "@/lib/rtl";
 import { cn } from "@/lib/utils";
 import "@fontsource-variable/noto-sans-arabic/wght.css";
@@ -76,6 +77,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />
+          <WhatsAppFab />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -38,19 +38,64 @@
   "contact": {
     "hero": {
       "eyebrow": "İletişim",
-      "title": "Projenizi konuşalım",
+      "title": "Bizimle iletişime geçin",
       "subtitle": "Brief'inizi paylaşın, 48 saat içinde fizibilite ile dönelim."
     },
     "details": {
+      "title": "İletişim bilgileri",
       "addressLabel": "Adres",
-      "address": "Bursa Organize Sanayi Bölgesi, Nilüfer / Bursa, Türkiye",
+      "address": "Eski Gemlik Yolu Kadem Sk. No: 37-40, Osmangazi / Bursa, Türkiye",
       "phoneLabel": "Telefon",
-      "phone": "+90 224 XXX XX XX",
+      "cellPhoneLabel": "Cep Telefonu",
+      "faxLabel": "Faks",
       "emailLabel": "E-posta",
-      "email": "info@kitaplastik.com",
+      "emailAltLabel": "Alternatif e-posta",
       "hoursLabel": "Çalışma saatleri",
       "hours": "Pazartesi–Cuma 08:00–18:00 (UTC+3)"
     },
-    "formNotice": "Detaylı RFQ formu Plan 3 kapsamında eklenecektir — şu anda e-posta ile talep alıyoruz."
+    "form": {
+      "title": "Bize mesaj gönderin",
+      "subtitle": "Formu doldurun; gönder'e bastığınızda varsayılan e-posta uygulamanız açılır ve mesajınız hazır gelir.",
+      "nameLabel": "Ad Soyad",
+      "namePlaceholder": "Adınız ve soyadınız",
+      "companyLabel": "Firma",
+      "companyPlaceholder": "Firma adı (opsiyonel)",
+      "emailLabel": "E-posta",
+      "emailPlaceholder": "siz@firma.com",
+      "phoneLabel": "Telefon",
+      "phonePlaceholder": "+90 5XX XXX XX XX (opsiyonel)",
+      "subjectLabel": "Konu",
+      "subjectOptions": {
+        "general": "Genel bilgi",
+        "quote": "Teklif talebi",
+        "support": "Teknik destek",
+        "other": "Diğer"
+      },
+      "messageLabel": "Mesajınız",
+      "messagePlaceholder": "Projenizi veya sorunuzu kısaca açıklayın...",
+      "submit": "Mesajı Gönder",
+      "submitting": "Açılıyor…",
+      "submitted": "E-posta uygulamanız açıldı. Lütfen kontrol edip gönderin.",
+      "fallbackNotice": "E-posta uygulamanız açılmadıysa doğrudan {email} adresine yazabilirsiniz.",
+      "required": "zorunlu",
+      "optional": "opsiyonel",
+      "invalidEmail": "Geçerli bir e-posta adresi girin.",
+      "minMessage": "Mesajınız en az 10 karakter olmalı."
+    },
+    "whatsapp": {
+      "eyebrow": "Hızlı iletişim",
+      "title": "WhatsApp'tan Yaz",
+      "description": "Sorularınızı doğrudan WhatsApp'tan iletin, hızlı yanıt alın.",
+      "cta": "WhatsApp'tan Yaz",
+      "fabLabel": "WhatsApp üzerinden iletişime geç",
+      "prefill": "Merhaba, Kıta Plastik ile iletişime geçmek istiyorum."
+    },
+    "telegram": {
+      "eyebrow": "Hızlı iletişim",
+      "title": "Telegram'dan Yaz",
+      "cta": "Telegram'dan Yaz",
+      "fabLabel": "Telegram üzerinden iletişime geç",
+      "prefill": "Merhaba, Kıta Plastik ile iletişime geçmek istiyorum."
+    }
   }
 }

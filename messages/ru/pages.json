@@ -38,19 +38,64 @@
   "contact": {
     "hero": {
       "eyebrow": "Контакты",
-      "title": "Обсудим ваш проект",
+      "title": "Свяжитесь с нами",
       "subtitle": "Пришлите техническое задание — в течение 48 часов мы вернёмся с технико-экономическим обоснованием."
     },
     "details": {
+      "title": "Контактные данные",
       "addressLabel": "Адрес",
-      "address": "Организованная промышленная зона Бурса, Нилюфер / Бурса, Türkiye",
+      "address": "Eski Gemlik Yolu Kadem Sk. No: 37-40, Османгази / Бурса, Турция",
       "phoneLabel": "Телефон",
-      "phone": "+90 224 XXX XX XX",
+      "cellPhoneLabel": "Мобильный",
+      "faxLabel": "Факс",
       "emailLabel": "Эл. почта",
-      "email": "info@kitaplastik.com",
+      "emailAltLabel": "Дополнительная эл. почта",
       "hoursLabel": "Часы работы",
       "hours": "Понедельник–Пятница 08:00–18:00 (UTC+3)"
     },
-    "formNotice": "Подробная форма RFQ будет добавлена в рамках Плана 3 — в настоящее время мы принимаем заявки по электронной почте."
+    "form": {
+      "title": "Напишите нам",
+      "subtitle": "Заполните форму — при нажатии «Отправить» откроется ваша почтовая программа с готовым сообщением.",
+      "nameLabel": "Имя и фамилия",
+      "namePlaceholder": "Ваше имя и фамилия",
+      "companyLabel": "Компания",
+      "companyPlaceholder": "Название компании (необязательно)",
+      "emailLabel": "Эл. почта",
+      "emailPlaceholder": "you@company.com",
+      "phoneLabel": "Телефон",
+      "phonePlaceholder": "+90 5XX XXX XX XX (необязательно)",
+      "subjectLabel": "Тема",
+      "subjectOptions": {
+        "general": "Общий вопрос",
+        "quote": "Запрос предложения",
+        "support": "Техническая поддержка",
+        "other": "Другое"
+      },
+      "messageLabel": "Ваше сообщение",
+      "messagePlaceholder": "Кратко опишите ваш проект или вопрос...",
+      "submit": "Отправить сообщение",
+      "submitting": "Открывается…",
+      "submitted": "Почтовая программа открыта. Проверьте и отправьте сообщение.",
+      "fallbackNotice": "Если почтовая программа не открылась, вы можете написать напрямую на {email}.",
+      "required": "обязательно",
+      "optional": "необязательно",
+      "invalidEmail": "Введите корректный адрес электронной почты.",
+      "minMessage": "Сообщение должно содержать не менее 10 символов."
+    },
+    "whatsapp": {
+      "eyebrow": "Быстрая связь",
+      "title": "Написать в WhatsApp",
+      "description": "Задавайте вопросы прямо в WhatsApp и получайте быстрый ответ.",
+      "cta": "Написать в WhatsApp",
+      "fabLabel": "Связаться через WhatsApp",
+      "prefill": "Здравствуйте, я хотел бы связаться с Kıta Plastik."
+    },
+    "telegram": {
+      "eyebrow": "Быстрая связь",
+      "title": "Написать в Telegram",
+      "cta": "Написать в Telegram",
+      "fabLabel": "Связаться через Telegram",
+      "prefill": "Здравствуйте, я хотел бы связаться с Kıta Plastik."
+    }
   }
 }

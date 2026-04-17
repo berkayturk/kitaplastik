@@ -38,19 +38,64 @@
   "contact": {
     "hero": {
       "eyebrow": "اتصل بنا",
-      "title": "لنتحدث عن مشروعك",
+      "title": "تواصل معنا",
       "subtitle": "شاركنا ملخص مشروعك وسنعود إليك بدراسة الجدوى خلال 48 ساعة."
     },
     "details": {
+      "title": "بيانات التواصل",
       "addressLabel": "العنوان",
-      "address": "منطقة بورصة الصناعية المنظمة، Nilüfer / Bursa، Türkiye",
+      "address": "Eski Gemlik Yolu Kadem Sk. No: 37-40، عثمانغازي / بورصة، تركيا",
       "phoneLabel": "الهاتف",
-      "phone": "+90 224 XXX XX XX",
+      "cellPhoneLabel": "الجوال",
+      "faxLabel": "الفاكس",
       "emailLabel": "البريد الإلكتروني",
-      "email": "info@kitaplastik.com",
+      "emailAltLabel": "بريد إلكتروني بديل",
       "hoursLabel": "ساعات العمل",
       "hours": "الإثنين–الجمعة 08:00–18:00 (UTC+3)"
     },
-    "formNotice": "سيُضاف نموذج RFQ التفصيلي ضمن الخطة 3 — نستقبل حاليًا الطلبات عبر البريد الإلكتروني."
+    "form": {
+      "title": "أرسل لنا رسالة",
+      "subtitle": "املأ النموذج؛ عند الضغط على إرسال يفتح تطبيق البريد الافتراضي لديك برسالتك جاهزة.",
+      "nameLabel": "الاسم الكامل",
+      "namePlaceholder": "اسمك الأول واسم العائلة",
+      "companyLabel": "الشركة",
+      "companyPlaceholder": "اسم الشركة (اختياري)",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "you@company.com",
+      "phoneLabel": "الهاتف",
+      "phonePlaceholder": "+90 5XX XXX XX XX (اختياري)",
+      "subjectLabel": "الموضوع",
+      "subjectOptions": {
+        "general": "استفسار عام",
+        "quote": "طلب عرض سعر",
+        "support": "دعم فني",
+        "other": "أخرى"
+      },
+      "messageLabel": "رسالتك",
+      "messagePlaceholder": "اشرح بإيجاز مشروعك أو سؤالك...",
+      "submit": "إرسال الرسالة",
+      "submitting": "جارٍ الفتح…",
+      "submitted": "تم فتح تطبيق البريد. يُرجى المراجعة والإرسال.",
+      "fallbackNotice": "إذا لم يُفتح تطبيق البريد لديك، يمكنك المراسلة مباشرة على {email}.",
+      "required": "مطلوب",
+      "optional": "اختياري",
+      "invalidEmail": "أدخل عنوان بريد إلكتروني صالحًا.",
+      "minMessage": "يجب ألا تقل الرسالة عن 10 أحرف."
+    },
+    "whatsapp": {
+      "eyebrow": "تواصل سريع",
+      "title": "راسلنا على واتساب",
+      "description": "أرسل أسئلتك مباشرةً عبر واتساب واحصل على رد سريع.",
+      "cta": "راسلنا على واتساب",
+      "fabLabel": "تواصل معنا عبر واتساب",
+      "prefill": "مرحبًا، أود التواصل مع Kıta Plastik."
+    },
+    "telegram": {
+      "eyebrow": "تواصل سريع",
+      "title": "راسلنا على تلغرام",
+      "cta": "راسلنا على تلغرام",
+      "fabLabel": "تواصل معنا عبر تلغرام",
+      "prefill": "مرحبًا، أود التواصل مع Kıta Plastik."
+    }
   }
 }

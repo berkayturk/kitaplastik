@@ -38,19 +38,64 @@
   "contact": {
     "hero": {
       "eyebrow": "Contact",
-      "title": "Let's talk about your project",
+      "title": "Get in touch with us",
       "subtitle": "Share your brief and we'll come back with a feasibility within 48 hours."
     },
     "details": {
+      "title": "Contact details",
       "addressLabel": "Address",
-      "address": "Bursa Organized Industrial Zone, Nilüfer / Bursa, Türkiye",
+      "address": "Eski Gemlik Yolu Kadem Sk. No: 37-40, Osmangazi / Bursa, Türkiye",
       "phoneLabel": "Phone",
-      "phone": "+90 224 XXX XX XX",
+      "cellPhoneLabel": "Mobile",
+      "faxLabel": "Fax",
       "emailLabel": "Email",
-      "email": "info@kitaplastik.com",
+      "emailAltLabel": "Alternative email",
       "hoursLabel": "Working hours",
       "hours": "Monday–Friday 08:00–18:00 (UTC+3)"
     },
-    "formNotice": "A detailed RFQ form will be added as part of Plan 3 — we currently accept requests by email."
+    "form": {
+      "title": "Send us a message",
+      "subtitle": "Fill in the form; when you press send, your default email app opens with your message ready to go.",
+      "nameLabel": "Full name",
+      "namePlaceholder": "Your first and last name",
+      "companyLabel": "Company",
+      "companyPlaceholder": "Company name (optional)",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@company.com",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "+90 5XX XXX XX XX (optional)",
+      "subjectLabel": "Subject",
+      "subjectOptions": {
+        "general": "General inquiry",
+        "quote": "Request for quote",
+        "support": "Technical support",
+        "other": "Other"
+      },
+      "messageLabel": "Your message",
+      "messagePlaceholder": "Briefly describe your project or question...",
+      "submit": "Send message",
+      "submitting": "Opening…",
+      "submitted": "Your email app is opening. Please review and send.",
+      "fallbackNotice": "If your email app didn't open, you can write directly to {email}.",
+      "required": "required",
+      "optional": "optional",
+      "invalidEmail": "Enter a valid email address.",
+      "minMessage": "Your message must be at least 10 characters."
+    },
+    "whatsapp": {
+      "eyebrow": "Quick contact",
+      "title": "Message on WhatsApp",
+      "description": "Send your questions directly via WhatsApp and get a fast reply.",
+      "cta": "Message on WhatsApp",
+      "fabLabel": "Contact us on WhatsApp",
+      "prefill": "Hello, I'd like to get in touch with Kıta Plastik."
+    },
+    "telegram": {
+      "eyebrow": "Quick contact",
+      "title": "Message on Telegram",
+      "cta": "Message on Telegram",
+      "fabLabel": "Contact us on Telegram",
+      "prefill": "Hello, I'd like to get in touch with Kıta Plastik."
+    }
   }
 }
