@@ -1,1 +1,31 @@
-{}
+{
+  "brand": {
+    "name": "Kıta Plastik",
+    "tagline": "Engineering partner in plastic injection moulding"
+  },
+  "cta": {
+    "requestQuote": "Request a Quote",
+    "learnMore": "Learn More",
+    "contactUs": "Contact Us",
+    "exploreSectors": "Explore Sectors",
+    "backToHome": "Back to Home"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or may have been moved.",
+    "home": "Back to home"
+  },
+  "form": {
+    "required": "Required field",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "footer": {
+    "copyright": "© {year} Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.",
+    "since": "From Bursa since 1989",
+    "address": "Bursa Organized Industrial Zone",
+    "phone": "Phone",
+    "email": "Email",
+    "links": "Links"
+  }
+}

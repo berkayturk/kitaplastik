@@ -1,1 +1,99 @@
-{}
+{
+  "hub": {
+    "hero": {
+      "eyebrow": "Sectors",
+      "title": "Three sectors, one engineering discipline",
+      "subtitle": "36 years of manufacturing experience in the glass washing, caps and textile sectors."
+    },
+    "camYikama": {
+      "title": "Glass Washing",
+      "description": "Durable plastic components used on bottling and washing lines."
+    },
+    "kapak": {
+      "title": "Caps",
+      "description": "High-volume cap production for food, cosmetics and chemical packaging."
+    },
+    "tekstil": {
+      "title": "Textile",
+      "description": "Tight-tolerance plastic accessories for textile machinery."
+    }
+  },
+  "camYikama": {
+    "hero": {
+      "eyebrow": "Sector",
+      "title": "The unseen backbone of glass-washing lines",
+      "subtitle": "Polymer components for bottle-washing machines, bottling lines and CIP systems."
+    },
+    "solutions": {
+      "title": "Solutions",
+      "items": [
+        {
+          "title": "Bottle-holding arms",
+          "description": "Wear-resistant arms that secure the bottle during washing."
+        },
+        {
+          "title": "Guide profiles",
+          "description": "Low-friction plastic profiles for conveyor lines."
+        },
+        {
+          "title": "Spray nozzles",
+          "description": "High-pressure-resistant polymer nozzle bodies."
+        }
+      ]
+    },
+    "materials": {
+      "title": "Material options",
+      "items": ["HDPE", "POM (acetal)", "PP", "PA6 (nylon)"]
+    }
+  },
+  "kapak": {
+    "hero": {
+      "eyebrow": "Sector",
+      "title": "Scale and consistency in caps",
+      "subtitle": "High-volume serial production — cap and closure solutions for food, cosmetics and chemical packaging."
+    },
+    "solutions": {
+      "title": "Solutions",
+      "items": [
+        {
+          "title": "Standard screw cap",
+          "description": "PP / HDPE material, 20–80 mm diameter range."
+        },
+        { "title": "Flip-top cap", "description": "For shampoo, liquid soap and edible oil." },
+        {
+          "title": "Child-resistant cap",
+          "description": "Compliant with safety standards for the chemical and pharmaceutical sectors."
+        }
+      ]
+    },
+    "materials": {
+      "title": "Material options",
+      "items": ["PP", "HDPE", "LDPE"]
+    }
+  },
+  "tekstil": {
+    "hero": {
+      "eyebrow": "Sector",
+      "title": "Precision parts for textile machinery",
+      "subtitle": "Tight-tolerance plastic accessories for weaving, knitting and garment machinery."
+    },
+    "solutions": {
+      "title": "Solutions",
+      "items": [
+        {
+          "title": "Shuttle guides",
+          "description": "Components that direct yarn flow on weaving looms."
+        },
+        { "title": "Bobbins and spools", "description": "For yarn-winding machines." },
+        {
+          "title": "Stretching frames",
+          "description": "Polymer components used on fabric-tensioning lines."
+        }
+      ]
+    },
+    "materials": {
+      "title": "Material options",
+      "items": ["POM (acetal)", "PA6", "PBT", "PP"]
+    }
+  }
+}

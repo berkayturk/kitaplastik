@@ -1,1 +1,26 @@
-{}
+{
+  "strip": {
+    "eyebrow": "A trusted manufacturing partner",
+    "title": "Alongside the brands we've produced for over 36 years",
+    "viewAll": "All references"
+  },
+  "page": {
+    "hero": {
+      "eyebrow": "References",
+      "title": "Across three sectors, on three continents",
+      "subtitle": "A selection of our domestic and export customers. Client details are kept anonymous for commercial confidentiality; please contact us for further information."
+    },
+    "sectionTitle": "Selected customers",
+    "empty": "No references have been added yet."
+  },
+  "clients": {
+    "c1": { "name": "Anadolu Şişeleme A.Ş.", "sector": "Glass Washing" },
+    "c2": { "name": "Marmara Ambalaj", "sector": "Caps" },
+    "c3": { "name": "Ege Tekstil Makine", "sector": "Textile" },
+    "c4": { "name": "Bosphorus Glass Co.", "sector": "Glass Washing" },
+    "c5": { "name": "NordPack GmbH", "sector": "Caps" },
+    "c6": { "name": "Textile Pro LLC", "sector": "Textile" },
+    "c7": { "name": "BalkanBottling d.o.o.", "sector": "Glass Washing" },
+    "c8": { "name": "Cosmopack Intl.", "sector": "Caps" }
+  }
+}

@@ -1,1 +1,12 @@
-{}
+{
+  "primary": "Main navigation",
+  "sectors": "Sectors",
+  "products": "Products",
+  "engineering": "Engineering",
+  "workshop": "Workshop",
+  "quality": "Quality",
+  "references": "References",
+  "about": "About",
+  "contact": "Contact",
+  "language": "Language"
+}

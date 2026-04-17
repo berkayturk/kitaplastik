@@ -1,1 +1,135 @@
-{}
+{
+  "products": {
+    "hero": {
+      "eyebrow": "Products",
+      "title": "Our standard product catalogue",
+      "subtitle": "Our in-stock, quickly deliverable standard parts for three sectors. Please contact us for the detailed catalogue."
+    },
+    "notice": "Our full catalogue will be added as part of Plan 3 — we currently accept requests via the contact form."
+  },
+  "engineering": {
+    "hero": {
+      "eyebrow": "Custom Production",
+      "title": "A global B2B engineering partner, from Bursa",
+      "subtitle": "If you want to design and have your own product manufactured — one team from brief to serial production."
+    },
+    "process": {
+      "title": "Your project in four steps",
+      "steps": [
+        {
+          "title": "1. Brief & NDA",
+          "description": "We listen to your requirements and sign an NDA if needed."
+        },
+        {
+          "title": "2. Feasibility",
+          "description": "Material selection, mould structure and cost projection — typically 5 business days."
+        },
+        {
+          "title": "3. Mould design",
+          "description": "3D model, tolerance schematic and sample production."
+        },
+        {
+          "title": "4. Serial production",
+          "description": "Calibrated, repeatable production after sample approval."
+        }
+      ]
+    },
+    "capabilities": {
+      "title": "Our capabilities",
+      "items": [
+        { "label": "Material", "value": "HDPE, LDPE, PP, POM, PA6, PBT, ABS" },
+        { "label": "Injection tonnage", "value": "50–450 tonnes" },
+        { "label": "Tolerance", "value": "±0.05 mm (standard), ±0.02 mm (precision)" },
+        { "label": "Monthly capacity", "value": "Approximately 8 million parts" }
+      ]
+    },
+    "confidentiality": {
+      "title": "Confidentiality",
+      "body": "Every project is run under an NDA; customer moulds and designs remain closed to third parties."
+    }
+  },
+  "workshop": {
+    "hero": {
+      "eyebrow": "Workshop",
+      "title": "Manufacturing in Bursa Organized Industrial Zone",
+      "subtitle": "3,500 m² of indoor space, 14 injection moulding machines and a fully equipped quality laboratory."
+    },
+    "stats": {
+      "area": "3,500 m²",
+      "machines": "14 injection moulding machines",
+      "capacity": "8M parts / month",
+      "staff": "42 people"
+    }
+  },
+  "quality": {
+    "hero": {
+      "eyebrow": "Quality",
+      "title": "The same tolerance on every batch",
+      "subtitle": "Our quality management system, the certifications required for export, and our dimensional / visual inspection processes on every batch."
+    },
+    "certificates": {
+      "title": "Certifications",
+      "items": [
+        { "name": "ISO 9001", "description": "Quality Management System — since 2008." },
+        { "name": "ISO 14001", "description": "Environmental Management System." },
+        { "name": "Food contact compliance", "description": "EU 10/2011 and FDA 21 CFR 177." }
+      ]
+    },
+    "process": {
+      "title": "Quality control process",
+      "items": [
+        "Incoming material inspection (MFI, moisture test)",
+        "First article inspection (FAI)",
+        "Batch-start and in-batch sampling",
+        "Dimensional measurement (calipers, CMM)",
+        "Visual / colour inspection"
+      ]
+    }
+  },
+  "about": {
+    "hero": {
+      "eyebrow": "About Us",
+      "title": "From Bursa to the world since 1989",
+      "subtitle": "Kıta Plastik ve Tekstil has been in plastic injection moulding for 36 years, backed by three generations of engineering know-how."
+    },
+    "story": {
+      "title": "Our story",
+      "body": "We were founded in 1989 as a small workshop in Bursa. In our early years we produced machine parts for the textile sector. In the 2000s we expanded into the glass washing and packaging sectors. Today, with a team of 42, we deliver custom and standard solutions to domestic and export customers across three sectors."
+    },
+    "values": {
+      "title": "Our values",
+      "items": [
+        {
+          "title": "Engineering discipline",
+          "description": "Every project is delivered with measurable tolerances."
+        },
+        {
+          "title": "Long-term partnership",
+          "description": "We've worked with most of our customers for 10+ years."
+        },
+        {
+          "title": "Transparent process",
+          "description": "Clear communication at every stage, from feasibility to delivery."
+        }
+      ]
+    }
+  },
+  "contact": {
+    "hero": {
+      "eyebrow": "Contact",
+      "title": "Let's talk about your project",
+      "subtitle": "Share your brief and we'll come back with a feasibility within 48 hours."
+    },
+    "details": {
+      "addressLabel": "Address",
+      "address": "Bursa Organized Industrial Zone, Nilüfer / Bursa, Türkiye",
+      "phoneLabel": "Phone",
+      "phone": "+90 224 XXX XX XX",
+      "emailLabel": "Email",
+      "email": "info@kitaplastik.com",
+      "hoursLabel": "Working hours",
+      "hours": "Monday–Friday 08:00–18:00 (UTC+3)"
+    },
+    "formNotice": "A detailed RFQ form will be added as part of Plan 3 — we currently accept requests by email."
+  }
+}

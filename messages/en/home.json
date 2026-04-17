@@ -1,1 +1,55 @@
-{}
+{
+  "hero": {
+    "eyebrow": "Since 1989",
+    "title": "Engineering partner in plastic injection moulding",
+    "subtitle": "From Bursa to the world. Standard products and custom-engineered solutions for the glass washing, caps and textile sectors.",
+    "primaryCta": "Request a Quote",
+    "secondaryCta": "Explore Sectors"
+  },
+  "references": {
+    "eyebrow": "A trusted manufacturing partner",
+    "title": "Brands that choose us",
+    "subtitle": "36 years of experience, delivery across 3 continents.",
+    "viewAll": "All references"
+  },
+  "sectors": {
+    "eyebrow": "Sectors",
+    "title": "Three sectors, one engineering discipline",
+    "camYikama": {
+      "title": "Glass Washing",
+      "description": "Durable washing-line components for bottling operations."
+    },
+    "kapak": {
+      "title": "Caps",
+      "description": "High-volume cap production — food, cosmetics and chemical packaging."
+    },
+    "tekstil": {
+      "title": "Textile",
+      "description": "Precision plastic parts for textile machinery and accessories."
+    }
+  },
+  "capabilities": {
+    "eyebrow": "Capabilities",
+    "title": "From mould design to serial production",
+    "items": [
+      {
+        "title": "Mould Design",
+        "description": "From customer brief to 3D model and tolerance schematic."
+      },
+      { "title": "Feasibility", "description": "Material, cost and process analysis." },
+      {
+        "title": "Serial Production",
+        "description": "Multi-cavity, calibrated, repeatable lines."
+      },
+      {
+        "title": "Quality Control",
+        "description": "Dimensional and visual inspection on every batch."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Let's talk about your project",
+    "subtitle": "Share your brief and we'll come back with a feasibility within 48 hours.",
+    "button": "Request a Quote"
+  }
+}
