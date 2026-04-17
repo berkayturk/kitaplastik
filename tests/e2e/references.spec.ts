@@ -1,0 +1,26 @@
+import { test, expect } from "@playwright/test";
+
+test.describe("references", () => {
+  test("ReferencesStrip visible above the fold on 1440x900", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/tr");
+    const strip = page.getByRole("heading", { name: /Bizi seçen markalar/ });
+    await expect(strip).toBeVisible();
+    const box = await strip.boundingBox();
+    expect(box).not.toBeNull();
+    expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(900);
+  });
+
+  test("clicking 'Tüm referanslar' navigates to /referanslar", async ({ page }) => {
+    await page.goto("/tr");
+    await page.getByRole("link", { name: /Tüm referanslar/ }).click();
+    await expect(page).toHaveURL(/\/referanslar/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  test("/referanslar lists 8 client cards", async ({ page }) => {
+    await page.goto("/tr/referanslar");
+    const cards = page.locator("article");
+    await expect(cards).toHaveCount(8);
+  });
+});
