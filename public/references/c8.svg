@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 60" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <line x1="25" y1="12" x2="25" y2="48" />
+  <line x1="8" y1="30" x2="42" y2="30" />
+  <text x="50" y="38" font-family="system-ui, sans-serif" font-size="16" font-weight="700" fill="currentColor" stroke="none">Cosmopack</text>
+</svg>
