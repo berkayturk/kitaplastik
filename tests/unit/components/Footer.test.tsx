@@ -29,6 +29,7 @@ const messages = {
       phone: "Telefon",
       email: "E-posta",
       links: "Bağlantılar",
+      legalName: "Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. — Bursa, Türkiye",
     },
   },
   nav: {
@@ -59,7 +60,7 @@ describe("Footer", () => {
   it("şirketin tam yasal adını içerir", () => {
     renderFooter();
     expect(
-      screen.getByText(/KITA PLASTİK ve TEKSTİL SAN\. TİC\. LTD\. ŞTİ\./i),
+      screen.getByText(/Kıta Plastik ve Tekstil San\. Tic\. Ltd\. Şti\. — Bursa/i),
     ).toBeInTheDocument();
   });
 

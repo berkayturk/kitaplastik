@@ -25,6 +25,7 @@ vi.mock("@/i18n/navigation", () => ({
 const messages = {
   nav: {
     primary: "Ana navigasyon",
+    home: "Anasayfa",
     sectors: "Sektörler",
     products: "Ürünler",
     references: "Referanslar",

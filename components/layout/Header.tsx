@@ -12,7 +12,7 @@ export function Header() {
     <header className="bg-bg-primary/95 sticky top-0 z-40 border-b border-[var(--color-border-subtle-dark)] backdrop-blur-sm">
       <Container>
         <div className="flex h-16 items-center justify-between gap-6">
-          <Link href="/" className="flex items-center gap-3" aria-label="Kıta Plastik anasayfa">
+          <Link href="/" className="flex items-center gap-3" aria-label={t("home")}>
             <KitaLogo className="text-text-primary h-8 w-auto" />
           </Link>
           <nav aria-label={t("primary")} className="hidden items-center gap-6 lg:flex">

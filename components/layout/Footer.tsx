@@ -56,7 +56,7 @@ export function Footer() {
           </div>
         </div>
         <div className="text-text-secondary border-t border-[var(--color-border-subtle-dark)] py-6 text-xs">
-          <p>KITA PLASTİK ve TEKSTİL SAN. TİC. LTD. ŞTİ. — Bursa, Türkiye</p>
+          <p>{tFooter("legalName")}</p>
           <p className="mt-1">{tFooter("copyright", { year: currentYear })}</p>
         </div>
       </Container>
