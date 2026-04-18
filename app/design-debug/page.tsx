@@ -4,6 +4,20 @@
 // and button variant preview. DELETE before the redesign branch merges to main.
 
 import type { ReactNode } from "react";
+import {
+  Button,
+  Badge,
+  Card,
+  CardEyebrow,
+  CardTitle,
+  CardBody,
+  CardFooter,
+  Divider,
+  TextField,
+  TextArea,
+  SelectField,
+  Checkbox,
+} from "@/components/ui";
 
 export default function DesignDebugPage() {
   return (
@@ -16,6 +30,9 @@ export default function DesignDebugPage() {
         <RadiiSection />
         <ShadowsSection />
         <ButtonsSection />
+        <BadgesSection />
+        <CardsSection />
+        <FormsSection />
         <ContrastSection />
       </div>
     </main>
@@ -482,67 +499,209 @@ function ElevationBox({ label, shadow }: { label: string; shadow: string }) {
   );
 }
 
-/* -------------------------------- 06. Buttons preview ------------------- */
+/* -------------------------------- 06. Buttons -------------------------- */
 
 function ButtonsSection() {
   return (
-    <Section number="06" title="Button variants (Phase 2 preview)">
+    <Section number="06" title="Button — 4 variants × 3 sizes">
       <div className="space-y-10">
         <div>
-          <SubHead>Primary — cobalt solid, size lg</SubHead>
-          <button
-            className="inline-flex h-12 items-center rounded-[var(--radius-sm)] px-6 text-[16px] font-semibold transition-colors hover:bg-[var(--color-accent-cobalt-hover)] active:translate-y-[1px]"
-            style={{
-              background: "var(--color-accent-cobalt)",
-              color: "var(--color-text-inverse)",
-              transitionDuration: "var(--duration-default)",
-              transitionTimingFunction: "var(--ease-snap)",
-            }}
-          >
-            Teklif İste →
-          </button>
+          <SubHead>Primary · cobalt solid</SubHead>
+          <div className="flex flex-wrap items-end gap-4">
+            <Button variant="primary" size="sm">
+              Teklif
+            </Button>
+            <Button variant="primary" size="md">
+              Teklif İste
+            </Button>
+            <Button variant="primary" size="lg">
+              Teklif İste →
+            </Button>
+            <Button variant="primary" size="lg" isLoading>
+              Gönderiliyor
+            </Button>
+            <Button variant="primary" size="lg" disabled>
+              Devre dışı
+            </Button>
+          </div>
         </div>
 
         <div>
-          <SubHead>Secondary — jade ghost, size lg</SubHead>
-          <button
-            className="inline-flex h-12 items-center rounded-[var(--radius-sm)] border-2 bg-transparent px-6 text-[16px] font-semibold transition-colors hover:bg-[var(--color-accent-jade-tint)] active:translate-y-[1px]"
-            style={{
-              borderColor: "var(--color-accent-jade)",
-              color: "var(--color-accent-jade)",
-              transitionDuration: "var(--duration-default)",
-              transitionTimingFunction: "var(--ease-snap)",
-            }}
-          >
-            Sektörleri Keşfet
-          </button>
+          <SubHead>Secondary · jade ghost</SubHead>
+          <div className="flex flex-wrap items-end gap-4">
+            <Button variant="secondary" size="sm">
+              Detay
+            </Button>
+            <Button variant="secondary" size="md">
+              Sektörleri Keşfet
+            </Button>
+            <Button variant="secondary" size="lg">
+              Ürün Kataloğu
+            </Button>
+          </div>
         </div>
 
         <div>
-          <SubHead>Tertiary — ghost, size md</SubHead>
-          <button
-            className="inline-flex h-10 items-center rounded-[var(--radius-sm)] bg-transparent px-4 text-[15px] font-medium transition-colors hover:bg-[var(--color-bg-secondary)]"
-            style={{
-              color: "var(--color-text-primary)",
-              transitionDuration: "var(--duration-default)",
-              transitionTimingFunction: "var(--ease-snap)",
-            }}
-          >
-            Detaylara git →
-          </button>
+          <SubHead>Tertiary · ghost</SubHead>
+          <div className="flex flex-wrap items-end gap-4">
+            <Button variant="tertiary" size="sm">
+              İptal
+            </Button>
+            <Button variant="tertiary" size="md">
+              Detaylara git →
+            </Button>
+            <Button variant="tertiary" size="lg">
+              Geri dön
+            </Button>
+          </div>
         </div>
 
         <div>
-          <SubHead>Focus ring — Tab here to verify</SubHead>
-          <button
-            className="inline-flex h-10 items-center rounded-[var(--radius-sm)] px-4 text-[15px] font-semibold focus:outline-none focus-visible:shadow-[var(--shadow-focus)]"
-            style={{
-              background: "var(--color-accent-cobalt)",
-              color: "var(--color-text-inverse)",
-            }}
-          >
-            Tab to focus me
-          </button>
+          <SubHead>Destructive · alert-red</SubHead>
+          <div className="flex flex-wrap items-end gap-4">
+            <Button variant="destructive" size="sm">
+              Sil
+            </Button>
+            <Button variant="destructive" size="md">
+              Kaydı Sil
+            </Button>
+          </div>
+        </div>
+
+        <div>
+          <SubHead>Focus ring · Tab buraya</SubHead>
+          <div className="flex gap-4">
+            <Button variant="primary">Tab hedefi 1</Button>
+            <Button variant="secondary">Tab hedefi 2</Button>
+            <Button variant="tertiary">Tab hedefi 3</Button>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/* -------------------------------- 07. Badges -------------------------- */
+
+function BadgesSection() {
+  return (
+    <Section number="07" title="Badge — status pills">
+      <div className="flex flex-wrap items-center gap-3">
+        <Badge variant="neutral">New</Badge>
+        <Badge variant="info">Reviewing</Badge>
+        <Badge variant="success">Quoted</Badge>
+        <Badge variant="warning">Pending</Badge>
+        <Badge variant="danger">Closed</Badge>
+      </div>
+      <p className="mt-6 max-w-2xl text-[14px] text-[var(--color-text-secondary)]">
+        Used in admin inbox rows and spec metadata. Never the primary visual element. Mono uppercase
+        for tabular legibility and to signal &ldquo;metadata, not content&rdquo;.
+      </p>
+    </Section>
+  );
+}
+
+/* -------------------------------- 08. Cards -------------------------- */
+
+function CardsSection() {
+  return (
+    <Section number="08" title="Card — hairline default, interactive, elevated">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <Card>
+          <CardEyebrow>Sektör 01</CardEyebrow>
+          <CardTitle>Cam Yıkama</CardTitle>
+          <CardBody>
+            Cam yıkama makinesi bileşenleri. 14 aktif kalıp, aylık 480.000 adet kapasite.
+          </CardBody>
+          <CardFooter>
+            <span className="font-mono text-[12px] text-[var(--color-text-tertiary)]">
+              Ø 80–320 mm · 12–480 g
+            </span>
+          </CardFooter>
+        </Card>
+
+        <Card interactive>
+          <CardEyebrow>Sektör 02</CardEyebrow>
+          <CardTitle>Kapak Aileleri</CardTitle>
+          <CardBody>
+            Hassas ölçülü şişe, kavanoz ve depo kapakları. DFM analizi ile mold-flow optimizasyonu.
+          </CardBody>
+          <CardFooter>
+            <Divider orientation="vertical" className="h-4" />
+            <span className="text-[13px] text-[var(--color-accent-cobalt)]">Detaylara git →</span>
+          </CardFooter>
+        </Card>
+
+        <Card elevated>
+          <CardEyebrow>Sektör 03</CardEyebrow>
+          <CardTitle>Tekstil Bileşenleri</CardTitle>
+          <CardBody>
+            Dokuma, örme ve finishing hatları için precision-molded bileşenler — iplik
+            kılavuzlarından bobin parçalarına.
+          </CardBody>
+          <CardFooter>
+            <span className="font-mono text-[12px] text-[var(--color-text-tertiary)]">
+              ±0.02 mm tolerans
+            </span>
+          </CardFooter>
+        </Card>
+      </div>
+    </Section>
+  );
+}
+
+/* -------------------------------- 09. Forms -------------------------- */
+
+function FormsSection() {
+  return (
+    <Section number="09" title="Form primitives — Field system">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <TextField
+          label="Ad Soyad"
+          placeholder="Berkay Türk"
+          helperText="Resmi kimlikteki ad soyad — teklif formu için."
+          required
+        />
+        <TextField
+          label="E-posta"
+          type="email"
+          placeholder="berkay@kitaplastik.com"
+          errorText="Geçerli bir e-posta adresi girin."
+          required
+          defaultValue="berkay@"
+        />
+        <TextField label="Telefon" type="tel" placeholder="+90 322 ..." optionalText="opsiyonel" />
+        <SelectField
+          label="Sektör"
+          placeholder="Seçin"
+          options={[
+            { value: "cam", label: "Cam yıkama" },
+            { value: "kapak", label: "Kapak aileleri" },
+            { value: "tekstil", label: "Tekstil bileşenleri" },
+            { value: "ozel", label: "Özel üretim" },
+          ]}
+          required
+        />
+        <div className="md:col-span-2">
+          <TextArea
+            label="Proje açıklaması"
+            placeholder="Üretilmesi istenen parça hakkında kısa bilgi; varsa adet, tolerans, teslim tarihi…"
+            helperText="0 / 1000 karakter. CAD dosyaları teklif talebinde ayrıca eklenir."
+            optionalText="opsiyonel"
+            rows={5}
+          />
+        </div>
+        <div className="flex flex-col gap-3 md:col-span-2">
+          <Checkbox
+            label="KVKK aydınlatma metnini okudum ve onaylıyorum."
+            helperText="Kişisel verileriniz yalnızca teklif süreci için işlenir."
+            required
+          />
+          <Checkbox
+            label="Pazarlama iletişimi almak istiyorum"
+            helperText="Yeni ürün bildirimleri ve fuar davetiyeleri — yılda en fazla 4 e-posta."
+          />
+          <Checkbox label="Devre dışı örnek" disabled />
         </div>
       </div>
     </Section>
@@ -563,7 +722,7 @@ function ContrastSection() {
     { fg: "#0A0F1E", bg: "#E8F6F1", label: "text-primary on jade-tint", ratio: "≈15.4:1" },
   ];
   return (
-    <Section number="07" title="Accessibility contrast (AA ≥ 4.5 · AAA ≥ 7.0)">
+    <Section number="10" title="Accessibility contrast (AA ≥ 4.5 · AAA ≥ 7.0)">
       <div className="space-y-3">
         {rows.map((r) => (
           <div
