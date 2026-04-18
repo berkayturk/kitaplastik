@@ -49,13 +49,15 @@ export const atmosphereFragmentShader = /* glsl */ `
     // Soft falloff kernels — generous radii so the field reads as atmosphere,
     // not as discrete spots. Peaks are deliberately capped very low (0.22-max)
     // to stay within ~4% lightness deviation from uBase.
-    // Peaks 0.38 / 0.32 / 0.26 let the tint-orbs gently push the paper base
-    // toward their hue in a visible but non-saturated way. Because the tint
-    // colors themselves sit <5% away from the base, peak mix of ~35% still
-    // means <2% actual lightness deviation on-screen.
-    float i1 = smoothstep(1.30, 0.15, length(uv - orb1)) * 0.38;
-    float i2 = smoothstep(1.45, 0.25, length(uv - orb2)) * 0.32;
-    float i3 = smoothstep(1.20, 0.20, length(uv - orb3)) * 0.26;
+    // Peaks 0.70 / 0.60 / 0.52 let the tint colors genuinely read on the
+    // canvas while staying within the warm-paper family (tint colors are
+    // themselves ~10-15% deviation). Net on-screen effect: soft but visible
+    // color washes — think watercolor on industrial paper, not Gaussian
+    // noise. Motion still imperceptible frame-to-frame because the orbit
+    // period is 60s (see multiplier below).
+    float i1 = smoothstep(1.30, 0.15, length(uv - orb1)) * 0.70;
+    float i2 = smoothstep(1.45, 0.25, length(uv - orb2)) * 0.60;
+    float i3 = smoothstep(1.20, 0.20, length(uv - orb3)) * 0.52;
 
     vec3 color = uBase;
     color = mix(color, uTintA, i1);

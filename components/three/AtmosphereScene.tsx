@@ -17,13 +17,13 @@ import { Color, type ShaderMaterial } from "three";
 import { atmosphereVertexShader, atmosphereFragmentShader } from "./shaders/atmosphere";
 import { useShouldReduceMotion } from "./useReducedMotion";
 
-// Palette tokens in linear RGB — values chosen to stay within ~4% lightness
-// of the warm-paper base (#FAFAF7). Keeps the moving field visually calmer
-// than the CSS mesh gradient painted by body::before.
+// Tint palette — sits inside the warm-paper family but meaningfully lighter
+// than the base so the orbit is actually visible on a calibrated display
+// rather than imperceptible. Shader mixes up to 70% toward these.
 const BASE = new Color("#fafaf7"); // warm paper — matches html bg-primary
-const TINT_A = new Color("#e8edf8"); // faint cobalt leaning
-const TINT_B = new Color("#e6f1eb"); // faint jade leaning
-const TINT_C = new Color("#f3ece0"); // warm highlight
+const TINT_A = new Color("#cadbf2"); // cobalt-leaning wash
+const TINT_B = new Color("#cfe7da"); // jade-leaning wash
+const TINT_C = new Color("#f1e3c7"); // warm amber-leaning wash
 
 function AtmosphereMesh() {
   const materialRef = useRef<ShaderMaterial>(null);

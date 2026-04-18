@@ -2,7 +2,7 @@
 
 import { Fragment } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { locales, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
@@ -13,10 +13,26 @@ const LABEL: Record<Locale, string> = {
   ar: "AR",
 };
 
+/**
+ * Locale switcher using plain `<a>` anchors (full-page navigation) rather
+ * than next-intl's `<Link>` with `locale` prop. Rationale:
+ *
+ *   1. Route-scoped Link locale switching has a known quirk where clicks
+ *      from the root path (`usePathname() === "/"`) stay on the current
+ *      locale in v3.x — a Playwright probe confirmed it against v3.26.5.
+ *   2. Switching language is a rare, deliberate action; a full reload
+ *      resets messages, metadata, next-intl context, and any client-side
+ *      cache cleanly. There is no UX benefit to shallow client nav.
+ *   3. The anchor is visible in the HTML (no hydration required), so it
+ *      works even when JavaScript is disabled.
+ */
 export function LocaleSwitcher() {
   const current = useLocale();
   const pathname = usePathname();
   const t = useTranslations("nav");
+  // `usePathname` from @/i18n/navigation strips the locale prefix. Root → "/"
+  // for which we want targets like "/en"; for "/iletisim" we want "/en/iletisim".
+  const pathTail = pathname === "/" ? "" : pathname;
 
   return (
     <nav aria-label={t("language")} className="flex items-center font-mono text-[13px]">
@@ -29,9 +45,9 @@ export function LocaleSwitcher() {
                 ·
               </span>
             )}
-            <Link
-              href={pathname}
-              locale={locale}
+            <a
+              href={`/${locale}${pathTail}`}
+              hrefLang={locale}
               aria-current={active ? "true" : undefined}
               className={cn(
                 "tracking-[0.08em] transition-colors duration-200 ease-out",
@@ -41,7 +57,7 @@ export function LocaleSwitcher() {
               )}
             >
               {LABEL[locale]}
-            </Link>
+            </a>
           </Fragment>
         );
       })}
