@@ -12,7 +12,10 @@ describe("seo routes", () => {
     expect(PUBLIC_ROUTES).toContain("/hakkimizda");
     expect(PUBLIC_ROUTES).toContain("/iletisim");
     expect(PUBLIC_ROUTES).toContain("/referanslar");
-    expect(PUBLIC_ROUTES).toHaveLength(9);
+    expect(PUBLIC_ROUTES).toContain("/teklif-iste");
+    expect(PUBLIC_ROUTES).toContain("/teklif-iste/ozel-uretim");
+    expect(PUBLIC_ROUTES).toContain("/teklif-iste/standart");
+    expect(PUBLIC_ROUTES).toHaveLength(12);
   });
 
   it("buildAlternates produces hreflang map with x-default", () => {

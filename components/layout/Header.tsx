@@ -46,6 +46,12 @@ export function Header() {
             >
               {t("contact")}
             </Link>
+            <Link
+              href="/teklif-iste"
+              className="text-text-secondary hover:text-text-primary text-sm transition-colors"
+            >
+              {t("rfq")}
+            </Link>
           </nav>
           <div className="flex items-center gap-4">
             <LocaleSwitcher />
