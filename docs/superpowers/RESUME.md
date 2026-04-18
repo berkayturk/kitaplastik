@@ -43,29 +43,68 @@
 - Hero `min-h-[72dvh]` (ReferencesStrip fold içinde görünür).
 - `vitest.setup.ts`'ye matchMedia stub eklendi (useShouldReduceMotion için).
 
-## Plan 3 — Sıradaki (~2 hafta)
+## Plan 3 ✅ — RFQ + Supabase + Admin Paneli (~35 commit, 2026-04-18 oturumu)
 
-RFQ pipeline + Supabase tabloları + admin paneli:
+Kod tamamlandı. İki küçük manuel adım kullanıcıya bırakıldı (bkz. "Release — kullanıcı görevleri" alt başlığı).
 
-1. **Supabase tabloları:** `rfqs`, `rfq_attachments`, `clients`, `users`, `notification_recipients`, `email_templates`, `audit_log` + RLS politikaları + storage bucket (`rfq-uploads`)
-2. **RFQ formları:**
-   - `/teklif-iste/ozel-uretim` (custom RFQ — proje brief + dosya upload)
-   - `/teklif-iste/standart` (standart ürün RFQ — katalogdan seç)
-   - Zod validation, Cloudflare Turnstile, Resend e-posta (ekibe + müşteriye)
-3. **Admin paneli:**
-   - Supabase Auth magic link
-   - `/admin/inbox` (RFQ listesi + durum değişikliği)
-   - `/admin/urunler` (ürün/sektör CRUD)
-   - `/admin/ayarlar` (şirket bilgi, bildirim alıcıları, e-posta şablonları)
-4. **Referanslar migrasyonu:** `lib/references/data.ts` mock → Supabase `clients` tablosu (interface sabit kalır)
-5. **Rate limiting + audit log + güvenlik:** `/api/rfq/route.ts` endpoint'i ile
+**Kod özet:**
+- **Supabase:** 4 migration (tablolar, RLS + `is_admin`/`is_admin_role` helpers, storage buckets, seed). `supabase/config.toml` + `supabase/README.md` eklendi. Hand-written `lib/supabase/types.ts` (uzak proje link olunca `supabase gen types` ile override edilecek).
+- **Env:** `lib/env.ts` artık `env` (PublicEnv) + `serverEnv` (ServerEnv) iki ayrı export — browser bundle leak'i önleniyor. Yeni alanlar: `SUPABASE_SERVICE_ROLE_KEY`, `TURNSTILE_*`, `RESEND_*`. Ayrı iki export implementer adaptasyonu; plan `env.X` yazmıştı.
+- **Primitives:** `lib/rate-limit.ts` (in-memory sliding-window), `lib/turnstile.ts` (siteverify), `lib/audit.ts` (error-swallowing), `lib/email/client.ts` (Resend), 4 template (contact/RFQ × team/customer, 4 dil customer).
+- **Validation:** `lib/validation/contact.ts`, `lib/validation/rfq.ts` (zod v4, `customRfqSchema` + `standartRfqSchema`).
+- **References migration:** `lib/references/data.ts` sync mock → async Supabase `clients` fetch. Interface sabit; `ReferencesStrip` artık async. Test file (`tests/unit/components/ReferencesStrip.test.tsx`) async pattern ile güncellendi; legacy `tests/unit/lib/references.test.ts` silindi.
+- **Middleware:** `lib/supabase/middleware.ts` (session refresh) + root `middleware.ts` next-intl + Supabase + `/admin` guard kompozisyonu. `isAdminPublicPath` `/admin/login` ve `/admin/auth/callback` hariç.
+- **Contact migration:** `/api/contact/route.ts` + `ContactForm.tsx` mailto → fetch. `TurnstileWidget.tsx` paylaşıldı (`components/rfq/`). i18n'den `fallbackNotice` kaldırıldı, 5 yeni key eklendi (4 dil).
+- **RFQ:** `/api/rfq/route.ts` (kind discriminator), `FileUploader` (client-side Storage, UUID rename, 5×10MB), `CustomRfqForm` + `StandartRfqForm` + `ProductPicker` (free-text MVP), `/teklif-iste/*` 3 sayfa, `rfq.json` 4 dil, Header nav link + `nav.json` 4 dil.
+- **Admin:** `lib/admin/auth.ts` (`requireAdmin`, `requireAdminRole`), `/admin/login` + server action, `/admin/auth/callback` route, `/admin` TR-only layout + Shell, `/admin/inbox` list + `/admin/inbox/[id]` detail (status change, notes, signed URL ekler), `/admin/ayarlar/bildirimler` CRUD. `/api/rfq` dinamik recipient routing (fallback `serverEnv.RESEND_TEAM_EMAIL`).
+- **E2E:** 4 Playwright spec (contact, RFQ custom, RFQ standart, admin login gate); admin authenticated flow `test.skip` (Plan 4'te programatik login hook).
+- **CI:** build + E2E job'larına Plan 3 env placeholder'ları eklendi (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, vs.).
 
-### Plan 3'te OLMAYANLAR (Plan 4'e kalır)
+**Test özeti:** 73 unit test geçiyor (22 dosya). Typecheck temiz. Build temiz; `/admin`, `/admin/login`, `/admin/auth/callback`, `/admin/inbox`, `/admin/inbox/[id]`, `/admin/ayarlar/bildirimler`, `/api/contact`, `/api/rfq`, `/[locale]/teklif-iste(/ozel-uretim|/standart)` route'ları derlendi.
 
-- Müşteri RFQ tracking sayfası (`/rfq/[uuid]/`)
-- SEO ileri seviye (Schema.org Organization/Product, OG image generator)
+**Önemli kararlar & caveats:**
+- Rate limit in-memory (MVP); Vercel multi-instance'ta kısmi → Plan 4 Upstash Redis upgrade.
+- Admin TR-only (`NextIntlClientProvider` manuel TR locale).
+- File upload client-side direct Storage; path validation yok (Turnstile + rate limit + audit ile katmanlı).
+- `products`/`sectors` tablolar Plan 3'te **oluşturuldu ama CRUD yok** (Plan 4). Şu an public `/urunler` placeholder, içerik Supabase Studio ile manuel eklenebilir.
+- Standart RFQ `ProductPicker` free-text MVP; Plan 4'te catalog-backed picker.
+- Login page `useSearchParams` → `<Suspense fallback={null}>` wrap edildi (Next 15 static rendering gereksinimi).
+- `tests/e2e/*` ve `tests/unit/components/ReferencesStrip.test.tsx` güncellendi/yeniden yazıldı.
+
+### Release — kullanıcı görevleri (manuel)
+
+1. **Supabase uzak proje oluştur** (Plan Task 6):
+   - dashboard.supabase.com → new project (region `eu-central-1`, kuvvetli şifre → 1Password)
+   - `pnpm exec supabase login`
+   - `pnpm exec supabase link --project-ref <ref>`
+   - `pnpm exec supabase db push` (4 migration → remote)
+   - `pnpm exec supabase gen types typescript --linked > lib/supabase/types.ts` (hand-written dosyayı override eder)
+   - `.env.local`'e gerçek `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` yaz
+2. **İlk admin kullanıcı** (Plan Task 26):
+   - Supabase Dashboard → Authentication → Users → `berkayturk6@gmail.com` ekle (auto-confirm)
+   - UUID kopyala, `pnpm exec supabase db psql --linked -c "insert into public.admin_users (user_id, role, display_name) values ('<uuid>', 'admin', 'Berkay') on conflict (user_id) do update set role='admin';"`
+   - Dashboard → Auth → Email provider **enable**, Sign ups **disable**
+   - Email templates → Magic Link template → `{{ .SiteURL }}/admin/auth/callback?code={{ .TokenHash }}&type=magiclink`
+3. **Cloudflare Turnstile prod key'leri** (Plan Task 39):
+   - cloudflare.com → Turnstile → new site (domain: kitaplastik.com)
+   - Site key + secret key
+4. **Resend domain verify** (Plan Task 39):
+   - resend.com → Domains → kitaplastik.com (DNS kayıtlarını DNS'e ekle)
+   - API key oluştur
+5. **Vercel env** (Plan Task 39): Production + Preview'a tüm env'leri gir (gerçek Supabase + Turnstile + Resend değerleri, `RESEND_FROM_EMAIL=noreply@kitaplastik.com`, `RESEND_TEAM_EMAIL=info@kitaplastik.com`).
+6. **Supabase Auth Site URL & Redirect URLs:** Settings → Auth → Site URL: `https://kitaplastik.com`; Redirect URLs: `https://kitaplastik.com/admin/auth/callback` + Vercel preview pattern.
+7. **Manuel smoke** (Plan Task 41): dev veya preview'da 4 akışı gerçek e-posta ile test et — contact form submit, custom RFQ + file upload, standart RFQ, admin magic link → inbox → status update.
+
+## Plan 4 — Sıradaki (~1-2 hafta)
+
+- `/admin/urunler` + `/admin/sektorler` CRUD (4-dil tab, görsel upload)
+- `/admin/ayarlar/sirket` (şirket bilgi — şu an `lib/company.ts` hardcoded)
+- `/admin/ayarlar/sablonlar` (e-posta şablonları — şu an `lib/email/templates/` TS)
+- Müşteri RFQ tracking sayfası `/[locale]/rfq/[uuid]/`
+- Upstash Redis rate limit upgrade
+- SEO ileri seviye: Schema.org Organization/Product, OG image generator
 - Plausible analytics, Sentry hata takibi, Lighthouse optimizasyonu
-- Faz 2 iyileştirmeler
+- Admin authenticated E2E programatik login hook
 
 ## Stratejik Kararlar (sürdürülecek)
 
@@ -96,16 +135,17 @@ Plan 2 ve Plan 3 arasında yapıldı:
 
 **Önemli:** Contact form şu an mailto tabanlı — Plan 3'te Resend/SMTP API endpoint'e upgrade olacak. `COMPANY.email.primary = info@kitaplastik.com` form destination.
 
-## Yeni Session Başlangıç Komutu (Plan 3 için)
+## Yeni Session Başlangıç Komutu (Plan 4 için)
 
-`/clear` sonrası tek mesajla başla:
+Önce release — kullanıcı görevleri bölümündeki 7 manuel adımı tamamla, sonra:
 
 ```
-docs/superpowers/RESUME.md dosyasını oku, sonra Plan 3'e başla:
-superpowers:writing-plans skill'i ile Plan 3'ü (RFQ + Supabase + admin paneli) yaz,
-docs/superpowers/plans/<date>-faz1-plan3-rfq-supabase-admin.md olarak kaydet,
-onayımdan sonra superpowers:subagent-driven-development ile pragmatik batch modda uygula.
-Best practices, security, Context7 ile latest docs check zorunlu. ultrathink
+docs/superpowers/RESUME.md dosyasını oku. Release adımları tamam mı kontrol et.
+Eksik varsa önce onu koordine et. Tamam ise Plan 4'e başla:
+superpowers:writing-plans skill'i ile Plan 4'ü (admin urunler/sektorler CRUD, ayarlar,
+müşteri RFQ tracking, SEO ileri, Plausible + Sentry, Upstash Redis) yaz.
+docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md olarak kaydet,
+onay sonrası subagent-driven-development pragmatik batch modda uygula. ultrathink
 ```
 
 ## Ortam Notları

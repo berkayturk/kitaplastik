@@ -45,12 +45,17 @@ jobs:
 
       - name: Build
         env:
-          # Hardcoded placeholder values so zod env validation passes during static build.
-          # Real Supabase credentials are injected on Vercel at deploy time.
+          # Placeholder values so zod env validation passes during static build.
+          # Real credentials are injected on Vercel at deploy time.
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
           SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
           NEXT_PUBLIC_SITE_URL: https://kitaplastik.com
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+          TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+          RESEND_API_KEY: re_placeholder_ci
+          RESEND_FROM_EMAIL: noreply@kitaplastik.com
+          RESEND_TEAM_EMAIL: info@kitaplastik.com
         run: pnpm build
 
   e2e:
@@ -84,6 +89,11 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
           SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
           NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+          TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+          RESEND_API_KEY: re_placeholder_ci
+          RESEND_FROM_EMAIL: noreply@kitaplastik.com
+          RESEND_TEAM_EMAIL: info@kitaplastik.com
         run: pnpm test:e2e
 
       - name: Upload Playwright report
