@@ -24,8 +24,6 @@
     "@fontsource-variable/noto-sans-arabic": "^5",
     "@hookform/resolvers": "^5.2.2",
     "@marsidev/react-turnstile": "^1.5.0",
-    "@react-three/drei": "^10.7",
-    "@react-three/fiber": "^9.6",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
     "class-variance-authority": "^0.7.1",
@@ -40,7 +38,6 @@
     "resend": "^6.12.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.5.0",
-    "three": "^0.184",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -54,7 +51,6 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@types/three": "^0.184",
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9.39.4",
     "eslint-config-next": "^15.5.15",

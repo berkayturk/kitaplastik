@@ -95,16 +95,32 @@ Kod tamamlandı. İki küçük manuel adım kullanıcıya bırakıldı (bkz. "Re
 6. **Supabase Auth Site URL & Redirect URLs:** Settings → Auth → Site URL: `https://kitaplastik.com`; Redirect URLs: `https://kitaplastik.com/admin/auth/callback` + Vercel preview pattern.
 7. **Manuel smoke** (Plan Task 41): dev veya preview'da 4 akışı gerçek e-posta ile test et — contact form submit, custom RFQ + file upload, standart RFQ, admin magic link → inbox → status update.
 
-## Plan 4 — Sıradaki (~1-2 hafta)
+## Redesign: Light "Refined Industrial" ✅ (2026-04-18 aynı oturum, feature branch `redesign/light-refined`)
 
+Dark "Industrial Precision" palette terk edildi. `v0.2-dark-industrial` tag'inde son görüntüsü mevcut.
+
+- **Phase 0** — 5-site WebFetch araştırması (`.planning/research/redesign-inspiration.md`): Hermle AG production template olarak belirlendi; "specificity over emotion" kopya patterni; hero strategy flip (photo-first, Spline ikincil progressive enhancement).
+- **Phase 1** — `app/globals.css` v2: 22 token (bg-primary #FAFAF7 warm paper, ink #0A0F1E, cobalt #1E4DD8, jade #0FA37F). Self-hosted `next/font/local` → `next/font/google` variable fonts: **Fraunces (display, opsz axis)** + **Hanken Grotesk (body)** + **JetBrains Mono (mono)**. `/design-debug` internal render-test sayfası (`noindex,nofollow`; 10 bölüm). Cyrillic sınırı: Fraunces next/font types'ta yok → RU locale display serif system fallback.
+- **Phase 2** — 8 token-driven primitive (`components/ui/`): Button (4 variant × 3 size + asChild + loading spinner), Badge, Card + CardEyebrow/Title/Body/Footer, Divider, Field helpers + TextField + TextArea + SelectField, Checkbox. Modal/FileUploader/Dropdown/Radio Phase 5+'da.
+- **Phase 3** — Shell yeniden tasarımı: `<SiteBackground />` FBM canvas silindi, yerine Tier 1 static CSS mesh gradient + 2% SVG grain (body::before/::after). Header 72px bg-primary hairline bottom; Footer bg-ink 4 kolon Fraunces başlıklar; LocaleSwitcher mono code dot-separated (TR · EN · RU · AR) cobalt underline on active; WhatsAppFab hover:scale kaldırıldı.
+- **Phase 4** — Hero Fraunces serif headline + italic cobalt accent + 4-KPI mono tabular figure stack (36 yıl · 3 sektör · 4 dil · ±0.02 mm). SectorGrid `<Card interactive>` ile numbered eyebrow + spec row. ReferencesStrip bg-subtle + grayscale logos + hover-to-color.
+- **Phase 5** — `/admin/login` Card + TextField + Button primitive ile; admin `Shell` bg-secondary main, Fraunces lockup, cobalt active nav, mono user strip.
+- **Phase 7 cleanup** — `components/three/*` tamamen silindi (6 dosya), `public/fonts/*.woff2` (self-hosted Inter + JBMono) silindi, R3F + drei + three + @types/three pnpm'den kaldırıldı. Bundle `-3 major` (~300KB).
+
+**Regex feedback validated** — Hero test'inde Turkish `İ` için regex `/i` flag kullanılamadığından pattern'e direkt `İ` yazıldı (memory feedback).
+
+**`/design-debug` route hâlâ korunuyor** — internal tool; noindex; ileride istenirse silinir.
+
+**Kalan iş — Plan 4 (backend CRUD + SEO + Analytics) ayrı çalışma:**
 - `/admin/urunler` + `/admin/sektorler` CRUD (4-dil tab, görsel upload)
-- `/admin/ayarlar/sirket` (şirket bilgi — şu an `lib/company.ts` hardcoded)
-- `/admin/ayarlar/sablonlar` (e-posta şablonları — şu an `lib/email/templates/` TS)
+- `/admin/ayarlar/sirket` + `/admin/ayarlar/sablonlar`
 - Müşteri RFQ tracking sayfası `/[locale]/rfq/[uuid]/`
 - Upstash Redis rate limit upgrade
-- SEO ileri seviye: Schema.org Organization/Product, OG image generator
-- Plausible analytics, Sentry hata takibi, Lighthouse optimizasyonu
+- SEO: Schema.org Organization/Product, OG image generator
+- Plausible analytics, Sentry, Lighthouse audit
 - Admin authenticated E2E programatik login hook
+- (İsteğe bağlı) Spline frosted polymer cap Tier 2 hero object
+- (İsteğe bağlı) Fraunces Cyrillic için Noto Serif / IBM Plex Serif RU fallback
 
 ## Stratejik Kararlar (sürdürülecek)
 
