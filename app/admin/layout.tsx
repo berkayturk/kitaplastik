@@ -1,6 +1,9 @@
 // app/admin/layout.tsx
 import type { ReactNode } from "react";
 import { NextIntlClientProvider } from "next-intl";
+import { fraunces, hankenGrotesk, jetbrainsMono } from "@/lib/fonts";
+import "@fontsource-variable/noto-sans-arabic/wght.css";
+import "@/app/globals.css";
 
 const TR_LOCALE = "tr";
 
@@ -13,8 +16,15 @@ async function loadAdminMessages() {
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const messages = await loadAdminMessages();
   return (
-    <NextIntlClientProvider locale={TR_LOCALE} messages={messages}>
-      {children}
-    </NextIntlClientProvider>
+    <html
+      lang={TR_LOCALE}
+      className={`${fraunces.variable} ${hankenGrotesk.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="bg-[var(--color-bg-secondary)] font-sans text-[var(--color-text-primary)] antialiased">
+        <NextIntlClientProvider locale={TR_LOCALE} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }
