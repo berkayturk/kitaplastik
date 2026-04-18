@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-arabic": "^5",
+    "@hookform/resolvers": "^5.2.2",
+    "@marsidev/react-turnstile": "^1.5.0",
     "@react-three/drei": "^10.7",
     "@react-three/fiber": "^9.6",
     "@supabase/ssr": "^0.10.2",
@@ -34,6 +36,8 @@
     "radix-ui": "^1.4.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-hook-form": "^7.72.1",
+    "resend": "^6.12.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.5.0",
     "three": "^0.184",
