@@ -10,6 +10,9 @@ export const PUBLIC_ROUTES = [
   "/hakkimizda",
   "/iletisim",
   "/referanslar",
+  "/teklif-iste",
+  "/teklif-iste/ozel-uretim",
+  "/teklif-iste/standart",
 ] as const;
 
 export type PublicRoute = (typeof PUBLIC_ROUTES)[number];

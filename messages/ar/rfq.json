@@ -1,0 +1,83 @@
+{
+  "rfq": {
+    "hub": {
+      "eyebrow": "طلب عرض سعر",
+      "title": "اختر المسار الذي يناسبك",
+      "customTitle": "التصنيع حسب الطلب",
+      "customDescription": "شارك موجز مشروعك وسيعود فريقنا بدراسة الجدوى.",
+      "standartTitle": "المنتج القياسي",
+      "standartDescription": "اختر منتجاً من الكتالوج وحدد الصنف والكمية."
+    },
+    "custom": {
+      "title": "طلب عرض للتصنيع حسب الطلب",
+      "subtitle": "شارك موجز مشروعك ومتطلباتك التقنية.",
+      "submit": "إرسال الطلب",
+      "submitting": "جارٍ الإرسال…",
+      "success": "تم استلام طلبك. سنرد خلال 1-2 يوم عمل.",
+      "errorRateLimit": "طلبات كثيرة جداً. يرجى المحاولة مرة أخرى بعد {minutes} دقيقة.",
+      "errorTurnstile": "فشل التحقق الأمني.",
+      "errorGeneric": "تعذّر إرسال الطلب. يرجى المحاولة مرة أخرى.",
+      "contactSection": "بيانات الاتصال",
+      "projectSection": "المشروع",
+      "filesSection": "الملفات (اختياري)",
+      "consent": "لقد اطلعت على إشعار الخصوصية KVKK / GDPR وأوافق عليه.",
+      "nameLabel": "الاسم الكامل",
+      "emailLabel": "البريد الإلكتروني",
+      "companyLabel": "الشركة",
+      "phoneLabel": "الهاتف",
+      "countryLabel": "الدولة",
+      "sectorLabel": "القطاع",
+      "sectorOptions": {
+        "cam-yikama": "غسيل الزجاج",
+        "kapak": "الأغطية والسدادات",
+        "tekstil": "المنسوجات",
+        "diger": "أخرى"
+      },
+      "descriptionLabel": "وصف المشروع",
+      "descriptionHint": "50 حرفاً على الأقل. حالة الاستخدام، السوق المستهدف، حجم الإنتاج.",
+      "volumeLabel": "الحجم السنوي التقديري",
+      "toleranceLabel": "دقة التفاوتات",
+      "toleranceOptions": { "low": "منخفضة", "medium": "متوسطة", "high": "عالية" },
+      "materialsLabel": "تفضيلات المواد",
+      "targetDateLabel": "التاريخ المستهدف",
+      "ndaLabel": "مطلوب اتفاقية سرية"
+    },
+    "standart": {
+      "title": "طلب عرض للمنتج القياسي",
+      "subtitle": "اختر من الكتالوج.",
+      "submit": "إرسال الطلب",
+      "submitting": "جارٍ الإرسال…",
+      "success": "تم استلام طلبك. سنرد خلال 1-2 يوم عمل.",
+      "errorRateLimit": "طلبات كثيرة جداً. حاول بعد {minutes} دقيقة.",
+      "errorTurnstile": "فشل التحقق الأمني.",
+      "errorGeneric": "تعذّر الإرسال. يرجى المحاولة مرة أخرى.",
+      "contactSection": "بيانات الاتصال",
+      "itemsSection": "المنتجات",
+      "addItem": "إضافة منتج",
+      "productLabel": "اسم المنتج / الرمز",
+      "qtyLabel": "الكمية",
+      "variantLabel": "الصنف",
+      "notesLabel": "ملاحظات",
+      "urgentLabel": "عاجل",
+      "deliveryCountryLabel": "دولة التسليم",
+      "incotermLabel": "شروط التسليم (Incoterm)",
+      "incotermPlaceholder": "اختر Incoterm",
+      "consent": "لقد اطلعت على إشعار الخصوصية KVKK / GDPR وأوافق عليه.",
+      "namePlaceholder": "الاسم الكامل",
+      "companyPlaceholder": "الشركة",
+      "emailPlaceholder": "البريد الإلكتروني",
+      "phonePlaceholder": "الهاتف",
+      "countryPlaceholder": "الدولة"
+    },
+    "upload": {
+      "uploading": "جارٍ الرفع…",
+      "remove": "إزالة",
+      "hint": "حتى {max} ملفات، كل منها حتى {mb} ميغابايت.",
+      "errMaxFiles": "يمكنك رفع {max} ملفات كحد أقصى.",
+      "errUnsupported": "ملف غير مدعوم: {name}",
+      "errTooBig": "حجم الملف {name} يتجاوز {mb} ميغابايت.",
+      "errTotalTooBig": "لا يمكن أن يتجاوز الحجم الإجمالي للملفات {mb} ميغابايت.",
+      "errUpload": "خطأ في الرفع: {name}"
+    }
+  }
+}

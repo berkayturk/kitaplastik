@@ -1,0 +1,83 @@
+{
+  "rfq": {
+    "hub": {
+      "eyebrow": "Request a Quote",
+      "title": "Choose the path that fits your need",
+      "customTitle": "Custom Manufacturing",
+      "customDescription": "Share your project brief; our team will come back with a feasibility.",
+      "standartTitle": "Standard Product",
+      "standartDescription": "Pick a product from the catalog, specify variant and quantity."
+    },
+    "custom": {
+      "title": "Custom Manufacturing Quote Request",
+      "subtitle": "Share your project brief and technical requirements.",
+      "submit": "Submit Request",
+      "submitting": "Sending…",
+      "success": "Your request is received. We'll get back within 1-2 business days.",
+      "errorRateLimit": "Too many requests. Please try again in {minutes} minutes.",
+      "errorTurnstile": "Security check failed.",
+      "errorGeneric": "Could not submit request. Please try again.",
+      "contactSection": "Contact",
+      "projectSection": "Project",
+      "filesSection": "Files (optional)",
+      "consent": "I have read and accept the KVKK / GDPR privacy notice.",
+      "nameLabel": "Full Name",
+      "emailLabel": "Email",
+      "companyLabel": "Company",
+      "phoneLabel": "Phone",
+      "countryLabel": "Country",
+      "sectorLabel": "Sector",
+      "sectorOptions": {
+        "cam-yikama": "Glass Washing",
+        "kapak": "Caps & Closures",
+        "tekstil": "Textile",
+        "diger": "Other"
+      },
+      "descriptionLabel": "Project description",
+      "descriptionHint": "At least 50 characters. Use case, target market, production volume.",
+      "volumeLabel": "Estimated annual volume",
+      "toleranceLabel": "Tolerance",
+      "toleranceOptions": { "low": "Low", "medium": "Medium", "high": "High" },
+      "materialsLabel": "Material preferences",
+      "targetDateLabel": "Target date",
+      "ndaLabel": "NDA required"
+    },
+    "standart": {
+      "title": "Standard Product Quote Request",
+      "subtitle": "Choose from the catalog.",
+      "submit": "Submit Request",
+      "submitting": "Sending…",
+      "success": "Your request is received. We'll get back within 1-2 business days.",
+      "errorRateLimit": "Too many requests. Please try again in {minutes} minutes.",
+      "errorTurnstile": "Security check failed.",
+      "errorGeneric": "Could not submit. Please try again.",
+      "contactSection": "Contact",
+      "itemsSection": "Products",
+      "addItem": "Add product",
+      "productLabel": "Product name / code",
+      "qtyLabel": "Qty",
+      "variantLabel": "Variant",
+      "notesLabel": "Notes",
+      "urgentLabel": "Urgent",
+      "deliveryCountryLabel": "Delivery country",
+      "incotermLabel": "Incoterm",
+      "incotermPlaceholder": "Select incoterm",
+      "consent": "I have read and accept the KVKK / GDPR privacy notice.",
+      "namePlaceholder": "Full Name",
+      "companyPlaceholder": "Company",
+      "emailPlaceholder": "Email",
+      "phonePlaceholder": "Phone",
+      "countryPlaceholder": "Country"
+    },
+    "upload": {
+      "uploading": "Uploading…",
+      "remove": "Remove",
+      "hint": "Up to {max} files, each up to {mb} MB.",
+      "errMaxFiles": "You can upload up to {max} files.",
+      "errUnsupported": "Unsupported file: {name}",
+      "errTooBig": "{name} is larger than {mb} MB.",
+      "errTotalTooBig": "Total file size cannot exceed {mb} MB.",
+      "errUpload": "Upload error: {name}"
+    }
+  }
+}

@@ -11,17 +11,18 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
   const locale: Locale = isValidLocale(requested) ? requested : routing.defaultLocale;
 
-  const [common, home, nav, sectors, references, pages] = await Promise.all([
+  const [common, home, nav, sectors, references, pages, rfq] = await Promise.all([
     import(`../messages/${locale}/common.json`).then((m) => m.default),
     import(`../messages/${locale}/home.json`).then((m) => m.default),
     import(`../messages/${locale}/nav.json`).then((m) => m.default),
     import(`../messages/${locale}/sectors.json`).then((m) => m.default),
     import(`../messages/${locale}/references.json`).then((m) => m.default),
     import(`../messages/${locale}/pages.json`).then((m) => m.default),
+    import(`../messages/${locale}/rfq.json`).then((m) => m.default),
   ]);
 
   return {
     locale,
-    messages: { common, home, nav, sectors, references, pages },
+    messages: { common, home, nav, sectors, references, pages, ...rfq },
   };
 });
