@@ -1,41 +1,120 @@
 @import "tailwindcss";
 
+/* Refined Industrial (Light) — v2 tokens.
+ *
+ * Palette: warm paper #FAFAF7 (not pure white — reduces glare),
+ * deep ink #0A0F1E, cobalt primary #1E4DD8, jade secondary #0FA37F.
+ * Accents never exceed ~5% of visible pixels; no gradient between them.
+ *
+ * Token names are preserved from the v1 (dark "Industrial Precision") palette
+ * so existing component class usage (`bg-bg-primary`, `text-text-primary`,
+ * `[var(--color-accent-red)]`) keeps working — values flip underneath.
+ * Phase 2/3 will replace legacy aliases with semantic names.
+ */
+
 @theme {
-  /* Industrial Precision palette — spec Bölüm 5.2 */
-  --color-bg-primary: #0a1628;
-  --color-bg-secondary: #1a2540;
-  --color-bg-elevated: #1f3a5f;
-  --color-surface-light: #f7f8fa;
+  /* ---- Surfaces ---- */
+  --color-bg-primary: #fafaf7; /* warm paper — default page bg */
+  --color-bg-subtle: #f9f7f1; /* eyebrow strips, inline callouts (research §3.2) */
+  --color-bg-secondary: #f4f4ef; /* section contrast, admin default surface */
+  --color-bg-elevated: #ffffff; /* cards, modals, form containers */
+  --color-bg-ink: #0a0f1e; /* rare dark block (footer anchor) */
+
+  /* Legacy v1 aliases for backward compat during migration */
+  --color-surface-light: #f4f4ef;
   --color-surface-card: #ffffff;
-  --color-border-subtle-dark: #2a3a52;
-  --color-border-subtle-light: #d8dde5;
-  --color-text-primary: #e6ebf2;
-  --color-text-primary-light: #0a1628;
-  --color-text-secondary: #8ba4c5;
-  --color-text-secondary-light: #5a6878;
-  --color-accent-blue: #5b8fc7;
-  --color-accent-cyan: #7fb0e0;
-  --color-accent-red: #b8252e;
-  --color-accent-green: #1f9e6b;
 
-  /* Sektör temaları */
-  --color-sector-cam: #5b8fc7;
-  --color-sector-kapak: #b8a040;
-  --color-sector-tekstil: #8a5fb8;
+  /* ---- Ink ---- */
+  --color-text-primary: #0a0f1e; /* deep warm black */
+  --color-text-secondary: #525a6b; /* medium slate — body muted */
+  --color-text-tertiary: #8b94a5; /* labels, meta, eyebrow accent */
+  --color-text-inverse: #fafaf7; /* on ink block */
+  /* Legacy v1 aliases */
+  --color-text-primary-light: #0a0f1e;
+  --color-text-secondary-light: #525a6b;
 
-  /* Tipografi (font-face Task 8'de yüklenecek) */
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), "SFMono-Regular", "Menlo", monospace;
-  --font-arabic: "IBM Plex Sans Arabic", "Inter", sans-serif;
+  /* ---- Borders ---- */
+  --color-border-hairline: #e7e5e0; /* default divider */
+  --color-border-default: #d9d6cf; /* card border */
+  --color-border-strong: #a8a59e; /* focus ring, pressed */
+  /* Legacy v1 aliases */
+  --color-border-subtle-dark: #e7e5e0; /* was a dark border; now maps to hairline */
+  --color-border-subtle-light: #e7e5e0;
 
-  /* Border radius — Industrial Precision keskin köşeler */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
-}
+  /* ---- Accents — cobalt (primary action) ---- */
+  --color-accent-cobalt: #1e4dd8;
+  --color-accent-cobalt-hover: #1740b8;
+  --color-accent-cobalt-tint: #eef2fe;
 
-:root {
-  color-scheme: dark;
+  /* ---- Accents — jade (secondary action / success) ---- */
+  --color-accent-jade: #0fa37f;
+  --color-accent-jade-hover: #0c8a6a;
+  --color-accent-jade-tint: #e8f6f1;
+
+  /* ---- Alerts ---- */
+  --color-alert-amber: #d97706;
+  --color-alert-red: #b91c1c;
+
+  /* ---- Legacy v1 accent aliases — remapped to new system ----
+   * accent-red was the hot "Teklif İste" primary. Now it's cobalt (primary CTA).
+   * accent-blue was the muted secondary. Now it's jade (secondary CTA).
+   * accent-cyan was the hero titleAccent. Now it's cobalt (prominent accent).
+   * accent-green was rarely used. Now it's jade.
+   * Components still using these names will flip to the new semantic color.
+   */
+  --color-accent-red: #1e4dd8; /* → cobalt */
+  --color-accent-blue: #0fa37f; /* → jade */
+  --color-accent-cyan: #1e4dd8; /* → cobalt */
+  --color-accent-green: #0fa37f; /* → jade */
+
+  /* ---- Sector accents — unified to cobalt/jade/amber, one per sector ---- */
+  --color-sector-cam: #1e4dd8; /* cobalt (water/precision) */
+  --color-sector-kapak: #d97706; /* amber (warm plastic caps) */
+  --color-sector-tekstil: #0fa37f; /* jade (textile precision) */
+
+  /* ---- Focus ---- */
+  --color-focus-ring: #1e4dd8;
+
+  /* ---- Typography ----
+   * Display: Fraunces variable (opsz axis) — serif with optical sizing,
+   *   warm industrial-editorial voice. Cyrillic supported. No Arabic.
+   * Sans: Hanken Grotesk variable — crisp grotesque, warmer than Inter,
+   *   Cyrillic supported. Default body + UI.
+   * Mono: JetBrains Mono — tabular figures ON, technical labels.
+   * Arabic: Noto Sans Arabic Variable (via @fontsource import in layout).
+   */
+  --font-display:
+    var(--font-display-family, "Fraunces"), "Iowan Old Style", "Apple Garamond", "Baskerville",
+    "Times New Roman", serif;
+  --font-sans:
+    var(--font-sans-family, "Hanken Grotesk"), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono:
+    var(--font-mono-family, "JetBrains Mono"), ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  --font-arabic: "Noto Sans Arabic Variable", "Noto Sans Arabic", system-ui, sans-serif;
+
+  /* ---- Radii ----
+   * Intentionally sharp at the small end (inputs 2px, buttons 4px)
+   * for a technical-catalog feel. No pill buttons.
+   */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  /* ---- Shadows — physical, warm, layered (never generic Tailwind glows) ---- */
+  --shadow-hairline: 0 0 0 1px var(--color-border-hairline);
+  --shadow-card: 0 1px 2px rgba(10, 15, 30, 0.04), 0 4px 12px rgba(10, 15, 30, 0.04);
+  --shadow-float: 0 2px 4px rgba(10, 15, 30, 0.06), 0 12px 32px rgba(10, 15, 30, 0.06);
+  --shadow-focus: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-accent-cobalt);
+
+  /* ---- Motion ----
+   * Single snap easing. 180ms default. Forbidden: scroll-triggered animations,
+   * fade-up chains, hover transforms larger than translateY(1px).
+   */
+  --ease-snap: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 120ms;
+  --duration-default: 180ms;
+  --duration-slow: 320ms;
 }
 
 html,
@@ -43,53 +122,84 @@ body {
   margin: 0;
   padding: 0;
   font-family: var(--font-sans);
+  font-optical-sizing: auto;
 }
 
 html {
-  /* Fallback background in case the site-wide canvas fails to mount (SSR, WebGL error).
-     The SiteBackground canvas sits at z-index: -10 and paints over this color. */
   background-color: var(--color-bg-primary);
+  /* No color-scheme declaration — default light. */
 }
 
 body {
   color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Transparent so the fixed -z-10 SiteBackground canvas bleeds through. */
-  background-color: transparent;
+  position: relative;
 }
 
+/* --------------------------------------------------------------------------
+ * Tier 1 atmospheric backdrop — static, zero JS, no perceptible motion.
+ *
+ * Three layered radial gradients bleed cobalt, jade, and warm highlight
+ * tints into the paper canvas at low opacity. A 2% SVG turbulence overlay
+ * adds paper grain so the field doesn't read as flat. This replaces the
+ * fullscreen FBM canvas from Plan 2.
+ *
+ * Fixed positioning + pointer-events: none so content sits cleanly above.
+ * -------------------------------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 55vh at 50% 0%, hsl(216 88% 88% / 0.14), transparent 65%),
+    radial-gradient(70vw 60vh at 0% 100%, hsl(158 60% 84% / 0.1), transparent 65%),
+    radial-gradient(50vw 60vh at 100% 45%, hsl(36 55% 90% / 0.08), transparent 65%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.025;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* shadcn base layer — inherited HSL tokens still used by some primitives.
+ * Flipped to light-mode values matching the new palette. Will be pruned in
+ * Phase 2 when we replace shadcn card/button wrappers with token-driven ones. */
 @layer base {
   :root {
-    /* shadcn baseColor: slate, dark mode varsayılan */
-    --background: 220 47% 10%;
-    --foreground: 217 25% 92%;
-    --card: 218 42% 15%;
-    --card-foreground: 217 25% 92%;
-    --popover: 218 42% 15%;
-    --popover-foreground: 217 25% 92%;
-    --primary: 357 67% 44%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 218 42% 20%;
-    --secondary-foreground: 217 25% 92%;
-    --muted: 218 30% 18%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 218 42% 25%;
-    --accent-foreground: 217 25% 92%;
-    --destructive: 0 65% 45%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 218 25% 25%;
-    --input: 218 25% 22%;
-    --ring: 211 53% 57%;
-    --radius: 0.125rem;
+    --background: 36 17% 97%; /* #FAFAF7 warm paper */
+    --foreground: 222 51% 7%; /* #0A0F1E deep ink */
+    --card: 0 0% 100%; /* #FFFFFF elevated */
+    --card-foreground: 222 51% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 51% 7%;
+    --primary: 225 75% 49%; /* #1E4DD8 cobalt */
+    --primary-foreground: 36 17% 97%;
+    --secondary: 38 20% 94%; /* #F4F4EF section contrast */
+    --secondary-foreground: 222 51% 7%;
+    --muted: 38 20% 94%;
+    --muted-foreground: 218 13% 37%; /* #525A6B */
+    --accent: 164 87% 35%; /* #0FA37F jade */
+    --accent-foreground: 36 17% 97%;
+    --destructive: 0 73% 42%; /* #B91C1C alert-red */
+    --destructive-foreground: 36 17% 97%;
+    --border: 40 13% 89%; /* #E7E5E0 hairline */
+    --input: 40 10% 85%; /* #D9D6CF default border */
+    --ring: 225 75% 49%; /* cobalt */
+    --radius: 0.25rem; /* 4px matches --radius-sm */
   }
 }
 
 @layer base {
-  :root {
-    --font-arabic: "Noto Sans Arabic Variable", "Noto Sans Arabic", system-ui, sans-serif;
-  }
-
   html[dir="rtl"] body,
   .font-arabic {
     font-family: var(--font-arabic);
@@ -101,21 +211,18 @@ body {
 }
 
 @layer components {
-  /* Reusable eyebrow label: sans-serif with wide tracking reads well across
-     Latin, Latin-Extended (TR diacritics: İ Ş Ğ), Cyrillic and Arabic scripts.
-     Replaces prior `font-mono text-xs tracking-wider uppercase` pattern,
-     which rendered awkwardly for Turkish diacritics in JetBrains Mono. */
+  /* Eyebrow label — mono, wide tracked, uppercase. Used above headlines to
+   * place a quiet typographic marker. Tertiary text color keeps it secondary.
+   * Arabic gets reduced tracking because joined script breaks at wide spacing. */
   .eyebrow {
-    font-family: var(--font-sans);
-    font-size: 0.75rem; /* text-xs */
-    font-weight: 500; /* medium */
-    letter-spacing: 0.22em;
+    font-family: var(--font-mono);
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary);
   }
 
-  /* Arabic shaping breaks when Latin-wide tracking is applied to a joined
-     script. Dial back to near-zero spacing under RTL so letterforms connect. */
   html[dir="rtl"] .eyebrow {
     letter-spacing: 0.02em;
   }

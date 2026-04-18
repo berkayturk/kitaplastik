@@ -23,7 +23,7 @@ export function KitaLogo({ className }: KitaLogoProps) {
       <text
         x="38"
         y="22"
-        fontFamily="var(--font-inter), system-ui, sans-serif"
+        fontFamily="var(--font-sans), system-ui, sans-serif"
         fontSize="18"
         fontWeight="600"
         letterSpacing="-0.02em"
@@ -34,7 +34,7 @@ export function KitaLogo({ className }: KitaLogoProps) {
       <text
         x="38"
         y="31"
-        fontFamily="var(--font-jetbrains-mono), monospace"
+        fontFamily="var(--font-mono), monospace"
         fontSize="7"
         fontWeight="500"
         letterSpacing="0.15em"

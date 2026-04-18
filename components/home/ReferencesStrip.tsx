@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { Container } from "../layout/Container";
 import { getReferences } from "@/lib/references/data";
-import { cn } from "@/lib/utils";
 
 export async function ReferencesStrip() {
   const tHome = await getTranslations("home.references");
@@ -12,22 +12,23 @@ export async function ReferencesStrip() {
   return (
     <section
       aria-labelledby="references-strip-title"
-      className="bg-bg-primary/80 border-y border-[var(--color-border-subtle-dark)] py-10 backdrop-blur-sm md:py-14"
+      className="border-y border-[var(--color-border-hairline)] bg-[var(--color-bg-subtle)] py-12 md:py-16"
     >
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <Container>
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow">{tHome("eyebrow")}</p>
             <h2
               id="references-strip-title"
-              className="text-text-primary mt-1 text-lg font-semibold tracking-tight md:text-xl"
+              className="font-display mt-3 text-[22px] leading-[1.2] font-medium tracking-[-0.01em] md:text-[26px]"
+              style={{ fontOpticalSizing: "auto" }}
             >
               {tHome("title")}
             </h2>
           </div>
           <Link
             href="/referanslar"
-            className="text-text-secondary hover:text-text-primary text-sm underline underline-offset-4"
+            className="text-[14px] font-medium text-[var(--color-text-secondary)] transition-colors duration-200 ease-out hover:text-[var(--color-accent-cobalt)]"
           >
             {tHome("viewAll")} →
           </Link>
@@ -35,11 +36,7 @@ export async function ReferencesStrip() {
 
         <ul
           role="list"
-          className={cn(
-            "grid grid-cols-2 items-center gap-x-8 gap-y-6",
-            "sm:grid-cols-4 lg:grid-cols-8",
-            "text-text-secondary",
-          )}
+          className="grid grid-cols-2 items-center gap-x-10 gap-y-8 sm:grid-cols-4 lg:grid-cols-8"
         >
           {references.map((ref) => {
             const name = tClients(`${ref.key}.name`);
@@ -48,15 +45,15 @@ export async function ReferencesStrip() {
                 <Image
                   src={ref.logoPath}
                   alt={name}
-                  width={150}
-                  height={60}
-                  className="h-12 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
+                  width={140}
+                  height={48}
+                  className="h-9 w-auto opacity-55 brightness-50 grayscale transition-opacity duration-200 ease-out hover:opacity-100 hover:brightness-100 hover:grayscale-0"
                 />
               </li>
             );
           })}
         </ul>
-      </div>
+      </Container>
     </section>
   );
 }

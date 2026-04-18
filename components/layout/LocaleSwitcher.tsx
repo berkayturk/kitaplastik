@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { locales, type Locale } from "@/i18n/routing";
@@ -18,24 +19,30 @@ export function LocaleSwitcher() {
   const t = useTranslations("nav");
 
   return (
-    <nav aria-label={t("language")} className="flex items-center gap-1 text-sm">
-      {locales.map((locale) => {
+    <nav aria-label={t("language")} className="flex items-center font-mono text-[13px]">
+      {locales.map((locale, i) => {
         const active = locale === current;
         return (
-          <Link
-            key={locale}
-            href={pathname}
-            locale={locale}
-            aria-current={active ? "true" : undefined}
-            className={cn(
-              "rounded-sm px-2 py-1 font-mono text-xs tracking-widest uppercase transition-colors",
-              active
-                ? "bg-bg-elevated text-text-primary"
-                : "text-text-secondary hover:text-text-primary",
+          <Fragment key={locale}>
+            {i > 0 && (
+              <span aria-hidden="true" className="mx-1 text-[var(--color-text-tertiary)]">
+                ·
+              </span>
             )}
-          >
-            {LABEL[locale]}
-          </Link>
+            <Link
+              href={pathname}
+              locale={locale}
+              aria-current={active ? "true" : undefined}
+              className={cn(
+                "tracking-[0.08em] transition-colors duration-200 ease-out",
+                active
+                  ? "text-[var(--color-text-primary)] underline decoration-[var(--color-accent-cobalt)] decoration-2 underline-offset-[6px]"
+                  : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]",
+              )}
+            >
+              {LABEL[locale]}
+            </Link>
+          </Fragment>
         );
       })}
     </nav>

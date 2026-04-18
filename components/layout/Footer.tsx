@@ -1,6 +1,8 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "./Container";
+import { KitaLogo } from "./KitaLogo";
+import { COMPANY } from "@/lib/company";
 
 export function Footer() {
   const tCommon = useTranslations("common");
@@ -9,57 +11,81 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-bg-secondary mt-24 border-t border-[var(--color-border-subtle-dark)]">
+    <footer className="mt-32 bg-[var(--color-bg-ink)] text-[var(--color-text-inverse)]">
       <Container>
-        <div className="grid gap-8 py-12 md:grid-cols-4">
-          <div className="md:col-span-2">
-            <p className="eyebrow text-accent-blue">— {tFooter("since")}</p>
-            <h3 className="mt-3 text-2xl font-black tracking-tight text-[var(--color-accent-red)]">
-              KITA
-            </h3>
-            <p className="text-text-secondary mt-4 max-w-md text-sm">{tCommon("brand.tagline")}</p>
+        <div className="grid gap-12 py-24 md:grid-cols-4">
+          {/* Brand + address */}
+          <div className="space-y-6 md:col-span-1">
+            <KitaLogo className="h-8 w-auto text-[var(--color-text-inverse)]" />
+            <address className="space-y-0.5 text-[14px] leading-[1.65] text-[rgba(250,250,247,0.75)] not-italic">
+              <p className="font-mono text-[12px] tracking-[0.08em] text-[rgba(250,250,247,0.5)] uppercase">
+                {tFooter("since")}
+              </p>
+              <p className="mt-3">{tFooter("legalName")}</p>
+              <p>{COMPANY.address.city}</p>
+            </address>
+            <div className="space-y-1 font-mono text-[13px] text-[rgba(250,250,247,0.75)]">
+              <p>{COMPANY.phone.display}</p>
+              <p>{COMPANY.email.primary}</p>
+            </div>
           </div>
-          <div>
-            <p className="eyebrow">{tFooter("links")}</p>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li>
-                <Link href="/sektorler" className="hover:text-text-primary">
-                  {tNav("sectors")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/urunler" className="hover:text-text-primary">
-                  {tNav("products")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/hakkimizda" className="hover:text-text-primary">
-                  {tNav("about")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <p className="eyebrow">{tNav("contact")}</p>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li>
-                <Link href="/iletisim" className="hover:text-text-primary">
-                  {tNav("contact")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/teklif-iste" className="hover:text-text-primary">
-                  {tCommon("cta.requestQuote")}
-                </Link>
-              </li>
-            </ul>
-          </div>
+
+          {/* Sektörler */}
+          <FooterColumn title={tNav("sectors")}>
+            <FooterLink href="/sektorler/cam-yikama">Cam Yıkama</FooterLink>
+            <FooterLink href="/sektorler/kapak">Kapak</FooterLink>
+            <FooterLink href="/sektorler/tekstil">Tekstil</FooterLink>
+          </FooterColumn>
+
+          {/* Şirket */}
+          <FooterColumn title={tCommon("brand.name")}>
+            <FooterLink href="/hakkimizda">{tNav("about")}</FooterLink>
+            <FooterLink href="/kalite">{tNav("quality")}</FooterLink>
+            <FooterLink href="/atolye">{tNav("workshop")}</FooterLink>
+            <FooterLink href="/muhendislik">{tNav("engineering")}</FooterLink>
+            <FooterLink href="/referanslar">{tNav("references")}</FooterLink>
+          </FooterColumn>
+
+          {/* İletişim */}
+          <FooterColumn title={tNav("contact")}>
+            <FooterLink href="/iletisim">{tNav("contact")}</FooterLink>
+            <FooterLink href="/teklif-iste">{tCommon("cta.requestQuote")}</FooterLink>
+            <FooterLink href="/urunler">{tNav("products")}</FooterLink>
+          </FooterColumn>
         </div>
-        <div className="text-text-secondary border-t border-[var(--color-border-subtle-dark)] py-6 text-xs">
-          <p>{tFooter("legalName")}</p>
-          <p className="mt-1">{tFooter("copyright", { year: currentYear })}</p>
+
+        <div className="flex flex-col gap-3 border-t border-[rgba(250,250,247,0.1)] py-6 text-[13px] text-[rgba(250,250,247,0.5)] md:flex-row md:items-center md:justify-between">
+          <p className="font-mono">{tFooter("copyright", { year: currentYear })}</p>
+          <p>{tCommon("brand.tagline")}</p>
         </div>
       </Container>
     </footer>
+  );
+}
+
+function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3
+        className="font-display text-[18px] leading-[1.3] font-medium text-[var(--color-text-inverse)]"
+        style={{ fontOpticalSizing: "auto" }}
+      >
+        {title}
+      </h3>
+      <ul className="mt-4 space-y-2 text-[14px]">{children}</ul>
+    </div>
+  );
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="text-[rgba(250,250,247,0.7)] transition-colors duration-200 ease-out hover:text-[var(--color-text-inverse)]"
+      >
+        {children}
+      </Link>
+    </li>
   );
 }

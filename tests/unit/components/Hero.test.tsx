@@ -45,14 +45,16 @@ describe("Hero", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/mühendislik partneri/i);
   });
 
-  it("1989 etiketi görünür", () => {
+  it("1989 etiketi en az bir kez görünür", () => {
     renderHero();
-    expect(screen.getByText(/1989'dan beri/i)).toBeInTheDocument();
+    // Hero'da iki yerde 1989'dan beri var: eyebrow ve KPI açıklaması. Ikisi de OK.
+    expect(screen.getAllByText(/1989'dan beri/i).length).toBeGreaterThan(0);
   });
 
   it("primary ve secondary CTA linklerini render eder", () => {
     renderHero();
-    expect(screen.getByRole("link", { name: "Teklif İste" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Sektörleri Keşfet" })).toBeInTheDocument();
+    // Turkish İ/i casefold edilmez regex `/i` flag'i ile; pattern'e tam İ koyulur.
+    expect(screen.getByRole("link", { name: /Teklif İste/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Sektörleri Keşfet/ })).toBeInTheDocument();
   });
 });

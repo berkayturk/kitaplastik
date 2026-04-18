@@ -72,8 +72,12 @@ describe("Footer", () => {
 
   it("footer link etiketlerini çeviri mesajlarından okur", () => {
     renderFooter();
-    expect(screen.getByRole("link", { name: /sektörler/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /ürünler/i })).toBeInTheDocument();
+    // Şirket kolonundan Hakkımızda (nav.about çevirisi)
     expect(screen.getByRole("link", { name: /hakkımızda/i })).toBeInTheDocument();
+    // İletişim kolonundan Ürünler + Teklif İste
+    expect(screen.getByRole("link", { name: /ürünler/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /teklif İste/i })).toBeInTheDocument();
+    // Sektörler kolon başlığı H3 olarak (link değil) görünmeli
+    expect(screen.getByRole("heading", { level: 3, name: /sektörler/i })).toBeInTheDocument();
   });
 });

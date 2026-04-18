@@ -19,9 +19,10 @@ export function WhatsAppFab() {
       aria-label={t("fabLabel")}
       className={cn(
         "fixed bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full",
-        "bg-[#25D366] text-white shadow-lg ring-1 ring-black/10",
-        "transition hover:scale-105 hover:bg-[#128C7E]",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+        "bg-[#25D366] text-white",
+        "shadow-[var(--shadow-float)] ring-1 ring-black/5",
+        "transition-colors duration-200 ease-out hover:bg-[#128C7E]",
+        "focus-visible:shadow-[0_0_0_2px_var(--color-bg-primary),0_0_0_4px_#25D366] focus-visible:outline-none",
         "print:hidden",
         isRtl ? "left-6" : "right-6",
       )}
