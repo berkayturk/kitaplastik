@@ -55,7 +55,7 @@
     },
     "form": {
       "title": "Bize mesaj gönderin",
-      "subtitle": "Formu doldurun; gönder'e bastığınızda varsayılan e-posta uygulamanız açılır ve mesajınız hazır gelir.",
+      "subtitle": "Formu doldurun; mesajınız doğrudan ekibimize ulaşır ve onay e-postası alırsınız.",
       "nameLabel": "Ad Soyad",
       "namePlaceholder": "Adınız ve soyadınız",
       "companyLabel": "Firma",
@@ -74,13 +74,17 @@
       "messageLabel": "Mesajınız",
       "messagePlaceholder": "Projenizi veya sorunuzu kısaca açıklayın...",
       "submit": "Mesajı Gönder",
-      "submitting": "Açılıyor…",
-      "submitted": "E-posta uygulamanız açıldı. Lütfen kontrol edip gönderin.",
-      "fallbackNotice": "E-posta uygulamanız açılmadıysa doğrudan {email} adresine yazabilirsiniz.",
+      "submitting": "Gönderiliyor…",
+      "submitted": "Mesajınız alındı. 1-2 iş günü içinde dönüş yapacağız.",
       "required": "zorunlu",
       "optional": "opsiyonel",
       "invalidEmail": "Geçerli bir e-posta adresi girin.",
-      "minMessage": "Mesajınız en az 10 karakter olmalı."
+      "minMessage": "Mesajınız en az 10 karakter olmalı.",
+      "honeypotLabel": "Yalnız bot kontrolü",
+      "turnstileHint": "Güvenlik kontrolü tamamlanıyor, lütfen bekleyin.",
+      "errorTurnstile": "Güvenlik kontrolü başarısız. Sayfayı yenileyip tekrar deneyin.",
+      "errorRateLimit": "Çok fazla istek. Lütfen {minutes} dakika sonra tekrar deneyin.",
+      "errorGeneric": "Mesaj gönderilemedi. Lütfen tekrar deneyin."
     },
     "whatsapp": {
       "eyebrow": "Hızlı iletişim",

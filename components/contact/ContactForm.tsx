@@ -1,62 +1,78 @@
+// components/contact/ContactForm.tsx
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useTranslations } from "next-intl";
-import { COMPANY } from "@/lib/company";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { TurnstileWidget } from "@/components/rfq/TurnstileWidget";
 
 type SubjectKey = "general" | "quote" | "support" | "other";
 const SUBJECT_KEYS: readonly SubjectKey[] = ["general", "quote", "support", "other"];
 
-type Status = "idle" | "opening" | "opened";
+type Status = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
   const t = useTranslations("pages.contact.form");
+  const locale = useLocale() as "tr" | "en" | "ru" | "ar";
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+
+    if (!turnstileToken) {
+      setError(t("turnstileHint"));
+      return;
+    }
+
     const form = event.currentTarget;
     const data = new FormData(form);
-    const name = String(data.get("name") ?? "").trim();
-    const company = String(data.get("company") ?? "").trim();
-    const email = String(data.get("email") ?? "").trim();
-    const phone = String(data.get("phone") ?? "").trim();
-    const subjectKey = String(data.get("subject") ?? "general").trim() as SubjectKey;
-    const message = String(data.get("message") ?? "").trim();
 
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRe.test(email)) {
-      setError(t("invalidEmail"));
-      return;
+    const payload = {
+      name: String(data.get("name") ?? "").trim(),
+      email: String(data.get("email") ?? "").trim(),
+      company: String(data.get("company") ?? "").trim(),
+      phone: String(data.get("phone") ?? "").trim(),
+      subject: String(data.get("subject") ?? "general") as SubjectKey,
+      message: String(data.get("message") ?? "").trim(),
+      honeypot: String(data.get("website") ?? ""),
+      locale,
+      turnstileToken,
+    };
+
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.status === 429) {
+        const json = (await res.json().catch(() => ({}))) as { retryAfter?: number };
+        const retryAfter = Number(json.retryAfter ?? 60);
+        setError(t("errorRateLimit", { minutes: Math.max(1, Math.ceil(retryAfter / 60)) }));
+        setStatus("error");
+        return;
+      }
+      if (res.status === 403) {
+        setError(t("errorTurnstile"));
+        setStatus("error");
+        return;
+      }
+      if (!res.ok) {
+        setError(t("errorGeneric"));
+        setStatus("error");
+        return;
+      }
+      setStatus("success");
+      form.reset();
+      setTurnstileToken(null);
+    } catch {
+      setError(t("errorGeneric"));
+      setStatus("error");
     }
-    if (message.length < 10) {
-      setError(t("minMessage"));
-      return;
-    }
-
-    const subjectLabel = t(`subjectOptions.${subjectKey}`);
-    const subjectLine = `[Web] ${subjectLabel} — ${name}`;
-    const bodyLines: (string | false)[] = [
-      `Ad / Name: ${name}`,
-      company ? `Firma / Company: ${company}` : false,
-      `E-posta / Email: ${email}`,
-      phone ? `Telefon / Phone: ${phone}` : false,
-      `Konu / Subject: ${subjectLabel}`,
-      "",
-      message,
-    ];
-    const body = bodyLines.filter((line): line is string => line !== false).join("\n");
-
-    const href = `mailto:${COMPANY.email.primary}?subject=${encodeURIComponent(
-      subjectLine,
-    )}&body=${encodeURIComponent(body)}`;
-
-    setStatus("opening");
-    window.location.href = href;
-    window.setTimeout(() => setStatus("opened"), 400);
   }
 
   const inputClass = cn(
@@ -139,14 +155,27 @@ export function ContactForm() {
         />
       </Field>
 
+      {/* Honeypot: visually hidden, bots only */}
+      <label aria-hidden="true" className="sr-only" tabIndex={-1}>
+        <span>{t("honeypotLabel")}</span>
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+      </label>
+
+      <div className="pt-1">
+        <TurnstileWidget
+          onSuccess={setTurnstileToken}
+          onExpire={() => setTurnstileToken(null)}
+          action="contact"
+        />
+      </div>
+
       {error && (
         <p role="alert" className="text-sm text-[var(--color-accent-red)]">
           {error}
         </p>
       )}
-
-      {status === "opened" && (
-        <p role="status" className="text-text-secondary text-sm">
+      {status === "success" && (
+        <p role="status" className="text-sm text-emerald-400">
           {t("submitted")}
         </p>
       )}
@@ -154,13 +183,13 @@ export function ContactForm() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <button
           type="submit"
-          disabled={status === "opening"}
+          disabled={status === "submitting" || !turnstileToken}
           className={cn(
             "rounded-sm bg-[var(--color-accent-red)] px-5 py-2.5 text-sm font-semibold text-white",
             "transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60",
           )}
         >
-          {status === "opening" ? t("submitting") : t("submit")}
+          {status === "submitting" ? t("submitting") : t("submit")}
         </button>
       </div>
     </form>
