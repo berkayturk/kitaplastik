@@ -132,7 +132,11 @@ html {
 
 body {
   color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
+  /* Transparent so the fixed negative-z-index AtmosphereScene canvas and
+   * body::before CSS-mesh fallback both remain visible beneath content.
+   * The html element paints --color-bg-primary as the root canvas,
+   * guaranteeing a paper color even if both backdrop layers fail. */
+  background-color: transparent;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
@@ -148,11 +152,13 @@ body {
  *
  * Fixed positioning + pointer-events: none so content sits cleanly above.
  * -------------------------------------------------------------------------- */
+/* Lowest layer: static CSS mesh — fallback for a11y / weak-hardware /
+ * no-WebGL users, and base paint during the AtmosphereScene hydration gap. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -2;
+  z-index: -3;
   pointer-events: none;
   background:
     radial-gradient(60vw 55vh at 50% 0%, hsl(216 88% 88% / 0.14), transparent 65%),
@@ -160,6 +166,8 @@ body::before {
     radial-gradient(50vw 60vh at 100% 45%, hsl(36 55% 90% / 0.08), transparent 65%);
 }
 
+/* Top texture layer: SVG turbulence grain. Painted above the shader canvas
+ * (z-index -2) so fiber grain stays crisp regardless of the backdrop. */
 body::after {
   content: "";
   position: fixed;
