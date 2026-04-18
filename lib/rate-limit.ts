@@ -21,7 +21,7 @@ export function createRateLimiter(opts: RateLimiterOptions) {
 
   function prune(bucket: Bucket, now: number) {
     const cutoff = now - opts.windowMs;
-    while (bucket.timestamps.length > 0 && bucket.timestamps[0] < cutoff) {
+    while (bucket.timestamps.length > 0 && (bucket.timestamps[0] as number) < cutoff) {
       bucket.timestamps.shift();
     }
   }
@@ -37,7 +37,7 @@ export function createRateLimiter(opts: RateLimiterOptions) {
       prune(bucket, now);
 
       if (bucket.timestamps.length >= opts.max) {
-        const oldest = bucket.timestamps[0];
+        const oldest = bucket.timestamps[0] as number;
         const retryAfterMs = oldest + opts.windowMs - now;
         return { allowed: false, retryAfter: Math.ceil(retryAfterMs / 1000) };
       }
