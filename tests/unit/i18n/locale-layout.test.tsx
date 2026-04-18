@@ -2,7 +2,20 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render } from "@testing-library/react";
 import type { ReactElement } from "react";
 
-// next/font/local cannot run under Vitest without Next's SWC transform.
+// next/font/google cannot run under Vitest without Next's SWC transform — each
+// exported font constructor (Fraunces, Hanken_Grotesk, JetBrains_Mono) must
+// return a { variable, className } shape so layout's template-literal usage
+// doesn't throw.
+vi.mock("next/font/google", () => {
+  const stub = () => ({ variable: "--font-stub", className: "font-stub" });
+  return {
+    Fraunces: stub,
+    Hanken_Grotesk: stub,
+    JetBrains_Mono: stub,
+  };
+});
+
+// Retained for any legacy localFont imports that survive the redesign.
 vi.mock("next/font/local", () => ({
   default: () => ({ variable: "--font-stub", className: "font-stub" }),
 }));

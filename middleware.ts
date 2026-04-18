@@ -10,6 +10,12 @@ function isAdminPath(pathname: string): boolean {
   return pathname === "/admin" || pathname.startsWith("/admin/");
 }
 
+// Internal render-verification route; bypass locale middleware entirely.
+// Remove this helper when /design-debug is deleted before ship.
+function isDesignDebugPath(pathname: string): boolean {
+  return pathname === "/design-debug" || pathname.startsWith("/design-debug/");
+}
+
 function isAdminPublicPath(pathname: string): boolean {
   return (
     pathname === "/admin/login" ||
@@ -20,6 +26,10 @@ function isAdminPublicPath(pathname: string): boolean {
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (isDesignDebugPath(pathname)) {
+    return NextResponse.next();
+  }
 
   if (isAdminPath(pathname)) {
     const { response, userId } = await updateSession(request);
