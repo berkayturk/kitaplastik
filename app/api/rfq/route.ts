@@ -112,12 +112,22 @@ export async function POST(request: NextRequest) {
     locale: input.locale,
   });
 
+  // Pull active recipients for this RFQ type; fall back to serverEnv.RESEND_TEAM_EMAIL if empty
+  const { data: recipients } = await supabase
+    .from("notification_recipients")
+    .select("email, rfq_types, active")
+    .eq("active", true);
+  const matchedEmails = (recipients ?? [])
+    .filter((r) => (r.rfq_types as string[]).includes(kind))
+    .map((r) => r.email);
+  const teamTo = matchedEmails.length > 0 ? matchedEmails : [serverEnv.RESEND_TEAM_EMAIL];
+
   try {
     const resend = getResend();
     await Promise.all([
       resend.emails.send({
         from: serverEnv.RESEND_FROM_EMAIL,
-        to: serverEnv.RESEND_TEAM_EMAIL,
+        to: teamTo,
         replyTo: contact.email,
         subject: team.subject,
         html: team.html,
