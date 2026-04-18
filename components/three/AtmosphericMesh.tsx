@@ -20,10 +20,11 @@ export function AtmosphericMesh({ reduced = false }: AtmosphericMeshProps) {
   const { viewport, size } = useThree();
   const pausedRef = useRef(false);
 
-  // Hold stable references to uniform objects so we can update their .value
-  // without going through ShaderMaterial.uniforms (indexed record under
-  // noUncheckedIndexedAccess).
-  const uniforms = useMemo(
+  // Initial uniforms handed to the material on mount. After mount, updates
+  // must go through materialRef.current.uniforms because R3F's reconciler
+  // clones the uniforms object when applying props, so mutating this local
+  // object no longer propagates to the GPU.
+  const initialUniforms = useMemo(
     () => ({
       uTime: { value: 0 },
       uMouse: { value: [0, 0] as [number, number] },
@@ -32,17 +33,19 @@ export function AtmosphericMesh({ reduced = false }: AtmosphericMeshProps) {
       uColorB: { value: ATMOSPHERIC_COLOR_B },
       uColorC: { value: ATMOSPHERIC_COLOR_C },
     }),
-    // size is intentionally read once; updates go through the effect below
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
   // Keep uResolution in sync when the canvas resizes
   useEffect(() => {
-    const res = uniforms.uResolution.value;
+    const mat = materialRef.current;
+    if (!mat) return;
+    const u = mat.uniforms as typeof initialUniforms;
+    const res = u.uResolution.value;
     res[0] = size.width;
     res[1] = size.height;
-  }, [size.width, size.height, uniforms.uResolution]);
+  }, [size.width, size.height, initialUniforms]);
 
   // Pause animation when the tab is hidden to save CPU/GPU
   useEffect(() => {
@@ -55,12 +58,14 @@ export function AtmosphericMesh({ reduced = false }: AtmosphericMeshProps) {
   }, []);
 
   useFrame((state) => {
-    if (reduced || pausedRef.current) return;
-    uniforms.uTime.value = state.clock.elapsedTime;
+    const mat = materialRef.current;
+    if (!mat || reduced || pausedRef.current) return;
+    const u = mat.uniforms as typeof initialUniforms;
+    u.uTime.value = state.clock.elapsedTime;
     const { x, y } = state.pointer;
-    const current = uniforms.uMouse.value;
-    current[0] += (x - current[0]) * 0.04;
-    current[1] += (y - current[1]) * 0.04;
+    const mouse = u.uMouse.value;
+    mouse[0] += (x - mouse[0]) * 0.04;
+    mouse[1] += (y - mouse[1]) * 0.04;
   });
 
   return (
@@ -70,7 +75,7 @@ export function AtmosphericMesh({ reduced = false }: AtmosphericMeshProps) {
         ref={materialRef}
         vertexShader={atmosphericVertexShader}
         fragmentShader={atmosphericFragmentShader}
-        uniforms={uniforms}
+        uniforms={initialUniforms}
       />
     </mesh>
   );

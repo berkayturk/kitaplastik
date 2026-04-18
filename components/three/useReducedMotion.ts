@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 
 export function useShouldReduceMotion(): boolean {
-  const [reduced, setReduced] = useState(true);
+  // Default false: SSR/CSR initial render matches via the dynamic import's loading fallback
+  // (SiteBackgroundCanvas is ssr:false). Capability probe in the effect flips true only
+  // when the user prefers reduced motion, saveData is on, hardware is weak, or WebGL is absent.
+  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;

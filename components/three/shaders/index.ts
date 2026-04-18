@@ -70,7 +70,7 @@ export const atmosphericFragmentShader = /* glsl */ `
     // Subtle mouse parallax
     uv += uMouse * 0.05;
 
-    float t = uTime * 0.03;
+    float t = uTime * 0.18;
 
     // Domain warping — 2 layers of FBM drive a second FBM lookup
     vec2 q = vec2(
@@ -91,9 +91,10 @@ export const atmosphericFragmentShader = /* glsl */ `
     vec3 color = mix(uColorA, uColorB, n1);
     color = mix(color, uColorC, n2 * 0.6);
 
-    // Soft highlight along warp magnitude — adds depth
+    // Soft highlight along warp magnitude — adds depth + slow breathing pulse
     float highlight = smoothstep(0.35, 0.9, length(r));
-    color += highlight * 0.08;
+    float pulse = 0.5 + 0.5 * sin(uTime * 0.35);
+    color += highlight * (0.14 + pulse * 0.08);
 
     // Subtle vignette
     vec2 center = vUv - 0.5;
@@ -111,4 +112,4 @@ export const atmosphericFragmentShader = /* glsl */ `
 // Industrial Precision palette — three stops for richer depth
 export const ATMOSPHERIC_COLOR_A = new Color("#060b16"); // near-black navy (deep)
 export const ATMOSPHERIC_COLOR_B = new Color("#12233f"); // industrial blue (mid)
-export const ATMOSPHERIC_COLOR_C = new Color("#294a76"); // accent blue (rim highlight)
+export const ATMOSPHERIC_COLOR_C = new Color("#3d6ea8"); // accent blue (rim highlight)
