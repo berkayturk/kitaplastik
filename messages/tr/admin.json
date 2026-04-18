@@ -1,0 +1,55 @@
+{
+  "admin": {
+    "inbox": {
+      "title": "Gelen Kutusu",
+      "empty": "Henüz RFQ yok.",
+      "filters": {
+        "allTypes": "Tüm tipler",
+        "allStatuses": "Tüm durumlar",
+        "searchPlaceholder": "E-posta, şirket veya isim ara…"
+      },
+      "columns": {
+        "id": "ID",
+        "type": "Tip",
+        "status": "Durum",
+        "company": "Şirket",
+        "contact": "İletişim",
+        "created": "Tarih"
+      },
+      "types": { "custom": "Özel", "standart": "Standart" },
+      "statuses": {
+        "new": "Yeni",
+        "reviewing": "İnceleniyor",
+        "quoted": "Teklif verildi",
+        "won": "Kazanıldı",
+        "lost": "Kaybedildi",
+        "archived": "Arşiv"
+      }
+    },
+    "detail": {
+      "title": "RFQ Detayı",
+      "contactSection": "İletişim",
+      "payloadSection": "Form Verisi",
+      "attachmentsSection": "Ekler",
+      "notesLabel": "Dahili Not (markdown)",
+      "saveNotes": "Notu Kaydet",
+      "statusLabel": "Durum",
+      "updateStatus": "Durumu Güncelle",
+      "openFile": "İndir"
+    },
+    "bildirimler": {
+      "title": "Bildirim Alıcıları",
+      "subtitle": "Yeni RFQ geldiğinde hangi e-postalara bildirim gitsin.",
+      "emailLabel": "E-posta",
+      "typesLabel": "RFQ tipleri",
+      "activeLabel": "Aktif",
+      "addButton": "Alıcı Ekle",
+      "removeButton": "Kaldır"
+    },
+    "shell": {
+      "inboxLink": "Gelen Kutusu",
+      "bildirimlerLink": "Bildirim Alıcıları",
+      "logout": "Çıkış"
+    }
+  }
+}
