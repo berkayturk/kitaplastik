@@ -37,7 +37,7 @@ export default async function ReferencesPage({ params }: PageProps) {
   const tClients = await getTranslations("references.clients");
   const tSectors = await getTranslations("sectors");
 
-  const references = getReferences();
+  const references = await getReferences();
 
   return (
     <section className="container mx-auto px-6 py-16 md:py-24">

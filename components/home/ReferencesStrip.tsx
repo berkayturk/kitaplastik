@@ -1,13 +1,13 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { getReferences } from "@/lib/references/data";
 import { cn } from "@/lib/utils";
 
-export function ReferencesStrip() {
-  const tHome = useTranslations("home.references");
-  const tClients = useTranslations("references.clients");
-  const references = getReferences();
+export async function ReferencesStrip() {
+  const tHome = await getTranslations("home.references");
+  const tClients = await getTranslations("references.clients");
+  const references = await getReferences();
 
   return (
     <section
