@@ -126,20 +126,49 @@ body {
 }
 
 html {
-  /* Flat warm-paper backdrop. In Phase 3 the Tier 1 CSS mesh gradient
-   * (three overlapping radial-gradients + 2% SVG grain) layers atop this. */
   background-color: var(--color-bg-primary);
   /* No color-scheme declaration — default light. */
 }
 
 body {
   color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Stays transparent during Phase 1 because the legacy SiteBackground canvas
-   * still renders in <main> until Phase 3 deletes it. After that flip,
-   * body can adopt the primary paper color directly (or let Tier 1 mesh show). */
-  background-color: transparent;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+ * Tier 1 atmospheric backdrop — static, zero JS, no perceptible motion.
+ *
+ * Three layered radial gradients bleed cobalt, jade, and warm highlight
+ * tints into the paper canvas at low opacity. A 2% SVG turbulence overlay
+ * adds paper grain so the field doesn't read as flat. This replaces the
+ * fullscreen FBM canvas from Plan 2.
+ *
+ * Fixed positioning + pointer-events: none so content sits cleanly above.
+ * -------------------------------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 55vh at 50% 0%, hsl(216 88% 88% / 0.14), transparent 65%),
+    radial-gradient(70vw 60vh at 0% 100%, hsl(158 60% 84% / 0.1), transparent 65%),
+    radial-gradient(50vw 60vh at 100% 45%, hsl(36 55% 90% / 0.08), transparent 65%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.025;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 /* shadcn base layer — inherited HSL tokens still used by some primitives.

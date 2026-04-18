@@ -3,6 +3,7 @@
 
 import { Suspense, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
+import { TextField, Button, Card, CardEyebrow, CardTitle } from "@/components/ui";
 import { sendMagicLink } from "./actions";
 
 const INITIAL_STATE = { ok: false, message: "" };
@@ -13,49 +14,47 @@ function LoginForm() {
   const [state, action, pending] = useActionState(sendMagicLink, INITIAL_STATE);
 
   return (
-    <form
-      action={action}
-      className="bg-bg-secondary/40 w-full max-w-sm space-y-4 rounded-lg border border-[var(--color-border-subtle-dark)] p-6"
-    >
-      <h1 className="text-text-primary text-xl font-semibold">Admin Girişi</h1>
-      <p className="text-text-secondary text-xs">
-        Kayıtlı e-posta adresinize tek kullanımlık giriş bağlantısı göndeririz.
-      </p>
-      <label className="block">
-        <span className="text-text-primary mb-1 block text-xs font-medium">E-posta</span>
-        <input
+    <form action={action} className="w-full max-w-sm">
+      <Card elevated padding="lg" className="space-y-6">
+        <div>
+          <CardEyebrow>Admin paneli</CardEyebrow>
+          <CardTitle className="mt-2">Girişe başla</CardTitle>
+          <p className="mt-3 text-[14px] leading-[1.55] text-[var(--color-text-secondary)]">
+            Kayıtlı e-posta adresinize tek kullanımlık bir giriş bağlantısı göndeririz.
+          </p>
+        </div>
+        <TextField
           name="email"
           type="email"
-          required
+          label="E-posta"
+          placeholder="ad@kitaplastik.com"
           autoComplete="email"
-          className="bg-bg-primary/60 text-text-primary w-full rounded-sm border border-[var(--color-border-subtle-dark)] px-3 py-2 text-sm"
+          required
         />
-      </label>
-      <input type="hidden" name="next" value={next} />
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full rounded-sm bg-[var(--color-accent-red)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
-      >
-        {pending ? "Gönderiliyor…" : "Bağlantıyı Gönder"}
-      </button>
-      {state.message && (
-        <p
-          role={state.ok ? "status" : "alert"}
-          className={
-            state.ok ? "text-sm text-emerald-400" : "text-sm text-[var(--color-accent-red)]"
-          }
-        >
-          {state.message}
-        </p>
-      )}
+        <input type="hidden" name="next" value={next} />
+        <Button type="submit" variant="primary" size="md" isLoading={pending} className="w-full">
+          Bağlantıyı Gönder
+        </Button>
+        {state.message && (
+          <p
+            role={state.ok ? "status" : "alert"}
+            className={
+              state.ok
+                ? "text-[13px] text-[var(--color-accent-jade-hover)]"
+                : "text-[13px] text-[var(--color-alert-red)]"
+            }
+          >
+            {state.message}
+          </p>
+        )}
+      </Card>
     </form>
   );
 }
 
 export default function LoginPage() {
   return (
-    <main className="bg-bg-primary flex min-h-screen items-center justify-center px-6">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--color-bg-secondary)] px-6 py-16">
       <Suspense fallback={null}>
         <LoginForm />
       </Suspense>
