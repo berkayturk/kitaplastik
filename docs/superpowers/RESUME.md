@@ -151,17 +151,48 @@ Plan 2 ve Plan 3 arasında yapıldı:
 
 **Önemli:** Contact form şu an mailto tabanlı — Plan 3'te Resend/SMTP API endpoint'e upgrade olacak. `COMPANY.email.primary = info@kitaplastik.com` form destination.
 
-## Yeni Session Başlangıç Komutu (Plan 4 için)
+## Konum: Redesign ✅ + Ambient 3D ✅ + LocaleSwitcher fix ✅ (2026-04-18 son oturum)
 
-Önce release — kullanıcı görevleri bölümündeki 7 manuel adımı tamamla, sonra:
+**Nerede kaldık:**
+
+- Light Refined Industrial redesign tamamen merge edildi main'e (52 commit origin/main önünde, push yok).
+- Tag: `v0.2-dark-industrial` (rollback için dark snapshot).
+- 72/72 unit test ✓, typecheck temiz, `/design-debug` canlı internal tool olarak duruyor.
+- Ambient 3D şu an 3 orb (cobalt/jade/amber wash) 60sn/tur, görünür ama sakin.
+- LocaleSwitcher plain `<a>` ile full-page navigation — root path bug fix.
+
+**Kullanıcının test etmediği / henüz bakmadığı şeyler (yeni session'da geri dönebilir):**
+
+- Gerçek tarayıcıda mobile + tablet + desktop breakpoint'leri
+- 4 locale (TR/EN/RU/AR) tam walk-through, özellikle AR RTL
+- Tab/keyboard navigation focus ring'leri
+- `prefers-reduced-motion` açık → ambient canvas mount olmuyor fallback çalışıyor mu
+- `pnpm build` (production build) — lokalde henüz çalıştırılmadı
+- `pnpm exec playwright test` — Plan 3 E2E spec'leri redesign sonrası regression var mı belirsiz (text/selector değişmiş olabilir)
+
+**Şu an bloklayan (gerçek creds lazım):** contact submit, RFQ submit, file upload, admin magic-link, admin inbox gerçek data, ReferencesStrip logoları Supabase fetch.
+
+## Yeni Session Başlangıç Komutu — Config Aşaması
 
 ```
-docs/superpowers/RESUME.md dosyasını oku. Release adımları tamam mı kontrol et.
-Eksik varsa önce onu koordine et. Tamam ise Plan 4'e başla:
-superpowers:writing-plans skill'i ile Plan 4'ü (admin urunler/sektorler CRUD, ayarlar,
-müşteri RFQ tracking, SEO ileri, Plausible + Sentry, Upstash Redis) yaz.
-docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md olarak kaydet,
-onay sonrası subagent-driven-development pragmatik batch modda uygula. ultrathink
+docs/superpowers/RESUME.md dosyasını oku. Redesign tamamlandı, test
+edilmedi. Şimdi config aşamasındayız — "Release — kullanıcı görevleri"
+altında 7 manuel adım var. Hangisini tamamladığımı sana söyleyeceğim,
+eksik olanları koordine et. Bittikten sonra ben tarayıcıda test ederim,
+sorun ve yeni iş kalemlerini paylaşırım. Gerekirse E2E spec'leri
+redesign sonrası yeni content için güncelle (Hero KPI'ları, locale
+switcher href değişti, Button primitive kullanımı vb.).
+
+Öncelik sırası:
+1. `pnpm build` koş — production build temiz mi (env validation dahil)
+2. Kullanıcı release adımlarının durumunu söyleyecek
+3. Eksik release adımları için talimat koordine et
+4. Sorun bildirimi gelirse fix; bildirim yoksa Plan 4 (admin CRUD + SEO
+   + analytics) planlamasına geç — `superpowers:writing-plans` skill'i
+   ile `docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md`
+5. Opsiyonel: `/design-debug` ship öncesi silinmeli
+
+ultrathink
 ```
 
 ## Ortam Notları
