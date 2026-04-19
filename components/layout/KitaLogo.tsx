@@ -4,7 +4,13 @@ interface KitaLogoProps {
 
 export function KitaLogo({ className }: KitaLogoProps) {
   return (
-    <svg viewBox="0 0 120 32" className={className} role="img" aria-label="Kıta Plastik">
+    <svg
+      viewBox="0 0 120 32"
+      className={className}
+      role="img"
+      aria-label="Kıta Plastik"
+      direction="ltr"
+    >
       <g fill="currentColor">
         <path
           d="M4 4 L26 4 L30 8 L30 28 L8 28 L4 24 Z"
