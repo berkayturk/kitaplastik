@@ -215,13 +215,18 @@ Admin login aşaması tamamlandı, 5 commit atıldı, branch origin'den 58 commi
 
 ```
 docs/superpowers/RESUME.md oku — "2026-04-19 follow-up" bölümü güncel. Admin
-login çalışıyor. Kalan Release task'ları: Turnstile (3), Resend (4), Vercel
-deploy (5), smoke test (7). Turnstile + Resend hesap kurma benim (berkay)
-manuel işim, sen talimat koordine et. Hepsi bitince Vercel'e çıkarız.
+login çalışıyor, branch pushed. Kalan Release task'ları: Turnstile (3),
+Resend (4), host seçimi + deploy (5 — VERCEL KULLANILMAYACAK, güven sorunu),
+smoke test (7). Turnstile + Resend hesap kurma benim (berkay) manuel işim,
+sen talimat koordine et. Host seçimini birlikte yapıyoruz — top picks:
+Cloudflare Pages (Turnstile zaten CF), self-host VPS (Hetzner + Coolify),
+Netlify. Önce ben tercih/constraint'lerimi söylerim, sen 2-3 seçeneği
+karşılaştır, birlikte karar veririz.
 
-Başlamak için: `pnpm dev` zaten çalışıyor (/tmp/kitaplastik-dev.log) veya yoksa
-başlat. Önce `git log origin/main..HEAD --oneline | head -10` ile branch
-durumuna bak (58 commit önde, push yok).
+Başlamak için: `pnpm dev` zaten çalışıyor (/tmp/kitaplastik-dev.log) veya
+yoksa başlat. Önce `git log origin/main..HEAD --oneline | head -3` ile branch
+durumuna bak (push sonrası 0 olmalı). Turnstile ile başla — Cloudflare
+hesabı zaten var mı sor.
 
 ultrathink
 ```
