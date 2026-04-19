@@ -1,261 +1,426 @@
-// lib/supabase/types.ts
-// Hand-written to match supabase/migrations/*. When the remote Supabase project
-// is linked, run `supabase gen types typescript --linked > lib/supabase/types.ts`
-// to replace with the canonical generated version.
-
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5";
+  };
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
-      sectors: {
-        Row: {
-          id: string;
-          slug: string;
-          name: Json;
-          description: Json | null;
-          hero_color: string | null;
-          display_order: number;
-          active: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          slug: string;
-          name: Json;
-          description?: Json | null;
-          hero_color?: string | null;
-          display_order?: number;
-          active?: boolean;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          slug?: string;
-          name?: Json;
-          description?: Json | null;
-          hero_color?: string | null;
-          display_order?: number;
-          active?: boolean;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      clients: {
-        Row: {
-          id: string;
-          key: string;
-          logo_path: string;
-          sector_key: string;
-          display_order: number;
-          active: boolean;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          key: string;
-          logo_path: string;
-          sector_key: string;
-          display_order?: number;
-          active?: boolean;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          key?: string;
-          logo_path?: string;
-          sector_key?: string;
-          display_order?: number;
-          active?: boolean;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      products: {
-        Row: {
-          id: string;
-          slug: string;
-          name: Json;
-          description: Json | null;
-          sector_id: string | null;
-          images: Json | null;
-          specs: Json | null;
-          variants: Json | null;
-          active: boolean;
-          display_order: number;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          slug: string;
-          name: Json;
-          description?: Json | null;
-          sector_id?: string | null;
-          images?: Json | null;
-          specs?: Json | null;
-          variants?: Json | null;
-          active?: boolean;
-          display_order?: number;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          slug?: string;
-          name?: Json;
-          description?: Json | null;
-          sector_id?: string | null;
-          images?: Json | null;
-          specs?: Json | null;
-          variants?: Json | null;
-          active?: boolean;
-          display_order?: number;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      rfqs: {
-        Row: {
-          id: string;
-          type: Database["public"]["Enums"]["rfq_type"];
-          status: Database["public"]["Enums"]["rfq_status"];
-          locale: string;
-          contact: Json;
-          payload: Json;
-          attachments: Json;
-          internal_notes: string | null;
-          assigned_to: string | null;
-          ip_address: string | null;
-          user_agent: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          type: Database["public"]["Enums"]["rfq_type"];
-          status?: Database["public"]["Enums"]["rfq_status"];
-          locale: string;
-          contact: Json;
-          payload: Json;
-          attachments?: Json;
-          internal_notes?: string | null;
-          assigned_to?: string | null;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          type?: Database["public"]["Enums"]["rfq_type"];
-          status?: Database["public"]["Enums"]["rfq_status"];
-          locale?: string;
-          contact?: Json;
-          payload?: Json;
-          attachments?: Json;
-          internal_notes?: string | null;
-          assigned_to?: string | null;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       admin_users: {
         Row: {
-          user_id: string;
-          role: Database["public"]["Enums"]["admin_role"];
+          created_at: string;
           display_name: string | null;
-          created_at: string;
-        };
-        Insert: {
+          role: Database["public"]["Enums"]["admin_role"];
           user_id: string;
-          role?: Database["public"]["Enums"]["admin_role"];
-          display_name?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          user_id?: string;
-          role?: Database["public"]["Enums"]["admin_role"];
-          display_name?: string | null;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      notification_recipients: {
-        Row: {
-          id: string;
-          email: string;
-          rfq_types: Database["public"]["Enums"]["rfq_type"][];
-          active: boolean;
-          created_at: string;
         };
         Insert: {
-          id?: string;
-          email: string;
-          rfq_types: Database["public"]["Enums"]["rfq_type"][];
-          active?: boolean;
           created_at?: string;
+          display_name?: string | null;
+          role?: Database["public"]["Enums"]["admin_role"];
+          user_id: string;
         };
         Update: {
-          id?: string;
-          email?: string;
-          rfq_types?: Database["public"]["Enums"]["rfq_type"][];
-          active?: boolean;
           created_at?: string;
+          display_name?: string | null;
+          role?: Database["public"]["Enums"]["admin_role"];
+          user_id?: string;
         };
         Relationships: [];
       };
       audit_log: {
         Row: {
-          id: number;
-          user_id: string | null;
           action: string;
-          entity_type: string;
-          entity_id: string | null;
-          diff: Json | null;
-          ip_address: string | null;
           created_at: string;
+          diff: Json | null;
+          entity_id: string | null;
+          entity_type: string;
+          id: number;
+          ip_address: unknown;
+          user_id: string | null;
         };
         Insert: {
-          id?: number;
-          user_id?: string | null;
           action: string;
-          entity_type: string;
-          entity_id?: string | null;
-          diff?: Json | null;
-          ip_address?: string | null;
           created_at?: string;
+          diff?: Json | null;
+          entity_id?: string | null;
+          entity_type: string;
+          id?: number;
+          ip_address?: unknown;
+          user_id?: string | null;
         };
         Update: {
-          id?: number;
-          user_id?: string | null;
           action?: string;
-          entity_type?: string;
-          entity_id?: string | null;
-          diff?: Json | null;
-          ip_address?: string | null;
           created_at?: string;
+          diff?: Json | null;
+          entity_id?: string | null;
+          entity_type?: string;
+          id?: number;
+          ip_address?: unknown;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
+      clients: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          display_order: number;
+          id: string;
+          key: string;
+          logo_path: string;
+          sector_key: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          display_order?: number;
+          id?: string;
+          key: string;
+          logo_path: string;
+          sector_key: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          display_order?: number;
+          id?: string;
+          key?: string;
+          logo_path?: string;
+          sector_key?: string;
+        };
+        Relationships: [];
+      };
+      notification_recipients: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          email: string;
+          id: string;
+          rfq_types: Database["public"]["Enums"]["rfq_type"][];
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          email: string;
+          id?: string;
+          rfq_types: Database["public"]["Enums"]["rfq_type"][];
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          rfq_types?: Database["public"]["Enums"]["rfq_type"][];
+        };
+        Relationships: [];
+      };
+      products: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          description: Json | null;
+          display_order: number;
+          id: string;
+          images: Json | null;
+          name: Json;
+          sector_id: string | null;
+          slug: string;
+          specs: Json | null;
+          updated_at: string;
+          variants: Json | null;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          description?: Json | null;
+          display_order?: number;
+          id?: string;
+          images?: Json | null;
+          name: Json;
+          sector_id?: string | null;
+          slug: string;
+          specs?: Json | null;
+          updated_at?: string;
+          variants?: Json | null;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          description?: Json | null;
+          display_order?: number;
+          id?: string;
+          images?: Json | null;
+          name?: Json;
+          sector_id?: string | null;
+          slug?: string;
+          specs?: Json | null;
+          updated_at?: string;
+          variants?: Json | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "products_sector_id_fkey";
+            columns: ["sector_id"];
+            isOneToOne: false;
+            referencedRelation: "sectors";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      rfqs: {
+        Row: {
+          assigned_to: string | null;
+          attachments: Json;
+          contact: Json;
+          created_at: string;
+          id: string;
+          internal_notes: string | null;
+          ip_address: unknown;
+          locale: string;
+          payload: Json;
+          status: Database["public"]["Enums"]["rfq_status"];
+          type: Database["public"]["Enums"]["rfq_type"];
+          updated_at: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          assigned_to?: string | null;
+          attachments?: Json;
+          contact: Json;
+          created_at?: string;
+          id?: string;
+          internal_notes?: string | null;
+          ip_address?: unknown;
+          locale: string;
+          payload: Json;
+          status?: Database["public"]["Enums"]["rfq_status"];
+          type: Database["public"]["Enums"]["rfq_type"];
+          updated_at?: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          assigned_to?: string | null;
+          attachments?: Json;
+          contact?: Json;
+          created_at?: string;
+          id?: string;
+          internal_notes?: string | null;
+          ip_address?: unknown;
+          locale?: string;
+          payload?: Json;
+          status?: Database["public"]["Enums"]["rfq_status"];
+          type?: Database["public"]["Enums"]["rfq_type"];
+          updated_at?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [];
+      };
+      sectors: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          description: Json | null;
+          display_order: number;
+          hero_color: string | null;
+          id: string;
+          name: Json;
+          slug: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          description?: Json | null;
+          display_order?: number;
+          hero_color?: string | null;
+          id?: string;
+          name: Json;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          description?: Json | null;
+          display_order?: number;
+          hero_color?: string | null;
+          id?: string;
+          name?: Json;
+          slug?: string;
+          updated_at?: string;
         };
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      [_ in never]: never;
+    };
     Functions: {
       is_admin: { Args: { uid: string }; Returns: boolean };
       is_admin_role: { Args: { uid: string }; Returns: boolean };
     };
     Enums: {
-      rfq_type: "custom" | "standart";
-      rfq_status: "new" | "reviewing" | "quoted" | "won" | "lost" | "archived";
       admin_role: "admin" | "sales" | "viewer";
+      rfq_status: "new" | "reviewing" | "quoted" | "won" | "lost" | "archived";
+      rfq_type: "custom" | "standart";
     };
-    CompositeTypes: Record<string, never>;
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
 };
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I;
+      }
+      ? I
+      : never
+    : never;
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U;
+      }
+      ? U
+      : never
+    : never;
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never;
+
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {
+      admin_role: ["admin", "sales", "viewer"],
+      rfq_status: ["new", "reviewing", "quoted", "won", "lost", "archived"],
+      rfq_type: ["custom", "standart"],
+    },
+  },
+} as const;

@@ -27,4 +27,4 @@ insert into public.clients (key, logo_path, sector_key, display_order, active) v
 on conflict (key) do nothing;
 
 insert into public.notification_recipients (email, rfq_types, active) values
-  ('berkayturk6@gmail.com', array['custom','standart']::rfq_type[], true);
+  ('berkaytrk6@gmail.com', array['custom','standart']::rfq_type[], true);
