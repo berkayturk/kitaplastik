@@ -40,9 +40,6 @@ export function Footer() {
           {/* Şirket */}
           <FooterColumn title={tCommon("brand.name")}>
             <FooterLink href="/hakkimizda">{tNav("about")}</FooterLink>
-            <FooterLink href="/kalite">{tNav("quality")}</FooterLink>
-            <FooterLink href="/atolye">{tNav("workshop")}</FooterLink>
-            <FooterLink href="/muhendislik">{tNav("engineering")}</FooterLink>
             <FooterLink href="/referanslar">{tNav("references")}</FooterLink>
           </FooterColumn>
 
