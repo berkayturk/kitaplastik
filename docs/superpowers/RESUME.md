@@ -206,7 +206,7 @@ Admin login aşaması tamamlandı, 5 commit atıldı, branch origin'den 58 commi
 - Public site walkthrough (4 locale, AR RTL, responsive, ambient 3D, keyboard nav) — önceki oturum listesi geçerli.
 - Release task 3 Cloudflare Turnstile (bloklar contact/RFQ submit'i)
 - Release task 4 Resend domain verify (bloklar tüm email gönderimini, Supabase built-in SMTP de zaten yetmez)
-- Release task 5 Vercel env + deploy
+- Release task 5 **host seçimi + deploy (Vercel KULLANILMAYACAK — güven sorunu; alternatifler: Cloudflare Pages, self-host VPS, Netlify vs.)** + env transfer
 - Release task 7 Manuel smoke (contact form, custom RFQ + file upload, standart RFQ)
 
 ## Yeni Session Başlangıç Komutları
