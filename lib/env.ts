@@ -25,7 +25,30 @@ export type PublicEnv = z.infer<typeof publicEnvSchema>;
 const isServer = typeof window === "undefined";
 const schema = isServer ? serverEnvSchema : publicEnvSchema;
 
-const result = schema.safeParse(process.env);
+// Explicit references so bundlers inline NEXT_PUBLIC_* into the client chunk.
+// Passing `process.env` as a whole object defeats static analysis in Turbopack/Webpack.
+const publicRaw = {
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+  NEXT_PUBLIC_PLAUSIBLE_DOMAIN: process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN,
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+};
+
+const raw = isServer
+  ? {
+      ...publicRaw,
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
+      RESEND_API_KEY: process.env.RESEND_API_KEY,
+      RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
+      RESEND_TEAM_EMAIL: process.env.RESEND_TEAM_EMAIL,
+      SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+    }
+  : publicRaw;
+
+const result = schema.safeParse(raw);
 
 if (!result.success) {
   const issues = result.error.issues.map((i) => `  - ${i.path.join(".")}: ${i.message}`).join("\n");
