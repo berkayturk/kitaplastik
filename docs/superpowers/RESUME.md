@@ -172,25 +172,81 @@ Plan 2 ve Plan 3 arasında yapıldı:
 
 **Şu an bloklayan (gerçek creds lazım):** contact submit, RFQ submit, file upload, admin magic-link, admin inbox gerçek data, ReferencesStrip logoları Supabase fetch.
 
-## Yeni Session Başlangıç Komutu — Config Aşaması
+## 2026-04-19 — Config session follow-up (bu oturum)
+
+Admin login aşaması tamamlandı, 5 commit atıldı, branch origin'den 58 commit önde (push yok).
+
+**Yapıldı:**
+
+- **Supabase uzak proje** (Release task 1) — `kitaplastik-prod` ref `sthwxiqtpafyjbevzkiq`, eu-central-1, **free tier**. 4 orijinal migration + 2 identity fix migration uygulandı. TS tipleri `lib/supabase/types.ts` regen edildi. Credentials `.env.local`'da. Dashboard: https://supabase.com/dashboard/project/sthwxiqtpafyjbevzkiq
+- **İlk admin kullanıcı** (Release task 2) — `berkaytrk6@gmail.com` (u SUZ — doğru adres; eski RESUME `berkayturk6` yazıyordu, hatalıydı). Admin_users satırı seeded, identity.email_verified=true. Password login'e geçildi (aşağı bkz).
+- **Auth config** (Release task 6) — site_url, uri_allow_list (localhost + `*.vercel.app` + prod), disable_signup=true, magic link template custom. Password flow bunlarla çakışmıyor.
+
+**Magic link → password login switch:**
+
+- Sebep: Supabase built-in SMTP free tier 2 mail/saat limit, `admin.createUser({email_confirm:true})` SDK quirk (`identities.identity_data.email_verified` false kalıyor), GoTrue 2.163+ bu flag false ise OTP reddediyor. Tek-kullanıcı admin için password daha pratik.
+- Yeni flow: `app/admin/login/{page.tsx,actions.ts}` — `signInWithPassword` + server-side `redirect('/admin/inbox')`. `app/admin/auth/callback/route.ts` hem PKCE `code` hem non-PKCE `token_hash+type` handle ediyor (unused fallback).
+- Credentials `.env.local` → `ADMIN_EMAIL`, `ADMIN_PASSWORD` (sadece referans, hash Supabase'de).
+- Admin login test edildi, `/admin/inbox` + `/admin/ayarlar/bildirimler` çalışıyor.
+
+**Idempotent Supabase fix migration'ları (proje reset edilse de doğru duruma geliyor):**
+
+- `20260419080000_fix_email_identity_verified.sql` — `identity.email_verified` false satırlarını true yapar.
+- `20260419150000_fix_admin_email_and_identity.sql` — `identity.email`'i `users.email` ile sync eder + `notification_recipients` typo fix.
+
+**Diğer fix'ler:**
+
+- `components/layout/KitaLogo.tsx` — SVG `direction="ltr"` (AR RTL'de Latin text flip fix).
+- `components/admin/InboxTable.tsx` — empty state'te de kolon başlıkları görünür.
+- `messages/{tr,en,ru,ar}/nav.json` + `components/layout/Footer.tsx` — silinmiş `muhendislik/atolye/kalite` ref'leri temizlendi.
+- `app/admin/login/actions.ts` — error code-specific Türkçe mesajlar (429 rate limit, invalid_credentials, vb.).
+
+**Test edilmeyen / senin manuel yapacakların:**
+
+- Public site walkthrough (4 locale, AR RTL, responsive, ambient 3D, keyboard nav) — önceki oturum listesi geçerli.
+- Release task 3 Cloudflare Turnstile (bloklar contact/RFQ submit'i)
+- Release task 4 Resend domain verify (bloklar tüm email gönderimini, Supabase built-in SMTP de zaten yetmez)
+- Release task 5 Vercel env + deploy
+- Release task 7 Manuel smoke (contact form, custom RFQ + file upload, standart RFQ)
+
+## Yeni Session Başlangıç Komutları
+
+### Config devamı (kısa — kalan manuel task'ları koordine etmek için)
 
 ```
-docs/superpowers/RESUME.md dosyasını oku. Redesign tamamlandı, test
-edilmedi. Şimdi config aşamasındayız — "Release — kullanıcı görevleri"
-altında 7 manuel adım var. Hangisini tamamladığımı sana söyleyeceğim,
-eksik olanları koordine et. Bittikten sonra ben tarayıcıda test ederim,
-sorun ve yeni iş kalemlerini paylaşırım. Gerekirse E2E spec'leri
-redesign sonrası yeni content için güncelle (Hero KPI'ları, locale
-switcher href değişti, Button primitive kullanımı vb.).
+docs/superpowers/RESUME.md oku — "2026-04-19 follow-up" bölümü güncel. Admin
+login çalışıyor. Kalan Release task'ları: Turnstile (3), Resend (4), Vercel
+deploy (5), smoke test (7). Turnstile + Resend hesap kurma benim (berkay)
+manuel işim, sen talimat koordine et. Hepsi bitince Vercel'e çıkarız.
 
-Öncelik sırası:
-1. `pnpm build` koş — production build temiz mi (env validation dahil)
-2. Kullanıcı release adımlarının durumunu söyleyecek
-3. Eksik release adımları için talimat koordine et
-4. Sorun bildirimi gelirse fix; bildirim yoksa Plan 4 (admin CRUD + SEO
-   + analytics) planlamasına geç — `superpowers:writing-plans` skill'i
-   ile `docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md`
-5. Opsiyonel: `/design-debug` ship öncesi silinmeli
+Başlamak için: `pnpm dev` zaten çalışıyor (/tmp/kitaplastik-dev.log) veya yoksa
+başlat. Önce `git log origin/main..HEAD --oneline | head -10` ile branch
+durumuna bak (58 commit önde, push yok).
+
+ultrathink
+```
+
+### Plan 4 planlama (büyük — admin CRUD + SEO + analytics için)
+
+```
+docs/superpowers/RESUME.md oku. Plan 1-3 + redesign + config aşaması
+tamamlandı. Plan 4'ü `superpowers:writing-plans` skill'i ile planla:
+`docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md`.
+
+Kapsam:
+- `/admin/urunler` + `/admin/sektorler` CRUD (4-dil tab, görsel upload)
+- `/admin/ayarlar/sirket` + `/admin/ayarlar/sablonlar`
+- Müşteri RFQ tracking sayfası `/[locale]/rfq/[uuid]/`
+- Upstash Redis rate limit upgrade (in-memory → distributed)
+- SEO ileri: Schema.org Organization/Product, OG image generator
+- Plausible analytics
+- Sentry error tracking
+- Admin authenticated E2E programatik login hook
+- Opsiyonel: Spline frosted polymer cap Tier 2 hero object
+- Opsiyonel: Fraunces Cyrillic için Noto Serif / IBM Plex Serif RU fallback
+
+Önce mevcut kod haritasını çıkar (admin layout pattern, RLS, middleware),
+sonra writing-plans brainstorm'u — ben cevaplayacağım.
 
 ultrathink
 ```
