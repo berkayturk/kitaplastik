@@ -1,9 +1,10 @@
 // app/design-debug/page.tsx
 // Internal render verification for the Refined Industrial (Light) design system.
-// Shows every color token, typography scale, diacritics render, radii, shadows,
-// and button variant preview. DELETE before the redesign branch merges to main.
+// Production-guarded: returns 404 in production, renders in dev/preview.
 
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import {
   Button,
   Badge,
@@ -19,7 +20,14 @@ import {
   Checkbox,
 } from "@/components/ui";
 
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default function DesignDebugPage() {
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
   return (
     <main className="px-8 py-20">
       <div className="mx-auto max-w-6xl">
