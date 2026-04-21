@@ -44,7 +44,7 @@ export function SectorGrid() {
           {SECTORS.map((sector) => (
             <Link
               key={sector.slug}
-              href={`/sektorler/${sector.slug}`}
+              href={`/sectors/${sector.slug}`}
               className="group block focus-visible:outline-none"
             >
               <Card interactive className="h-full">

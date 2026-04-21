@@ -32,22 +32,22 @@ export function Footer() {
 
           {/* Sektörler */}
           <FooterColumn title={tNav("sectors")}>
-            <FooterLink href="/sektorler/cam-yikama">Cam Yıkama</FooterLink>
-            <FooterLink href="/sektorler/kapak">Kapak</FooterLink>
-            <FooterLink href="/sektorler/tekstil">Tekstil</FooterLink>
+            <FooterLink href="/sectors/bottle-washing">Cam Yıkama</FooterLink>
+            <FooterLink href="/sectors/caps">Kapak</FooterLink>
+            <FooterLink href="/sectors/textile">Tekstil</FooterLink>
           </FooterColumn>
 
           {/* Şirket */}
           <FooterColumn title={tCommon("brand.name")}>
-            <FooterLink href="/hakkimizda">{tNav("about")}</FooterLink>
-            <FooterLink href="/referanslar">{tNav("references")}</FooterLink>
+            <FooterLink href="/about">{tNav("about")}</FooterLink>
+            <FooterLink href="/references">{tNav("references")}</FooterLink>
           </FooterColumn>
 
           {/* İletişim */}
           <FooterColumn title={tNav("contact")}>
-            <FooterLink href="/iletisim">{tNav("contact")}</FooterLink>
-            <FooterLink href="/teklif-iste">{tCommon("cta.requestQuote")}</FooterLink>
-            <FooterLink href="/urunler">{tNav("products")}</FooterLink>
+            <FooterLink href="/contact">{tNav("contact")}</FooterLink>
+            <FooterLink href="/request-quote">{tCommon("cta.requestQuote")}</FooterLink>
+            <FooterLink href="/products">{tNav("products")}</FooterLink>
           </FooterColumn>
         </div>
 

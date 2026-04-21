@@ -33,7 +33,7 @@ export function Shell({ user, active, children }: Props) {
             <NavLink href="/admin/inbox" active={active === "inbox"}>
               Gelen Kutusu
             </NavLink>
-            <NavLink href="/admin/ayarlar/bildirimler" active={active === "bildirimler"}>
+            <NavLink href="/admin/settings/notifications" active={active === "bildirimler"}>
               Bildirim Alıcıları
             </NavLink>
           </nav>

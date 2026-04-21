@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${t("title")} | Kıta Plastik`,
     description: t("subtitle"),
     alternates: {
-      canonical: `${origin}/${locale}/hakkimizda`,
-      languages: buildAlternates("/hakkimizda", origin).languages,
+      canonical: `${origin}/${locale}/about`,
+      languages: buildAlternates("/about", origin).languages,
     },
   };
 }

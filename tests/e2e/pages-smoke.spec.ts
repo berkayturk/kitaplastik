@@ -2,14 +2,14 @@ import { test, expect } from "@playwright/test";
 
 const PUBLIC_ROUTES = [
   "/",
-  "/sektorler",
-  "/sektorler/cam-yikama",
-  "/sektorler/kapak",
-  "/sektorler/tekstil",
-  "/urunler",
-  "/hakkimizda",
-  "/iletisim",
-  "/referanslar",
+  "/sectors",
+  "/sectors/bottle-washing",
+  "/sectors/caps",
+  "/sectors/textile",
+  "/products",
+  "/about",
+  "/contact",
+  "/references",
 ];
 
 const LOCALES = ["tr", "en", "ru", "ar"];

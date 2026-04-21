@@ -1,4 +1,4 @@
-// app/admin/ayarlar/bildirimler/actions.ts
+// app/admin/settings/notifications/actions.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -30,7 +30,7 @@ export async function addRecipient(formData: FormData): Promise<void> {
     ip: null,
     diff: { email, types },
   });
-  revalidatePath("/admin/ayarlar/bildirimler");
+  revalidatePath("/admin/settings/notifications");
 }
 
 export async function toggleRecipient(formData: FormData): Promise<void> {
@@ -51,7 +51,7 @@ export async function toggleRecipient(formData: FormData): Promise<void> {
     ip: null,
     diff: { active: !active },
   });
-  revalidatePath("/admin/ayarlar/bildirimler");
+  revalidatePath("/admin/settings/notifications");
 }
 
 export async function removeRecipient(formData: FormData): Promise<void> {
@@ -68,5 +68,5 @@ export async function removeRecipient(formData: FormData): Promise<void> {
     ip: null,
     diff: null,
   });
-  revalidatePath("/admin/ayarlar/bildirimler");
+  revalidatePath("/admin/settings/notifications");
 }

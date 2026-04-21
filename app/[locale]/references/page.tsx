@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${t("hero.title")} | Kıta Plastik`,
     description: t("hero.subtitle"),
     alternates: {
-      canonical: `${origin}/${locale}/referanslar`,
-      languages: buildAlternates("/referanslar", origin).languages,
+      canonical: `${origin}/${locale}/references`,
+      languages: buildAlternates("/references", origin).languages,
     },
   };
 }

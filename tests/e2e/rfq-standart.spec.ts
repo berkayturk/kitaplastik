@@ -1,8 +1,14 @@
 // tests/e2e/rfq-standart.spec.ts
 import { test, expect } from "@playwright/test";
 
+const hasRealSupabase =
+  process.env.NEXT_PUBLIC_SUPABASE_URL != null &&
+  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
+
+test.skip(!hasRealSupabase, "RFQ submit requires real Supabase (CI uses placeholder)");
+
 test("standart RFQ submits with one product row", async ({ page }) => {
-  await page.goto("/tr/teklif-iste/standart");
+  await page.goto("/tr/request-quote/standard");
 
   // First product row is pre-rendered with empty slug; fill it.
   await page.getByPlaceholder("Ürün adı / kodu").first().fill("kapak-33mm");

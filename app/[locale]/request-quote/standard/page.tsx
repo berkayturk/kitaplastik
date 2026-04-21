@@ -1,10 +1,10 @@
-// app/[locale]/teklif-iste/ozel-uretim/page.tsx
+// app/[locale]/request-quote/standard/page.tsx
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
-import { CustomRfqForm } from "@/components/rfq/CustomRfqForm";
+import { StandartRfqForm } from "@/components/rfq/StandartRfqForm";
 
 interface PageProps {
   params: Promise<{ locale: Locale }>;
@@ -12,14 +12,14 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "rfq.custom" });
+  const t = await getTranslations({ locale, namespace: "rfq.standart" });
   const origin = env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com";
   return {
     title: `${t("title")} | Kıta Plastik`,
     description: t("subtitle"),
     alternates: {
-      canonical: `${origin}/${locale}/teklif-iste/ozel-uretim`,
-      languages: buildAlternates("/teklif-iste/ozel-uretim", origin).languages,
+      canonical: `${origin}/${locale}/request-quote/standard`,
+      languages: buildAlternates("/request-quote/standard", origin).languages,
     },
   };
 }
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function Page({ params }: PageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("rfq.custom");
+  const t = await getTranslations("rfq.standart");
   return (
     <section className="container mx-auto max-w-3xl px-6 py-10">
       <header className="mb-8">
@@ -36,7 +36,7 @@ export default async function Page({ params }: PageProps) {
         </h1>
         <p className="text-text-secondary mt-2 text-sm md:text-base">{t("subtitle")}</p>
       </header>
-      <CustomRfqForm />
+      <StandartRfqForm />
     </section>
   );
 }

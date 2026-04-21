@@ -32,13 +32,13 @@ export function Hero() {
 
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
-                href="/teklif-iste"
+                href="/request-quote"
                 className={buttonVariants({ variant: "primary", size: "lg" })}
               >
                 {t("primaryCta")} →
               </Link>
               <Link
-                href="/sektorler"
+                href="/sectors"
                 className={buttonVariants({ variant: "secondary", size: "lg" })}
               >
                 {t("secondaryCta")}
