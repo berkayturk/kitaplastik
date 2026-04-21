@@ -1,6 +1,7 @@
 // components/rfq/ProductPicker.tsx
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import type { Locale } from "@/i18n/routing";
@@ -46,6 +47,7 @@ function useDebounced<T>(value: T, delay = 200): T {
 }
 
 export function ProductPicker({ value, onChange, locale, maxItems = 20 }: Props) {
+  const t = useTranslations("rfq.standart");
   const canAdd = value.length < maxItems;
 
   function update(i: number, patch: Partial<ItemRow>) {
@@ -75,7 +77,7 @@ export function ProductPicker({ value, onChange, locale, maxItems = 20 }: Props)
           onClick={add}
           className="text-sm font-medium text-[var(--color-accent-cobalt)] hover:underline"
         >
-          + Ürün Ekle
+          {t("addItem")}
         </button>
       )}
     </div>
@@ -93,6 +95,7 @@ function Row({
   onChange: (patch: Partial<ItemRow>) => void;
   onRemove: () => void;
 }) {
+  const t = useTranslations("rfq.standart");
   const [query, setQuery] = useState(row.productName);
   const debounced = useDebounced(query, 200);
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null);
@@ -147,9 +150,9 @@ function Row({
             setQuery(e.target.value);
             onChange({ productName: e.target.value, productSlug: "" });
           }}
-          placeholder="Ürün adı ara…"
+          placeholder={t("searchPlaceholder")}
           className={inputClass}
-          aria-label="Ürün ara"
+          aria-label={t("searchAriaLabel")}
           aria-autocomplete="list"
         />
         {suggestions && suggestions.length > 0 && (
@@ -176,14 +179,14 @@ function Row({
         )}
         {searched && suggestions && suggestions.length === 0 && (
           <p className="text-text-secondary mt-2 text-sm">
-            Aradığınız ürün listede yok mu?{" "}
+            {t("noMatchPrompt")}{" "}
             <Link
               href="/request-quote/ozel-uretim"
               className="text-[var(--color-accent-cobalt)] hover:underline"
             >
-              Özel üretim talep formundan
-            </Link>{" "}
-            detaylı talep oluşturun.
+              {t("noMatchLinkText")}
+            </Link>
+            {t("noMatchSuffix")}
           </p>
         )}
       </div>
@@ -192,18 +195,18 @@ function Row({
           type="text"
           value={row.variant}
           onChange={(e) => onChange({ variant: e.target.value })}
-          placeholder="Varyant / renk / not"
+          placeholder={t("variantPlaceholder")}
           className={inputClass}
-          aria-label="Varyant"
+          aria-label={t("variantAriaLabel")}
         />
         <input
           type="number"
           min={1}
           value={row.qty}
           onChange={(e) => onChange({ qty: Math.max(1, Number(e.target.value) || 0) })}
-          placeholder="Miktar"
+          placeholder={t("qtyPlaceholder")}
           className={inputClass}
-          aria-label="Miktar"
+          aria-label={t("qtyAriaLabel")}
         />
       </div>
       <button
@@ -211,7 +214,7 @@ function Row({
         onClick={onRemove}
         className="mt-2 text-xs text-[var(--color-accent-red)] hover:underline"
       >
-        Sil
+        {t("removeRow")}
       </button>
     </div>
   );
