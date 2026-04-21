@@ -248,6 +248,54 @@ Admin login aşaması tamamlandı, 5 commit atıldı, branch origin'den 58 commi
 
 **Güvenlik borcu:** Coolify API token chat'e yazıldı (`1|D5aQv8w4...`). **Rotate edilmeli**: Coolify → Keys & Tokens → eski token'ı delete, yeni oluştur → `gh secret set COOLIFY_TOKEN --body '<yeni>'`.
 
+### 2026-04-21 (devam) — Admin login fix + Node pin + Turnstile/Resend + Supabase plugin MCP
+
+**Admin login debug + fix** (SQL reset):
+- Canlıda login 400 `invalid_credentials` dönüyordu (berkaytrk6@gmail.com, referer `https://kitaplastik.com`, auth logs'tan teyit)
+- Teşhis: user state tamamen sağlıklı (email_confirmed, identity_email sync, admin role) → sadece password hash mismatch (user şifreyi yanlış hatırlıyor/stale not)
+- Fix: Dashboard SQL Editor → `UPDATE auth.users SET encrypted_password = crypt('<yeni-şifre>', gen_salt('bf')), updated_at=now() WHERE id = '<uuid>' RETURNING email, updated_at;`
+- User şifreyi **kendi** query'de yazdı (chat'e düşmedi), 1Password'e kaydetti, login ✅
+- **Öğrenme:** `auth.admin.updateUserById({password})` yerine direct SQL UPDATE + bcrypt `crypt('<pw>', gen_salt('bf'))` pattern hızlı ve chat'e düşmeden uygulanabilir.
+
+**Supabase MCP auth çökmesi** (resolved):
+- Default Supabase MCP (Claude Code'un kurduğu) 401 döndü, `mcp-health-check` cooldown ile bloklandı (standard,strict mode)
+- CLI `supabase login --linked` da 401 — access token expire
+- Non-TTY ortamda `supabase login` interactive OAuth desteklemez
+- **Çözüm:** `/plugin` ile `supabase` plugin MCP kuruldu (claude-plugins-official). Plugin'in kendi OAuth akışı sağlıklı çalıştı (localhost callback pattern, user browser onay). Default MCP yerine plugin artık kullanılıyor.
+- Pattern: default MCP 401 veriyorsa önce plugin'e geç, OAuth yenile, default MCP'yi silmek opsiyonel.
+
+**Node 22.22.2 pin** (commit `2af9273`):
+- `.nvmrc`: `22` → `22.22.2` (tam semver)
+- `package.json` engines.node: `>=22` → `>=22.22.2 <23`
+- Coolify env: `NIXPACKS_NODE_VERSION=22.22.2` eklendi (redundant safety, primary control)
+- Nixpacks artık 24 fallback yerine 22.22.2 indirir; canlıda ETag değişimi doğrulandı
+
+**Turnstile secret rotate** (Coolify env sadece — kod değişikliği yok):
+- CF Turnstile dashboard → Rotate → yeni secret → Coolify `TURNSTILE_SECRET_KEY` update → auto-deploy redeploy ile aktif
+- Eski (chat'te leak olan) secret CF rotate ile invalidate oldu
+
+**Resend domain verify + branded FROM**:
+- Resend → `kitaplastik.com` eklendi, region EU West (Dublin)
+- CF DNS: MX `send` → `feedback-smtp.eu-west-1.amazonses.com` (pri 10), TXT `send` SPF (`v=spf1 include:amazonses.com ~all`), TXT `resend._domainkey` DKIM public key
+- Resend Verified ✅
+- Coolify env `RESEND_FROM_EMAIL` = `noreply@kitaplastik.com`
+- Canlıda auto-deploy ile aktif; contact/RFQ mail artık branded sender kullanıyor
+- **Not:** Root `@` için SPF TXT EKLENMEDİ — Google Workspace gelince birleşik SPF string olarak (google + amazonses include'ları) root'a eklenecek. Şu an sadece `send.` subdomain için SPF var.
+
+### CF proxy + Let's Encrypt DNS-01 (ERTELENEN İŞ, ~20-25 dk)
+
+Orange cloud + SSL Full (strict) açmak için **önce** Coolify Traefik cert challenge'ını DNS-01'e migrate etmek lazım, yoksa 60-90 gün sonra Let's Encrypt HTTP-01/TLS-ALPN-01 CF proxy tarafından intercept edilir → renewal fail → site HTTPS down.
+
+**Güvenli sıra:**
+1. CF → My Profile → API Tokens → "Create" → scope: `Zone:DNS:Edit`, zone: `kitaplastik.com` → token al
+2. Coolify Server Settings → Traefik env: `CF_API_TOKEN` + DNS-01 challenge config (Coolify v4 dokümanı: `traefik.acme.dnschallenge.provider=cloudflare`)
+3. Traefik'i restart + manuel cert renewal trigger → DNS-01 ile başarılı olduğunu doğrula
+4. **Sonra** CF DNS → A records (@ + www) Proxy ON (orange cloud)
+5. CF SSL/TLS → Overview → Full (strict)
+6. Test: `curl -sI https://kitaplastik.com` → `server: cloudflare`, Next.js 200
+
+Bu bir ayrı "infra session" olarak ele alınacak. Ayrı oturumda ~20-25 dk.
+
 ### Next session — Plan 4b başlar
 
 Spec: `docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md`. `superpowers:writing-plans` → PLAN.md → `superpowers:subagent-driven-development`.
@@ -268,39 +316,39 @@ Kapsam: `/admin/products` CRUD (liste + yeni + düzenle + sil/geri yükle) + 4 d
 
 ## Yeni Session Başlangıç Komutları
 
-### 🚀 Plan 4b başlat (en öncelikli — Plan 4a canlıda, auto-deploy hazır)
+### 🚀 Plan 4b başlat (en öncelikli — site MVP canlıda, tüm infra stable)
 
 ```
-Kitaplastik Plan 4a MERGED + canlıda (d01f1bc). Auto-deploy kuruldu
-(.github/workflows/deploy.yml, CI-gated). docs/superpowers/RESUME.md
-"2026-04-21 Plan 4a URL migration ✅" bölümünü oku.
+Kitaplastik Plan 4a MERGED + canlıda (d01f1bc). Auto-deploy CI-gated çalışıyor.
+Admin login + Resend branded FROM + Turnstile rotate + Node 22.22.2 pin hepsi
+canlı. docs/superpowers/RESUME.md "2026-04-21" bölümlerini oku (son kısım).
 
 Şimdi Plan 4b (Admin Products CRUD) başla:
 
 1. Spec oku: docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md
-2. superpowers:writing-plans → docs/superpowers/plans/<tarih>-faz1-plan4b-admin-products-crud.md
-3. Brainstorm sorularını bana sor (admin UX, 4 dil "boşsa gösterme" UX, 10 preset
-   özellik, görsel upload akışı)
+2. superpowers:writing-plans → brainstorm (4-6 tasarım sorusu cevaplayacağım:
+   admin form UX, 4 dil "boşsa-gösterme" UX, 10 preset özellik yapısı,
+   görsel upload akışı, RFQ picker catalog entegrasyonu, sil/geri-yükle soft delete)
+3. docs/superpowers/plans/<tarih>-faz1-plan4b-admin-products-crud.md yaz
 4. Plan onaylanınca superpowers:subagent-driven-development ile execute
 
-Kapsam özet: /admin/products CRUD (4 dil tab TR zorunlu, EN/RU/AR opsiyonel),
-10 preset özellik, ana görsel + galeri, public /products grid + /products/[slug],
-RFQ picker catalog-backed. Auto-translate yok.
+Kapsam: /admin/products CRUD (4 dil tab TR zorunlu, EN/RU/AR opsiyonel +
+"boşsa gösterme" pattern), 10 preset özellik, ana görsel + galeri upload,
+public /products grid + /products/[slug] detay, RFQ picker catalog-backed.
+Auto-translate yok (elle çeviri yapıştırma).
 
 ultrathink
 ```
 
-### 🔒 Coolify token rotate (güvenlik borcu)
+### 🌐 CF proxy + Let's Encrypt DNS-01 migration (infra, ~20-25 dk)
 
 ```
-Coolify API token önceki oturumda chat'e yazıldı (transcript'te duruyor).
-Rotate lazım:
-1. https://coolify.brtapps.dev/ → Keys & Tokens
-2. Eski token sil (1|D5aQv8w... ile başlayan)
-3. Yeni API token oluştur (scope: read+write, name: deploy-from-gh-actions-v2)
-4. gh secret set COOLIFY_TOKEN --body '<yeni-token>'
-5. Test: git commit --allow-empty -m "chore: verify auto-deploy" + push,
-   CI bekle, deploy.yml workflow success olmalı, /kitaplastik.com canlı güncel.
+Kitaplastik CF proxy + SSL Full (strict) için Let's Encrypt cert renewal'ı
+DNS-01'e geçirmek lazım (HTTP-01/TLS-ALPN-01 CF proxy ile çakışır).
+docs/superpowers/RESUME.md "CF proxy + Let's Encrypt DNS-01 (ERTELENEN İŞ)"
+bölümünü oku, 6 adımı uygula.
+
+Ön gerekli: CF API token (Zone:DNS:Edit scope, kitaplastik.com zone).
 ```
 
 ### 🔄 Redeploy + smoke (hemen yarın)
