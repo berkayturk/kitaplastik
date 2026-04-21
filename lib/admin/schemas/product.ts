@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { SPEC_PRESETS } from "@/lib/admin/spec-presets";
+import { SPEC_PRESETS, type SpecPresetId } from "@/lib/admin/spec-presets";
 
-const PRESET_IDS = SPEC_PRESETS.map((p) => p.id) as [string, ...string[]];
+const PRESET_IDS = SPEC_PRESETS.map((p) => p.id) as [SpecPresetId, ...SpecPresetId[]];
 
 // Postgres-compatible UUID format (8-4-4-4-12 hex). Zod v4's z.string().uuid()
 // enforces RFC 4122 version/variant bytes, which rejects valid Postgres UUIDs
@@ -44,7 +44,7 @@ const uniquePresets = (specs: { preset_id: string }[], ctx: z.RefinementCtx): vo
 
 const Base = z.object({
   sector_id: z.string().regex(UUID_RE, "invalid UUID format"),
-  name: LocalizedText.refine((n) => n.tr.trim().length > 0, {
+  name: LocalizedText.transform((n) => ({ ...n, tr: n.tr.trim() })).refine((n) => n.tr.length > 0, {
     message: "name.tr zorunlu",
     path: ["tr"],
   }),

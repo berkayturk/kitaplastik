@@ -45,6 +45,18 @@ describe("CreateProductSchema", () => {
     }));
     expect(CreateProductSchema.safeParse({ ...validBase, images }).success).toBe(false);
   });
+
+  it("name.tr whitespace-only reddedilir ve valid veri trim edilir", () => {
+    const whitespaceOnly = { ...validBase, name: { tr: "   ", en: "", ru: "", ar: "" } };
+    expect(CreateProductSchema.safeParse(whitespaceOnly).success).toBe(false);
+
+    const surroundingWs = { ...validBase, name: { tr: "  PET Kapak  ", en: "", ru: "", ar: "" } };
+    const result = CreateProductSchema.safeParse(surroundingWs);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.name.tr).toBe("PET Kapak"); // trim'li
+    }
+  });
 });
 
 describe("UpdateProductSchema", () => {
