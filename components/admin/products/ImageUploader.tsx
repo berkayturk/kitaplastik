@@ -2,7 +2,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { createBrowserClient } from "@supabase/ssr";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env.client";
 
 export interface UploadedImage {
   path: string;

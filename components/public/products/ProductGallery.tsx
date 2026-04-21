@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { Locale } from "@/i18n/routing";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env.client";
 import { getImageAltText } from "@/lib/products/alt-text";
 
 interface Img {

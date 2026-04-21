@@ -8,6 +8,7 @@ import { recordAudit } from "@/lib/audit";
 import { CreateProductSchema, UpdateProductSchema } from "@/lib/admin/schemas/product";
 import { slugify } from "@/lib/utils/slugify";
 import { uniqueSlug } from "@/lib/utils/unique-slug";
+import { assertUuid } from "@/lib/utils/assert";
 import { slugExists, getProductById } from "@/lib/admin/products";
 
 const LOCALES = ["tr", "en", "ru", "ar"] as const;
@@ -71,6 +72,7 @@ export async function createProduct(formData: FormData): Promise<void> {
 
 export async function updateProduct(id: string, formData: FormData): Promise<void> {
   const user = await requireAdminRole();
+  assertUuid(id);
 
   const slugOverride = String(formData.get("slug_override") ?? "").trim() || undefined;
 
@@ -127,6 +129,9 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
 
 export async function softDeleteProduct(id: string): Promise<void> {
   const user = await requireAdminRole();
+  assertUuid(id);
+  const existing = await getProductById(id);
+  if (!existing) throw new Error("Ürün bulunamadı");
   const svc = createServiceClient();
   const { error } = await svc.from("products").update({ active: false }).eq("id", id);
   if (error) throw new Error(error.message);
@@ -146,6 +151,9 @@ export async function softDeleteProduct(id: string): Promise<void> {
 
 export async function restoreProduct(id: string): Promise<void> {
   const user = await requireAdminRole();
+  assertUuid(id);
+  const existing = await getProductById(id);
+  if (!existing) throw new Error("Ürün bulunamadı");
   const svc = createServiceClient();
   const { error } = await svc.from("products").update({ active: true }).eq("id", id);
   if (error) throw new Error(error.message);
@@ -165,6 +173,7 @@ export async function restoreProduct(id: string): Promise<void> {
 
 export async function cloneProduct(sourceId: string): Promise<void> {
   const user = await requireAdminRole();
+  assertUuid(sourceId, "sourceId");
   const svc = createServiceClient();
 
   const source = await getProductById(sourceId);
@@ -174,7 +183,7 @@ export async function cloneProduct(sourceId: string): Promise<void> {
 
   type ClonedImage = { path: string; order: number; alt_text: Record<string, string> };
   const cloned: ClonedImage[] = [];
-  let insertedId!: string;
+  let insertedId: string | undefined;
 
   try {
     for (const img of source.images ?? []) {
@@ -227,5 +236,6 @@ export async function cloneProduct(sourceId: string): Promise<void> {
     throw err;
   }
 
+  if (!insertedId) throw new Error("Klonlama başarısız");
   redirect(`/admin/products/${insertedId}/edit?cloned=1`);
 }

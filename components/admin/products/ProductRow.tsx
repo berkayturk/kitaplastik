@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { ProductRow as ProductRowData } from "@/lib/admin/products";
 import { DeleteDialog } from "./DeleteDialog";
 import { RestoreButton } from "./RestoreButton";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env.client";
 
 interface Props {
   product: ProductRowData;

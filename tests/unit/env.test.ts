@@ -19,7 +19,7 @@ describe("env validation", () => {
     process.env.SUPABASE_SERVICE_ROLE_KEY = "svc-key";
     process.env.TURNSTILE_SECRET_KEY = "secret-key";
     process.env.RESEND_API_KEY = "re_test";
-    const { env } = await import("@/lib/env");
+    const { env } = await import("@/lib/env.client");
     expect(env.NEXT_PUBLIC_SUPABASE_URL).toBe("https://example.supabase.co");
     expect(env.NEXT_PUBLIC_SUPABASE_ANON_KEY).toBe("anon-key-xyz");
   });
@@ -31,7 +31,7 @@ describe("env validation", () => {
     process.env.SUPABASE_SERVICE_ROLE_KEY = "svc-key";
     process.env.TURNSTILE_SECRET_KEY = "secret-key";
     process.env.RESEND_API_KEY = "re_test";
-    await expect(import("@/lib/env")).rejects.toThrow(/NEXT_PUBLIC_SUPABASE_URL/);
+    await expect(import("@/lib/env.client")).rejects.toThrow(/NEXT_PUBLIC_SUPABASE_URL/);
   });
 
   it("geçersiz URL formatı için hata fırlatır", async () => {
@@ -41,6 +41,6 @@ describe("env validation", () => {
     process.env.SUPABASE_SERVICE_ROLE_KEY = "svc-key";
     process.env.TURNSTILE_SECRET_KEY = "secret-key";
     process.env.RESEND_API_KEY = "re_test";
-    await expect(import("@/lib/env")).rejects.toThrow(/url/i);
+    await expect(import("@/lib/env.client")).rejects.toThrow(/url/i);
   });
 });

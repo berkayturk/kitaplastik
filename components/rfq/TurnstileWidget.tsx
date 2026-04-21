@@ -2,7 +2,7 @@
 "use client";
 
 import { Turnstile } from "@marsidev/react-turnstile";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env.client";
 
 interface Props {
   onSuccess: (token: string) => void;

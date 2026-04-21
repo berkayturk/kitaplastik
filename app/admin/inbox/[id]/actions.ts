@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
 import { recordAudit } from "@/lib/audit";
+import { assertUuid } from "@/lib/utils/assert";
 
 const STATUSES = ["new", "reviewing", "quoted", "won", "lost", "archived"] as const;
 type Status = (typeof STATUSES)[number];
@@ -17,6 +18,7 @@ function isStatus(v: string): v is Status {
 export async function updateStatus(formData: FormData): Promise<void> {
   const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
+  assertUuid(id);
   const statusRaw = String(formData.get("status") ?? "new");
   if (!isStatus(statusRaw)) throw new Error("invalid_status");
   const status = statusRaw;
@@ -44,6 +46,7 @@ export async function updateStatus(formData: FormData): Promise<void> {
 export async function saveNotes(formData: FormData): Promise<void> {
   const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
+  assertUuid(id);
   const notes = String(formData.get("notes") ?? "");
   const svc = createServiceClient();
   const { error } = await svc.from("rfqs").update({ internal_notes: notes }).eq("id", id);
