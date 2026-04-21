@@ -5,10 +5,10 @@ import { revalidatePath } from "next/cache";
 import { requireAdminRole } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
 import { recordAudit } from "@/lib/audit";
-import { CreateProductSchema } from "@/lib/admin/schemas/product";
+import { CreateProductSchema, UpdateProductSchema } from "@/lib/admin/schemas/product";
 import { slugify } from "@/lib/utils/slugify";
 import { uniqueSlug } from "@/lib/utils/unique-slug";
-import { slugExists } from "@/lib/admin/products";
+import { slugExists, getProductById } from "@/lib/admin/products";
 
 const LOCALES = ["tr", "en", "ru", "ar"] as const;
 
@@ -67,4 +67,61 @@ export async function createProduct(formData: FormData): Promise<void> {
 
   revalidatePublicProducts();
   redirect("/admin/products?success=created");
+}
+
+export async function updateProduct(id: string, formData: FormData): Promise<void> {
+  const user = await requireAdminRole();
+
+  const slugOverride = String(formData.get("slug_override") ?? "").trim() || undefined;
+
+  const input = UpdateProductSchema.parse({
+    sector_id: String(formData.get("sector_id") ?? ""),
+    name: parseJson(formData.get("name"), { tr: "", en: "", ru: "", ar: "" }),
+    description: parseJson(formData.get("description"), { tr: "", en: "", ru: "", ar: "" }),
+    specs: parseJson(formData.get("specs"), []),
+    images: parseJson(formData.get("images"), []),
+    ...(slugOverride ? { slug_override: slugOverride } : {}),
+  });
+
+  const existing = await getProductById(id);
+  if (!existing) throw new Error("Ürün bulunamadı");
+
+  let nextSlug = existing.slug;
+  if (input.slug_override && input.slug_override !== existing.slug) {
+    if (await slugExists(input.slug_override, id)) {
+      throw new Error(`"${input.slug_override}" slug başka ürün tarafından kullanılıyor`);
+    }
+    nextSlug = input.slug_override;
+  }
+
+  const svc = createServiceClient();
+  const { error } = await svc
+    .from("products")
+    .update({
+      slug: nextSlug,
+      sector_id: input.sector_id,
+      name: input.name,
+      description: input.description,
+      specs: input.specs,
+      images: input.images,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await recordAudit({
+    action: "product_updated",
+    entity_type: "product",
+    entity_id: id,
+    user_id: user.id,
+    ip: null,
+    diff: {
+      slug: nextSlug !== existing.slug ? { from: existing.slug, to: nextSlug } : undefined,
+      name: input.name,
+    },
+  });
+
+  revalidatePublicProducts();
+  revalidatePath(`/admin/products/${id}/edit`);
+  redirect("/admin/products?success=updated");
 }
