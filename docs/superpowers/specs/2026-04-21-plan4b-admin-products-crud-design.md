@@ -60,8 +60,8 @@ Bu iş iki bölüm:
 ### Senaryo D — Benzer ürün hızlıca ekliyorsun
 
 1. Mevcut ürün "Düzenle" sayfasında **"Bu ürüne benzer yeni ekle"** butonu
-2. Aynı verilerle yeni form açılır
-3. Farklı olan yerleri değiştirirsin (ad, boyut, görsel) → Kaydet
+2. Sunucu tarafında Storage görselleri yeni UUID path'lerine kopyalanır (orijinal ürün etkilenmez), yeni bir ürün satırı insert edilir, ardından edit mode'unda form tam dolu açılır (metin alanları + spec satırları + görseller)
+3. Farklı olan yerleri değiştirirsin (ad, boyut, bir-iki görsel swap) → Kaydet
 4. 5 benzer ürün 10 dakikada yüklenir
 
 ## Admin form görünümü
@@ -144,6 +144,21 @@ Her satır: küçük thumbnail + ürün adı (TR) + sektör + aksiyon butonları
 - Sonradan /edit → EN tab'ına metni yapıştır → Kaydet → ürün EN locale'de de yayında
 - Admin ürün listesinde her satırda hangi dillerde dolu olduğu rozetle görünür: `TR ✓ · EN ✓` veya `TR ✓`
 
+## Alt text & a11y (görseller)
+
+Görsel `alt_text` alanı admin formunda **girilmez** — yurtdışı trafik + basitlik önceliğiyle runtime auto-fallback kullanılır:
+
+- **Ana görsel (order=0):** `alt = {name[locale]}` — örn. "PET Preform Kapak 28 mm"
+- **Galeri görselleri (order>0):** `alt = {name[locale]} — {t('common.productImageLabel')} {order+1}`
+  - TR: "… — görsel 2"
+  - EN: "… — image 2"
+  - RU: "… — изображение 2"
+  - AR: "… — صورة 2"
+
+Public ürün sadece `name[locale]` dolu olduğu locale'de render olduğu için alt text otomatik doğru dilde olur (i18n sızıntısı yok, RTL AR dahil). Schema'daki `images[].alt_text: {tr,en,ru,ar}` alanı boş kayıt edilir — Plan 4c'de detaylı manuel override için hazır kalır.
+
+**Yeni i18n key:** `common.productImageLabel` — 4 dilde `messages/{tr,en,ru,ar}/common.json`'a eklenir.
+
 ## Teknik özellikler (spec) mantığı
 
 10 preset özellik var — her biri 4 dilde label'lı:
@@ -164,15 +179,17 @@ Her satır: küçük thumbnail + ürün adı (TR) + sektör + aksiyon butonları
 - Admin "Özellik Ekle" → listeden seçer, değeri yazar
 - Key 4 dilde otomatik (preset lookup), public sayfada locale'e göre gösterilir
 - **Değer dil-bağımsız tek alan** (admin bir kere girer, 4 dilde aynı görünür). Endüstriyel verilerde değerler çoğunlukla universal ("PET", "28 mm", "10.000 adet")
+- **Preset unique:** Her preset yalnızca bir kere eklenebilir. "Özellik Ekle" dropdown'ında zaten eklenmiş preset disabled olur. Çoklu değer gerekirse tek hücrede virgül/slash ile girilir (örn. `Sertifika: TSE, ISO 9001, FDA` veya `Renk: Beyaz / Siyah / Şeffaf`). Plan 4c'de ihtiyaç doğarsa constraint kaldırılabilir (geriye uyumlu).
+- **Sıralama:** Spec satırları admin tarafından yukarı/aşağı ok butonlarıyla sıralanır; public detay sayfasındaki tablo bu sırayı korur (ilk satır en üstte).
 - Özgün (preset listede olmayan) özellik eklemek MVP'de yok — ihtiyaç olursa Plan 4c'ye
 
 ## Risk ve yan etki
 
 - **4 dil doldurma yükü:** TR zorunlu, diğerleri opsiyonel. Başta sadece TR'de yüklersen EN/RU/AR sayfalarında o ürün görünmez (kabul edilmiş davranış). İlerleyen günlerde EN/RU/AR çevirilerini elle yapıştırırsın, her kaydetmede o dilde yayın açılır.
 - **Görsel optimizasyonu MVP'de yok.** Admin panelinde resize/compress yapılmıyor. 5 MB'den büyük görsel yüklersen yavaş yüklenir. Next/Image runtime'da resize + WebP yapıyor, public sayfada hızlı gösterilir — ama Storage'daki orijinaller büyük kalır. Plan 4c'de client-side compress eklenebilir.
-- **Slug çakışması:** Aynı ürün adıyla iki ürün yükleyemezsin. "Bu slug zaten var" uyarısı çıkar, ad'ı küçük değiştirirsin (örn. numaralandır). URL'ler TR ad'dan otomatik üretilir (`pet-preform-kapak-28-mm`).
+- **Slug çakışması:** Aynı ürün adıyla iki ürün yükleyemezsin. "Bu slug zaten var" uyarısı çıkar, ad'ı küçük değiştirirsin (örn. numaralandır). URL'ler TR ad'dan ilk kayıtta otomatik üretilir (`pet-preform-kapak-28-mm`).
 - **Silinmiş ürünlerin görselleri Storage'da kalır.** "Silinmiş" tab'ında ürünü tekrar görürsün (geri yükleyebilmen için). Otomatik temizlik MVP'de yok.
-- **Slug değiştirilmesi linkleri kırar.** Düzenleme sırasında ad'ı tamamen değiştirirsen slug da değişebilir; mevcut Google link'leri bir süre kırık olur. Düzenle sayfasında uyarı gösterilir.
+- **Slug lifecycle (kilitli, opt-in edit):** Slug yalnızca ilk kayıtta TR adından türetilir; sonraki düzenlemelerde **kilitli ve salt-okunur** olarak gösterilir (TR adı değişse bile slug değişmez). Admin URL'i gerçekten değiştirmek isterse edit form'daki **"Slug'ı düzenle"** toggle'ını açar → input editable olur + "URL değişir, mevcut Google link'leri kırılır" uyarısı gösterilir + uniqueness kontrolü yapılır. Bu sayede tipik düzenlemelerde (açıklama/spec/görsel/TR ad düzeltmesi) mevcut link'ler asla kırılmaz.
 
 ## Ne zaman bitecek?
 
@@ -207,6 +224,12 @@ Plan 4b "bitti" denebilmesi için:
 - [ ] Detay sayfada Schema.org Product markup var (Google Rich Results test passes)
 - [ ] Standart RFQ'daki ürün seçici products tablosundan autocomplete ediyor
 - [ ] Manuel test: 3 örnek ürün yükle (farklı sektör, farklı görsel sayısı, TR-only + 4-dil), public site'da doğru görünür
+- [ ] Slug ilk kayıttan sonra edit form'da **kilitli** (salt-okunur); "Slug'ı düzenle" toggle açılınca input editable + "URL değişir, Google link'leri kırılır" uyarısı gösteriliyor; uniqueness kontrolü server'da doğrulanıyor
+- [ ] "Bu ürüne benzer yeni ekle" butonu yeni ürün insert ediyor + 1-5 görseli `supabase.storage.copy()` ile yeni UUID path'lerine kopyalıyor; orijinal ürün + görselleri etkilenmiyor; yeni ürün edit mode'da tüm alanları dolu açılıyor
+- [ ] Public sayfalarda alt text runtime auto-fallback: ana görsel `name[locale]`, galeri `name[locale] — {productImageLabel} {N}`, 4 locale'de doğrulandı (AR RTL dahil)
+- [ ] Standart RFQ ürün seçici autocomplete sonuç bulamayınca nazik empty state + `/teklif-iste/ozel-uretim` linki gösteriyor
+- [ ] Spec satırı yukarı/aşağı reorder → public detay sayfasındaki spec tablosu aynı sırayı koruyor
+- [ ] `common.productImageLabel` i18n key 4 dilde `messages/{tr,en,ru,ar}/common.json`'a eklendi
 - [ ] Unit + E2E testler yeşil, CI yeşil
 - [ ] Coolify redeploy sonrası canlı: tüm kabul kriterleri canlıda da geçiyor
 - [ ] `/admin/settings/notifications` route'u (Plan 4a'da rename edildi) hâlâ çalışıyor
@@ -230,9 +253,9 @@ Server Actions (app/admin/products/actions.ts):
   updateProduct(id, formData)
   softDeleteProduct(id)
   restoreProduct(id)
-
-HTTP API (opsiyonel):
-  /api/admin/products/[id]/clone          (POST, "benzer ekle" için)
+  cloneProduct(id)                   ("benzer ekle": yeni ürün row insert + Storage'daki 1-5 görseli
+                                      supabase.storage.copy() ile yeni UUID path'lerine kopyala →
+                                      redirect /admin/products/<new-id>/edit)
 ```
 
 ### Bileşen ağacı
@@ -243,11 +266,16 @@ components/admin/products/
   ProductRow.tsx
   ProductForm.tsx           (ana form, 'use client')
   LocaleTabs.tsx            (TR/EN/RU/AR switcher)
-  SpecBuilder.tsx           (preset dropdown + key-value liste)
-  ImageUploader.tsx         (Supabase Storage direkt upload, reorder oklar)
+  SlugField.tsx             (create: canlı preview; edit: kilitli salt-okunur +
+                             "Slug'ı düzenle" toggle + "URL değişir" uyarısı)
+  SpecBuilder.tsx           (preset dropdown; eklenmiş preset "disabled";
+                             up/down ok butonu ile sıralama; her satırda sil)
+  ImageUploader.tsx         (Supabase Storage direkt upload; up/down ok butonları
+                             ile sıralama; max 5 × 10 MB; JPG/PNG/WebP)
   DeleteDialog.tsx          (confirmation modal)
   RestoreButton.tsx
   SaveProgressModal.tsx     (blocking modal "Kaydediliyor...")
+  CloneButton.tsx           (edit form'da "Bu ürüne benzer yeni ekle" → cloneProduct server action)
 
 components/public/products/
   ProductGrid.tsx
@@ -257,7 +285,11 @@ components/public/products/
   ProductSpecTable.tsx
 
 components/rfq/
-  ProductPicker.tsx         (GÜNCELLE: free-text → catalog autocomplete)
+  ProductPicker.tsx         (GÜNCELLE: free-text → catalog autocomplete;
+                             debounce fetch `products` tablosundan locale-filtrelenmiş,
+                             sonuç yoksa empty state: "Aradığınız ürün listede yok mu?
+                             Özel üretim talep formundan detaylı talep oluşturun." →
+                             /[locale]/teklif-iste/ozel-uretim link)
 
 lib/admin/
   products.ts               (server CRUD helpers)
@@ -350,6 +382,60 @@ async function uploadImage(file: File, tempSlug: string) {
 
 Edit mode'da slug değişirse görsel path'leri Storage'da rename edilmez (görsel URL'leri kalıcı). Slug değişince `images[].path` hâlâ eski slug'ı işaret eder; işlev değişmez, sadece path estetik değil. MVP kabul.
 
+### Görsel kopyalama (`cloneProduct` server action)
+
+```ts
+'use server'
+export async function cloneProduct(sourceId: string) {
+  await requireAdminRole()
+  const supabase = createServerClient()
+
+  const { data: source, error: fetchErr } = await supabase
+    .from('products').select('*').eq('id', sourceId).single()
+  if (fetchErr || !source) throw fetchErr ?? new Error('not found')
+
+  const newSlug = await uniqueSlug(`${source.slug}-kopya`, 'products')
+  const clonedImages: ProductImage[] = []
+
+  try {
+    for (const img of source.images ?? []) {
+      const newUuid = crypto.randomUUID()
+      const ext = img.path.split('.').pop() ?? 'jpg'
+      const newPath = `${newSlug}/${newUuid}.${ext}`
+      const { error } = await supabase.storage
+        .from('product-images')
+        .copy(img.path, newPath)
+      if (error) throw error
+      clonedImages.push({ ...img, path: newPath })
+    }
+
+    const { data: inserted, error: insertErr } = await supabase
+      .from('products').insert({
+        slug: newSlug,
+        sector_id: source.sector_id,
+        name: source.name,
+        description: source.description,
+        images: clonedImages,
+        specs: source.specs,
+        active: true,
+      }).select('id').single()
+    if (insertErr) throw insertErr
+
+    await insertAudit('clone', 'product', inserted.id, { source_id: sourceId })
+    for (const loc of ['tr','en','ru','ar']) revalidatePath(`/${loc}/products`, 'layout')
+    redirect(`/admin/products/${inserted.id}/edit?cloned=1`)
+  } catch (err) {
+    // Partial storage copy rollback: best-effort cleanup
+    for (const img of clonedImages) {
+      await supabase.storage.from('product-images').remove([img.path]).catch(() => {})
+    }
+    throw err
+  }
+}
+```
+
+Yeni slug: `<orijinal-slug>-kopya` (örn. `pet-preform-kapak-28-mm-kopya`), `uniqueSlug()` helper'ı `-kopya-2`, `-kopya-3` suffix ile unique hale getirir. Admin edit'te TR adını + slug'ı (toggle ile) değiştirip Kaydet der.
+
 ### Auth & RLS
 
 - Admin route'ları: `requireAdminRole()` helper (mevcut, `lib/admin/auth.ts`)
@@ -360,23 +446,40 @@ Edit mode'da slug değişirse görsel path'leri Storage'da rename edilmez (görs
 
 **Unit:**
 - `tests/unit/lib/utils/slugify.test.ts` — Türkçe karakter (İ→i, ş→s, ı→i)
-- `tests/unit/lib/admin/schemas/product.test.ts` — Zod validation (TR zorunlu, EN opsiyonel, specs format)
+- `tests/unit/lib/admin/schemas/product.test.ts` — Zod validation (TR zorunlu, EN opsiyonel, specs format, preset unique constraint)
 - `tests/unit/lib/admin/spec-presets.test.ts` — 10 preset + 4 dil label
+- `tests/unit/lib/products/alt-text.test.ts` — ana görsel vs galeri alt formatting + 4 locale
+- `tests/unit/components/admin/products/SlugField.test.tsx` — kilitli default, toggle açma, uyarı görünümü
+- `tests/unit/components/admin/products/SpecBuilder.test.tsx` — preset unique disabled, up/down arrows, delete
 
 **Integration:** server action'ları test etmek için Supabase test client + transactional rollback.
 
 **E2E:** `tests/e2e/helpers/adminLogin.ts` — Supabase admin API ile session cookie inject (programmatic login, Plan 3'te `test.skip` edilmişti, burada aktif edilir).
 - `tests/e2e/admin-product-create.spec.ts`
-- `tests/e2e/admin-product-edit.spec.ts`
+- `tests/e2e/admin-product-edit.spec.ts` (slug toggle + TR ad değişikliğinde slug stabil testi dahil)
+- `tests/e2e/admin-product-clone.spec.ts` (Senaryo D: metin + görsel kopyalama doğrulaması)
 - `tests/e2e/admin-product-delete-restore.spec.ts`
-- `tests/e2e/public-products-grid.spec.ts`
-- `tests/e2e/public-product-detail.spec.ts`
-- `tests/e2e/rfq-product-picker.spec.ts`
+- `tests/e2e/public-products-grid.spec.ts` (4 locale + "boşsa-gösterme" davranışı)
+- `tests/e2e/public-product-detail.spec.ts` (alt text auto-fallback doğrulaması)
+- `tests/e2e/rfq-product-picker.spec.ts` (autocomplete + empty state → özel üretim linki)
 
 ### Deploy
 
 - Coolify redeploy (Plan 4a pattern)
 - Smoke: `/admin/products` login + happy path + delete/restore + public `/tr/products` + RFQ picker
+
+### Brainstorm Kararları (2026-04-21)
+
+Spec onay sonrası 6 tasarım sorusu netleştirildi. Tüm kararlar yukarıdaki bölümlere işlendi; aşağıda referans için özet:
+
+| # | Soru | Karar |
+|---|---|---|
+| 1 | Slug yaşam döngüsü | İlk kayıtta TR'den auto, sonra kilitli + opt-in "Slug'ı düzenle" toggle |
+| 2 | Aynı preset'in birden fazla eklenmesi | Preset unique; dropdown'da eklenmiş preset disabled; çoklu değer tek hücrede virgülle |
+| 3 | Alt text | Admin girmez; runtime fallback `name[locale]` + `productImageLabel` |
+| 4 | "Benzer ürün ekle" kapsamı | Metin + görseller (Storage `copy()` yeni UUID path'lere); edit mode'da açılır |
+| 5 | Sıralama UX (görsel + spec) | Yukarı/aşağı ok butonları (drag-drop Plan 4c adayı) |
+| 6 | RFQ ProductPicker fallback | Katalog-only; sonuç yoksa nazik empty state → özel üretim linki |
 
 ### Plan 4c adayları (bu plan dışı, ileride)
 
