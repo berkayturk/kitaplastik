@@ -50,9 +50,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const product = await loadProduct(locale, slug);
   if (!product) notFound();
 
-  const [tCta, tCommon] = await Promise.all([
+  const [tCta, tCommon, tDetail] = await Promise.all([
     getTranslations({ locale, namespace: "common.cta" }),
     getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "pages.products.detail" }),
   ]);
 
   return (
@@ -78,6 +79,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         locale={locale}
         ctaLabel={tCta("requestQuote")}
         imageLabel={tCommon("productImageLabel")}
+        specsLabel={tDetail("specsLabel")}
       />
     </section>
   );

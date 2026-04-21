@@ -5,7 +5,10 @@
       "title": "Standart ürün katalogumuz",
       "subtitle": "Üç sektör için stoklu ve hızlı teslim edilebilen standart parçalarımız. Detaylı katalog için iletişime geçiniz."
     },
-    "notice": "Tam kataloğumuz Plan 3 kapsamında eklenecektir — şu anda talepleri iletişim formundan alıyoruz."
+    "notice": "Tam kataloğumuz Plan 3 kapsamında eklenecektir — şu anda talepleri iletişim formundan alıyoruz.",
+    "detail": {
+      "specsLabel": "Teknik Özellikler"
+    }
   },
   "about": {
     "hero": {

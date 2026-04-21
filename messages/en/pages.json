@@ -5,7 +5,10 @@
       "title": "Our standard product catalogue",
       "subtitle": "Our in-stock, quickly deliverable standard parts for three sectors. Please contact us for the detailed catalogue."
     },
-    "notice": "Our full catalogue will be added as part of Plan 3 — we currently accept requests via the contact form."
+    "notice": "Our full catalogue will be added as part of Plan 3 — we currently accept requests via the contact form.",
+    "detail": {
+      "specsLabel": "Technical Specifications"
+    }
   },
   "about": {
     "hero": {

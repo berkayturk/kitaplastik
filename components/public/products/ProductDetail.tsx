@@ -18,9 +18,10 @@ interface Props {
   locale: Locale;
   ctaLabel: string;
   imageLabel: string;
+  specsLabel: string;
 }
 
-export function ProductDetail({ product, locale, ctaLabel, imageLabel }: Props) {
+export function ProductDetail({ product, locale, ctaLabel, imageLabel, specsLabel }: Props) {
   const siteUrl = (env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com").replace(/\/$/, "");
   const imageBase = `${env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/$/, "")}/storage/v1/object/public/product-images`;
 
@@ -53,7 +54,7 @@ export function ProductDetail({ product, locale, ctaLabel, imageLabel }: Props) 
         )}
         <div className="mt-6">
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-text-tertiary">
-            Teknik Özellikler
+            {specsLabel}
           </h2>
           <ProductSpecTable specs={product.specs} locale={locale} />
         </div>
