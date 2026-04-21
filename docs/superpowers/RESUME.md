@@ -347,6 +347,62 @@ Her task self-contained: exact file paths, full code blocks, TDD cycle (failing 
 - Spec + plan dosyaları: merge içinde (Plan 4a PR)
 - Memory: `feedback_basit_scope_split.md` (önceki oturum) + bu oturum yeni: `feedback_coolify_autodeploy_via_gha.md`
 
+## 2026-04-21 (devam 3) — Plan 4b kod canlıda, smoke + security audit aşaması
+
+**Durum:** Plan 4b execute tamamlandı. 38 commit main'e push edildi (`8b64d53..eb2de24`). GHA → Coolify auto-deploy tetiklendi.
+
+### Ne bitti
+
+- 28 task (T1-T28) subagent-driven pattern ile: implementer → spec review → code quality review → fix
+- 38 commit: 28 feat/test + 10 fix (code-review bulguları)
+- Local green: typecheck ✓, vitest 108/108 ✓, lint clean ✓, build ✓ (4 locale products SSG + dynamic slug + 3 admin routes)
+- 5 ürün route'u derlendi: `/[locale]/products` (4 locale SSG), `/[locale]/products/[slug]` (dynamic), `/admin/products`, `/admin/products/new`, `/admin/products/[id]/edit`
+- 10 code-review fix inline: security/a11y/TS strict/i18n/UX düzeltmeleri
+
+### Final fix turu (user: "her şeyi fixle öyle pushla")
+
+4 ek commit (Plan 4b review'larda yakalanan):
+- SpecBuilder `role="option"` → `role="menuitem"` (jsx-a11y + ARIA ownership düzeldi)
+- `listProducts` search param drop (UI filter client-side zaten yapıyor — dead code temizlik)
+- `ProductDetail` "Teknik Özellikler" → `specsLabel` prop + 4 locale translation
+- RFQ `ProductPicker` i18n restore (10 yeni key × 4 locale, eskiden hardcoded TR idi)
+
+### Şu an nerede (WIP — smoke bekliyor)
+
+- Deploy ~2-3dk içinde Coolify'da canlı olur
+- T28 canlı smoke kalan (plan'da Step 3-4 listesi var — admin CRUD 4 locale × clone × delete/restore × RFQ picker empty state × Schema.org JSON-LD kontrolü)
+- RESUME "Plan 4b ✅" entry smoke sonrası (plan'da T28 Step 6 template hazır)
+
+### Security audit kararı
+
+Smoke test ÖNCESİ user'ın talebiyle comprehensive security audit başlatıldı:
+- `security-review` skill (branch diff)
+- `security-reviewer` agent (OWASP)
+- `database-reviewer` agent (Supabase RLS)
+- `typescript-reviewer` agent (TS-specific)
+- `pnpm audit` (dep vulns)
+- Grep for hardcoded secrets
+
+Bulgular (synthesized ve fix edildi — 6 commit):
+
+- **CRITICAL (2)**: public pages anon client'a geçti (C1 — RLS bypass kapandı); rfq-attachments path traversal regex constraint ile kapandı (C2 — migration'da UUID prefix + whitelisted extension).
+- **HIGH (9)**: open redirect auth/callback `next` fix; UUID assertion tüm admin action'lara eklendi (`updateProduct` / `softDeleteProduct` / `restoreProduct` / `cloneProduct` / `updateStatus` / `saveNotes` / `toggleRecipient` / `removeRecipient`); audit_log INSERT policy drop (service client yazar, policy attack surface); `insertedId!` definite-assignment narrow edildi; error boundaries (public + admin); RLS memoization — param-less `is_admin()` / `is_admin_role()` helpers + `(select auth.uid())` + SECURITY DEFINER + search_path locked.
+- **MEDIUM (12)**: env server/client split + `"server-only"` pragma (`lib/env.client.ts` yeni, `lib/env.ts` server-only); CSP + HSTS headers vercel.json; `app/design-debug/` silindi + middleware bypass temizlendi; bucket limits (file_size + allowed_mime_types: product-images 10MB jpeg/png/webp, rfq-attachments 10MB pdf+images+office+step+iges, sector-images 10MB image); ilike wildcard escape (%, _, \\); clone storage copy hata mesajı sanitize; password trim kaldırıldı; softDeleteProduct/restoreProduct existence check; addRecipient `z.string().email()` validate; redundant `as AdminUser["role"]` cast silindi; ProductPicker stable React keys (`crypto.randomUUID()` + payload'tan strip); button error handling (DeleteDialog/CloneButton/RestoreButton try/catch + inline error state).
+- **LOW (8)**: `is_admin` SECURITY DEFINER; perf indexes (products(active,display_order), products(sector_id), rfqs(assigned_to), notification_recipients(active) WHERE active); env test dosyaları env.client'a yönlendirildi.
+
+**Deferred (gerekçeli)**:
+
+- next-intl v3→v4 upgrade (H2-sec): breaking change, ayrı task. CSP + open-redirect fix'ler attack surface'i zaten kapattı.
+- `console.error` → structured logger (M5-ts): Sentry SDK wiring lazım, ayrı plan.
+- `exactOptionalPropertyTypes` (L3-ts): tsconfig change, orthogonal.
+- Seed email cleanup (M2-db): git history immutable; yeni seed'lerde env substitution.
+- Middleware admin_role DB lookup (H4-db): page-level `requireAdmin` / `requireAdminRole` yeterli defense-in-depth; edge runtime'da ek DB roundtrip ağır.
+- admin_users policy docs (H2-db): service-only pattern zaten etkili; `self read admin_users` memoized güncellemesi yapıldı.
+
+**Yeni migration**: `supabase/migrations/20260421200000_plan4b_security_hardening.sql` (henüz push edilmedi — user `supabase db push` ile uygulayacak).
+
+**Son durum**: 44 commit toplam, hepsi push-hazır. Local green: typecheck ✓, vitest 108/108 ✓, lint ✓, build ✓. Smoke test + migration push bekliyor.
+
 ## Yeni Session Başlangıç Komutları
 
 ### 🚀 Plan 4b EXECUTE (subagent-driven — brainstorm + plan hazır)
