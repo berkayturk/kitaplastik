@@ -174,7 +174,7 @@ export async function cloneProduct(sourceId: string): Promise<void> {
 
   type ClonedImage = { path: string; order: number; alt_text: Record<string, string> };
   const cloned: ClonedImage[] = [];
-  let insertedId: string | null = null;
+  let insertedId!: string;
 
   try {
     for (const img of source.images ?? []) {
