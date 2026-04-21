@@ -124,3 +124,41 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
   revalidatePath(`/admin/products/${id}/edit`);
   redirect("/admin/products?success=updated");
 }
+
+export async function softDeleteProduct(id: string): Promise<void> {
+  const user = await requireAdminRole();
+  const svc = createServiceClient();
+  const { error } = await svc.from("products").update({ active: false }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await recordAudit({
+    action: "product_soft_deleted",
+    entity_type: "product",
+    entity_id: id,
+    user_id: user.id,
+    ip: null,
+    diff: { active: false },
+  });
+
+  revalidatePublicProducts();
+  revalidatePath("/admin/products");
+}
+
+export async function restoreProduct(id: string): Promise<void> {
+  const user = await requireAdminRole();
+  const svc = createServiceClient();
+  const { error } = await svc.from("products").update({ active: true }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await recordAudit({
+    action: "product_restored",
+    entity_type: "product",
+    entity_id: id,
+    user_id: user.id,
+    ip: null,
+    diff: { active: true },
+  });
+
+  revalidatePublicProducts();
+  revalidatePath("/admin/products");
+}
