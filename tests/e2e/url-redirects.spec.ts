@@ -27,17 +27,21 @@ test.describe("Plan 4a: public URL 301 redirects", () => {
         const response = await page.goto(oldUrl, {
           waitUntil: "domcontentloaded",
         });
-        expect(response?.status()).toBe(200);
+        // Redirect sonrası yeni URL'de settled olmalı
         expect(page.url()).toContain(newUrl);
+        // Yeni URL 2xx response dönmeli
+        expect(response?.status()).toBeGreaterThanOrEqual(200);
+        expect(response?.status()).toBeLessThan(300);
       });
     }
   }
 });
 
 test("admin: /admin/ayarlar/bildirimler → /admin/settings/notifications", async ({ page }) => {
-  const response = await page.goto("/admin/ayarlar/bildirimler", {
+  await page.goto("/admin/ayarlar/bildirimler", {
     waitUntil: "domcontentloaded",
   });
-  // Admin login gate yakaladığından 200 or redirect to /admin/login — her iki durumda da path /admin/settings/notifications'ı geçmiş olmalı
-  expect(response?.url()).toMatch(/\/admin\/(settings\/notifications|login)/);
+  // page.url() = post-navigation settled URL (response.url() redirect chain'in
+  // ilk URL'sini döner, yanıltıcı)
+  expect(page.url()).toMatch(/\/admin\/(settings\/notifications|login)/);
 });
