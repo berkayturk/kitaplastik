@@ -1,0 +1,29 @@
+name: Deploy
+
+# Trigger Coolify deploy after CI finishes successfully on main.
+# Secrets required:
+#   - COOLIFY_TOKEN       Coolify API bearer token
+#   - COOLIFY_DEPLOY_URL  Full deploy webhook URL (per-app UUID)
+# Failed CI -> no deploy (broken commits stay off production).
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Trigger Coolify deploy
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 5
+
+    steps:
+      - name: Call Coolify deploy webhook
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_DEPLOY_URL: ${{ secrets.COOLIFY_DEPLOY_URL }}
+        run: |
+          response=$(curl -fsSL -H "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_DEPLOY_URL")
+          echo "Coolify response: $response"
