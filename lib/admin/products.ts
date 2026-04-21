@@ -25,22 +25,15 @@ export interface ProductRow {
   updated_at: string;
 }
 
-export async function listProducts(opts: {
-  active: boolean;
-  search?: string;
-}): Promise<ProductRow[]> {
+export async function listProducts(opts: { active: boolean }): Promise<ProductRow[]> {
   const svc = createServiceClient();
-  let q = svc
+  const { data, error } = await svc
     .from("products")
     .select(
       "id, slug, sector_id, name, description, images, specs, active, display_order, updated_at",
     )
     .eq("active", opts.active)
     .order("updated_at", { ascending: false });
-  if (opts.search && opts.search.trim()) {
-    q = q.ilike("slug", `%${opts.search.trim()}%`);
-  }
-  const { data, error } = await q;
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as ProductRow[];
 }
