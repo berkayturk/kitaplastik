@@ -209,9 +209,74 @@ Admin login aşaması tamamlandı, 5 commit atıldı, branch origin'den 58 commi
 - Release task 5 **host seçimi + deploy (Vercel KULLANILMAYACAK — güven sorunu; alternatifler: Cloudflare Pages, self-host VPS, Netlify vs.)** + env transfer
 - Release task 7 Manuel smoke (contact form, custom RFQ + file upload, standart RFQ)
 
+## 2026-04-20 — İlk production deploy ✅
+
+**Site CANLI:** `https://kitaplastik.com` + `https://www.kitaplastik.com` (307 → `/tr`, HTTP/2 + h3, Let's Encrypt SSL).
+
+- **Domain:** CF Registrar, Berkay hesabında (abi hesabından "Move domain" ile transfer). NS: `denver` + `irma`. A @ + www → `188.245.42.178` (DNS only).
+- **Host:** Hetzner cx33 (`188.245.42.178`) + Coolify (`https://coolify.brtapps.dev/`). Nixpacks auto (Node 24 kurdu, 22'ye pin Plan 4).
+- **Deploy commit:** `7eadaf1`. `cbc8874` (design-debug prod guard + favicon + robots update) push edildi ama **redeploy bekliyor**.
+- **Turnstile prod key:** site + secret CF'de oluşturuldu; Coolify env'de. Secret chat'te paylaşıldı — Plan 4'te rotate.
+- **Resend:** şimdiki FROM ile çalışıyor; `noreply@kitaplastik.com` için domain verify sonraki iş.
+- **Memory güncellendi:** `project_kitaplastik.md` + 2 yeni feedback (`cf_registrar_same_account`, `coolify_nixpacks_env`).
+
 ## Yeni Session Başlangıç Komutları
 
-### Config devamı (kısa — kalan manuel task'ları koordine etmek için)
+### 🔄 Redeploy + smoke (hemen yarın)
+
+```
+Kitaplastik canlıda (https://kitaplastik.com). cbc8874 commit'i henüz deploy'a
+gitmedi — Coolify'da Redeploy tetikle (design-debug prod guard + favicon + robots
+disallow gelir). Sonra smoke: 4 locale (TR/EN/RU/AR, AR RTL), mobile, iletişim
+form (Turnstile + Resend mail), RFQ custom + standart (file upload), admin login
+→ /admin/inbox. Sorun çıkarsa fix, çıkmazsa durum özeti.
+
+ultrathink
+```
+
+### 📧 Resend domain verify + Google Workspace kurulum
+
+```
+Kitaplastik için info@kitaplastik.com mail kutusu + noreply@kitaplastik.com
+outbound sender kuralım. Plan:
+1. Google Workspace: kurulum + MX kayıtları (CF DNS)
+2. Resend: Domains → kitaplastik.com ekle, SPF/DKIM kayıtları CF DNS'e
+3. Birleşik SPF string (google + resend include'ları)
+4. Coolify env: RESEND_FROM_EMAIL=noreply@kitaplastik.com
+5. Redeploy + smoke contact form
+
+Başla: önce Resend dashboard'da domain add'le başla mı, yoksa GWS önce mi?
+
+ultrathink
+```
+
+### 🗺️ Plan 4 planlama (büyük — admin CRUD + SEO + analytics)
+
+```
+Kitaplastik MVP ve production deploy tamam. Plan 4'ü `superpowers:writing-plans`
+ile planla: `docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md`.
+
+Kapsam:
+- /admin/urunler + /admin/sektorler CRUD (4-dil tab, görsel upload)
+- /admin/ayarlar/sirket + sablonlar
+- Müşteri RFQ tracking /[locale]/rfq/[uuid]/
+- Upstash Redis rate limit upgrade
+- SEO: Schema.org Organization/Product, OG image, apple-icon
+- KVKK + Gizlilik Politikası sayfaları
+- Plausible + Sentry
+- Admin E2E programatik login
+- Node 22 pin (NIXPACKS_NODE_VERSION=22.22.2)
+- Turnstile secret rotate
+- CF proxy open (orange) + SSL "Full (strict)"
+- 404 sayfası i18n
+- E2E regresyon (redesign sonrası)
+
+Kod haritasını gör → brainstorm sorularını başlat.
+
+ultrathink
+```
+
+### Deprecated — Config devamı (config aşaması tamamlandı)
 
 ```
 docs/superpowers/RESUME.md oku — "2026-04-19 follow-up" bölümü güncel. Admin
