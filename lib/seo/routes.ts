@@ -2,17 +2,17 @@ import { locales, defaultLocale, type Locale } from "@/i18n/routing";
 
 export const PUBLIC_ROUTES = [
   "/",
-  "/sektorler",
-  "/sektorler/cam-yikama",
-  "/sektorler/kapak",
-  "/sektorler/tekstil",
-  "/urunler",
-  "/hakkimizda",
-  "/iletisim",
-  "/referanslar",
-  "/teklif-iste",
-  "/teklif-iste/ozel-uretim",
-  "/teklif-iste/standart",
+  "/sectors",
+  "/sectors/bottle-washing",
+  "/sectors/caps",
+  "/sectors/textile",
+  "/products",
+  "/about",
+  "/contact",
+  "/references",
+  "/request-quote",
+  "/request-quote/custom",
+  "/request-quote/standard",
 ] as const;
 
 export type PublicRoute = (typeof PUBLIC_ROUTES)[number];
