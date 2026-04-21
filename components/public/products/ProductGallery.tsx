@@ -48,6 +48,7 @@ export function ProductGallery({ images, name, locale, imageLabel }: Props) {
                 i === active ? "border-[var(--color-accent-cobalt)]" : "border-transparent"
               }`}
               aria-label={`Galeri ${i + 1}`}
+              aria-pressed={i === active}
             >
               <Image
                 src={`${base}/${img.path}`}
