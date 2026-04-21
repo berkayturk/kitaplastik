@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SPEC_PRESETS, type SpecPresetId, getPresetLabel } from "@/lib/admin/spec-presets";
 
 export interface SpecRow {
@@ -14,7 +14,26 @@ interface Props {
 
 export function SpecBuilder({ value, onChange }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const usedPresets = new Set(value.map((r) => r.preset_id));
+
+  useEffect(() => {
+    if (!pickerOpen) return;
+    function handleOutside(e: PointerEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setPickerOpen(false);
+      }
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setPickerOpen(false);
+    }
+    document.addEventListener("pointerdown", handleOutside);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("pointerdown", handleOutside);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [pickerOpen]);
 
   function updateRow(idx: number, patch: Partial<SpecRow>) {
     onChange(value.map((r, i) => (i === idx ? { ...r, ...patch } : r)));
@@ -82,7 +101,7 @@ export function SpecBuilder({ value, onChange }: Props) {
         ))}
       </div>
 
-      <div className="relative inline-block">
+      <div ref={containerRef} className="relative inline-block">
         <button
           type="button"
           onClick={() => setPickerOpen((o) => !o)}
@@ -99,14 +118,13 @@ export function SpecBuilder({ value, onChange }: Props) {
             {SPEC_PRESETS.map((p) => {
               const disabled = usedPresets.has(p.id);
               return (
-                <li key={p.id}>
+                <li key={p.id} role="presentation">
                   <button
                     role="option"
                     type="button"
                     onClick={() => addPreset(p.id)}
                     disabled={disabled}
                     aria-disabled={disabled}
-                    aria-selected={false}
                     className="hover:bg-bg-secondary/60 flex w-full items-center justify-between rounded-sm px-2 py-1 text-left text-sm disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {p.labels.tr}
