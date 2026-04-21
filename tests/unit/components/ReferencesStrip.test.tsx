@@ -103,6 +103,6 @@ describe("ReferencesStrip", () => {
   it("has link to full references page", async () => {
     await renderStrip();
     const link = screen.getByRole("link", { name: /Tümü/i });
-    expect(link).toHaveAttribute("href", expect.stringContaining("/referanslar"));
+    expect(link).toHaveAttribute("href", expect.stringContaining("/references"));
   });
 });

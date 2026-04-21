@@ -27,7 +27,7 @@ export async function ReferencesStrip() {
             </h2>
           </div>
           <Link
-            href="/referanslar"
+            href="/references"
             className="text-[14px] font-medium text-[var(--color-text-secondary)] transition-colors duration-200 ease-out hover:text-[var(--color-accent-cobalt)]"
           >
             {tHome("viewAll")} →
