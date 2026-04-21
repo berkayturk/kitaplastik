@@ -9,6 +9,7 @@ import { env } from "@/lib/env.client";
 import { cn } from "@/lib/utils";
 
 export interface ItemRow {
+  id: string; // client-only stable key for React list rendering; stripped before payload
   productSlug: string;
   productName: string;
   variant: string;
@@ -57,14 +58,17 @@ export function ProductPicker({ value, onChange, locale, maxItems = 20 }: Props)
     onChange(value.filter((_, idx) => idx !== i));
   }
   function add() {
-    onChange([...value, { productSlug: "", productName: "", variant: "", qty: 100 }]);
+    onChange([
+      ...value,
+      { id: crypto.randomUUID(), productSlug: "", productName: "", variant: "", qty: 100 },
+    ]);
   }
 
   return (
     <div className="space-y-3">
       {value.map((row, i) => (
         <Row
-          key={i}
+          key={row.id}
           row={row}
           locale={locale}
           onChange={(patch) => update(i, patch)}
@@ -111,13 +115,19 @@ function Row({
     }
     (async () => {
       const nameKey = `name->>${locale}`;
+      // Escape LIKE wildcards so user input is treated literally (prevents "%" / "_" abuse).
+      const escaped = debounced
+        .trim()
+        .replace(/\\/g, "\\\\")
+        .replace(/%/g, "\\%")
+        .replace(/_/g, "\\_");
       const { data } = await supa
         .from("products")
         .select(`slug, name`)
         .eq("active", true)
         .not(nameKey, "is", null)
         .neq(nameKey, "")
-        .ilike(nameKey, `%${debounced.trim()}%`)
+        .ilike(nameKey, `%${escaped}%`)
         .limit(8);
       if (cancelled) return;
       const rows = (data ?? []) as Array<{ slug: string; name: Record<string, string> | null }>;

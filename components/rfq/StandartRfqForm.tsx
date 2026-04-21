@@ -10,12 +10,20 @@ import { TurnstileWidget } from "./TurnstileWidget";
 const INCOTERMS = ["EXW", "FOB", "CIF", "DAP"] as const;
 type Status = "idle" | "submitting" | "success" | "error";
 
+function emptyItem(): ItemRow {
+  return {
+    id: crypto.randomUUID(),
+    productSlug: "",
+    productName: "",
+    variant: "",
+    qty: 100,
+  };
+}
+
 export function StandartRfqForm() {
   const t = useTranslations("rfq.standart");
   const locale = useLocale() as "tr" | "en" | "ru" | "ar";
-  const [items, setItems] = useState<ItemRow[]>([
-    { productSlug: "", productName: "", variant: "", qty: 100 },
-  ]);
+  const [items, setItems] = useState<ItemRow[]>(() => [emptyItem()]);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [err, setErr] = useState<string | null>(null);
@@ -39,7 +47,10 @@ export function StandartRfqForm() {
         phone: String(data.get("phone") ?? "").trim(),
         country: String(data.get("country") ?? "TR").trim(),
       },
-      items: items.filter((r) => r.productSlug.trim().length > 0),
+      // Strip client-only `id` so payload shape matches server schema exactly.
+      items: items
+        .filter((r) => r.productSlug.trim().length > 0)
+        .map(({ id: _id, ...rest }) => rest),
       deliveryCountry: String(data.get("deliveryCountry") ?? ""),
       incoterm: (String(data.get("incoterm") ?? "") || undefined) as
         | "EXW"
@@ -82,7 +93,7 @@ export function StandartRfqForm() {
       }
       setStatus("success");
       form.reset();
-      setItems([{ productSlug: "", productName: "", variant: "", qty: 100 }]);
+      setItems([emptyItem()]);
       setTurnstileToken(null);
     } catch {
       setErr(t("errorGeneric"));

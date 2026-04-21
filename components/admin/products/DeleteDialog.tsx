@@ -10,6 +10,7 @@ export function DeleteDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <>
@@ -33,17 +34,30 @@ export function DeleteDialog({
               &quot;{productName}&quot; ürünü Silinmiş tab&apos;ına taşınacak. Daha sonra geri
               yükleyebilirsin.
             </p>
+            {error && <p className="mt-3 text-xs text-[var(--color-accent-red)]">{error}</p>}
             <div className="mt-4 flex justify-end gap-3">
-              <button type="button" onClick={() => setOpen(false)} className="text-sm">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setError(null);
+                }}
+                className="text-sm"
+              >
                 İptal
               </button>
               <button
                 type="button"
                 disabled={pending}
                 onClick={() => {
+                  setError(null);
                   start(async () => {
-                    await action();
-                    setOpen(false);
+                    try {
+                      await action();
+                      setOpen(false);
+                    } catch (err) {
+                      setError(err instanceof Error ? err.message : "Silme başarısız");
+                    }
                   });
                 }}
                 className="rounded-sm bg-[var(--color-accent-red)] px-3 py-1.5 text-sm text-white disabled:opacity-60"

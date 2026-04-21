@@ -191,7 +191,10 @@ export async function cloneProduct(sourceId: string): Promise<void> {
       const ext = img.path.split(".").pop() || "jpg";
       const newPath = `${newSlug}/${newUuid}.${ext}`;
       const { error } = await svc.storage.from("product-images").copy(img.path, newPath);
-      if (error) throw new Error(`storage.copy ${img.path} → ${newPath}: ${error.message}`);
+      if (error) {
+        console.error("[clone] storage.copy failed:", img.path, "→", newPath, error.message);
+        throw new Error("Görsel kopyalama başarısız. Tekrar deneyin.");
+      }
       cloned.push({
         path: newPath,
         order: img.order,

@@ -13,7 +13,8 @@ export async function signIn(_prevState: Result, formData: FormData): Promise<Re
   const email = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
-  const password = String(formData.get("password") ?? "").trim();
+  // Not trimmed: leading/trailing whitespace is valid in passwords and must not be silently dropped.
+  const password = String(formData.get("password") ?? "");
   if (!email || !password) {
     return { ok: false, message: "E-posta ve şifre zorunludur." };
   }

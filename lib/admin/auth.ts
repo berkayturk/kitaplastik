@@ -28,7 +28,7 @@ export async function getAdminUser(): Promise<AdminUser | null> {
   return {
     id: user.id,
     email: user.email,
-    role: adminRow.role as AdminUser["role"],
+    role: adminRow.role,
     displayName: adminRow.display_name,
   };
 }

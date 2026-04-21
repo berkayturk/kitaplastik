@@ -1,10 +1,12 @@
 // app/admin/settings/notifications/actions.ts
 "use server";
 
+import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAdminRole } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
 import { recordAudit } from "@/lib/audit";
+import { assertUuid } from "@/lib/utils/assert";
 
 export async function addRecipient(formData: FormData): Promise<void> {
   const user = await requireAdminRole();
@@ -15,7 +17,8 @@ export async function addRecipient(formData: FormData): Promise<void> {
   const types = typesRaw.filter(
     (t): t is "custom" | "standart" => t === "custom" || t === "standart",
   );
-  if (!email || types.length === 0) return;
+  const emailCheck = z.string().email().safeParse(email);
+  if (!emailCheck.success || types.length === 0) return;
 
   const svc = createServiceClient();
   const { error } = await svc
@@ -36,6 +39,7 @@ export async function addRecipient(formData: FormData): Promise<void> {
 export async function toggleRecipient(formData: FormData): Promise<void> {
   const user = await requireAdminRole();
   const id = String(formData.get("id") ?? "");
+  assertUuid(id);
   const active = String(formData.get("active") ?? "false") === "true";
   const svc = createServiceClient();
   const { error } = await svc
@@ -57,6 +61,7 @@ export async function toggleRecipient(formData: FormData): Promise<void> {
 export async function removeRecipient(formData: FormData): Promise<void> {
   const user = await requireAdminRole();
   const id = String(formData.get("id") ?? "");
+  assertUuid(id);
   const svc = createServiceClient();
   const { error } = await svc.from("notification_recipients").delete().eq("id", id);
   if (error) throw new Error(error.message);
