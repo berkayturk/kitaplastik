@@ -104,7 +104,6 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
       description: input.description,
       specs: input.specs,
       images: input.images,
-      updated_at: new Date().toISOString(),
     })
     .eq("id", id);
   if (error) throw new Error(error.message);
