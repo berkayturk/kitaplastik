@@ -11,7 +11,7 @@ test("admin can create a product with TR-only content", async ({ page, context }
   await page.fill('input[id="name"]', `E2E Test Ürün ${Date.now()}`);
   await page.fill('textarea[id="description"]', "E2E açıklama");
   await page.click("text=+ Özellik Ekle");
-  await page.click("role=option[name=/malzeme/i]");
+  await page.click("role=menuitem[name=/malzeme/i]");
   await page.fill('input[aria-label="Malzeme değeri"]', "PET");
   await page.click('button:has-text("Kaydet ve Yayınla")');
   await expect(page).toHaveURL(/\/admin\/products\?success=created/);

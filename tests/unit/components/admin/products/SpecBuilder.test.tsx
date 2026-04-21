@@ -13,7 +13,7 @@ describe("SpecBuilder", () => {
     const onChange = vi.fn();
     render(<SpecBuilder value={[{ preset_id: "material", value: "PET" }]} onChange={onChange} />);
     fireEvent.click(screen.getByRole("button", { name: /özellik ekle/i }));
-    const materialOpt = screen.getByRole("option", { name: /malzeme/i });
+    const materialOpt = screen.getByRole("menuitem", { name: /malzeme/i });
     expect(materialOpt).toBeDisabled();
   });
 

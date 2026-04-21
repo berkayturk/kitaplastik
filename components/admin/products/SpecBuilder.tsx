@@ -112,7 +112,7 @@ export function SpecBuilder({ value, onChange }: Props) {
         </button>
         {pickerOpen && (
           <ul
-            role="listbox"
+            role="menu"
             className="bg-bg-primary absolute z-10 mt-1 w-56 rounded-sm border border-[var(--color-border-subtle-dark)] p-1 shadow-lg"
           >
             {SPEC_PRESETS.map((p) => {
@@ -120,7 +120,7 @@ export function SpecBuilder({ value, onChange }: Props) {
               return (
                 <li key={p.id} role="presentation">
                   <button
-                    role="option"
+                    role="menuitem"
                     type="button"
                     onClick={() => addPreset(p.id)}
                     disabled={disabled}
