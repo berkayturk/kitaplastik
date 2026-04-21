@@ -302,6 +302,39 @@ Spec: `docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md`. 
 
 Kapsam: `/admin/products` CRUD (liste + yeni + düzenle + sil/geri yükle) + 4 dil tab (TR zorunlu, EN/RU/AR opsiyonel "boşsa gösterme") + 10 preset özellik + ana görsel + galeri upload + public `/products` grid + `/products/[slug]` detay + RFQ picker catalog-backed. **Auto-translate yok** (user: Türkçe elle yaz, diğer dilleri manuel yapıştır).
 
+## 2026-04-21 (devam 2) — Plan 4b spec + PLAN.md hazır, execution bekliyor
+
+Bu oturumda brainstorm + planlama tamamlandı. Kod değişikliği yok — 2 docs commit.
+
+### Brainstorm (6 soru → 6 karar)
+
+Spec'in "Brainstorm Kararları" bölümü full tabloya sahip. Kısaca:
+
+1. **Slug:** ilk kayıtta TR'den auto, sonra kilitli + opt-in "Slug'ı düzenle" toggle
+2. **Spec builder:** preset unique (dropdown'da eklenmiş disabled), çoklu değer tek hücrede virgülle
+3. **Alt text:** admin girmez; runtime fallback `name[locale]` + `common.productImageLabel` (4 dilde)
+4. **"Benzer ürün ekle":** metin + görseller Storage.copy() yeni UUID path'lere; edit mode'da açılır
+5. **Sıralama:** yukarı/aşağı ok butonları (görsel + spec)
+6. **RFQ ProductPicker:** katalog-only + empty state → özel üretim formu linki
+
+### Dosyalar
+
+- Spec: `docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md` (commit `d7f9e62` — brainstorm kararları inline işlendi + consolidation tablosu eklendi)
+- **Plan:** `docs/superpowers/plans/2026-04-21-faz1-plan4b-admin-products-crud.md` (commit `84e01b0`, 3202 satır, 28 bite-sized task TDD-per-task)
+
+### Plan task özeti (28 task, ~3-5 gün)
+
+- **Foundations (T1-6):** i18n key + alt-text helper, XSS-safe json-ld helper, slugify (TR-aware), uniqueSlug helper, 10 preset, Zod schemas
+- **Server actions (T7-10):** create/update/softDelete/restore/cloneProduct (Storage.copy + rollback)
+- **Admin components (T11-17):** SlugField, SpecBuilder, ImageUploader, LocaleTabs, ProductForm, Delete/Restore/Clone buttons, ProductList
+- **Admin pages (T18-19):** list + Shell nav update, new + edit
+- **Public (T20-23):** ProductCard/Grid, Gallery/SpecTable/Detail, /products grid, /products/[slug] detay
+- **RFQ (T24):** ProductPicker catalog autocomplete + empty state
+- **E2E (T25-27):** programmatic login helper + 7 spec
+- **Deploy (T28):** CI → Coolify auto-deploy → canlı smoke
+
+Her task self-contained: exact file paths, full code blocks, TDD cycle (failing test → implement → passing test → commit), dependency map plan sonunda.
+
 ### Kritik bulgular
 
 1. **Coolify "Public Repository" source tipinde webhook otomatik kurulmaz.** Toggle UI'de açık gözükebilir ama GitHub'a gerçek webhook inject etmez. Debug: `gh api repos/<owner>/<repo>/hooks` → boşsa toggle çalışmıyor demek.
@@ -316,28 +349,40 @@ Kapsam: `/admin/products` CRUD (liste + yeni + düzenle + sil/geri yükle) + 4 d
 
 ## Yeni Session Başlangıç Komutları
 
-### 🚀 Plan 4b başlat (en öncelikli — site MVP canlıda, tüm infra stable)
+### 🚀 Plan 4b EXECUTE (subagent-driven — brainstorm + plan hazır)
 
 ```
-Kitaplastik Plan 4a MERGED + canlıda (d01f1bc). Auto-deploy CI-gated çalışıyor.
-Admin login + Resend branded FROM + Turnstile rotate + Node 22.22.2 pin hepsi
-canlı. docs/superpowers/RESUME.md "2026-04-21" bölümlerini oku (son kısım).
+Kitaplastik Plan 4b spec (d7f9e62) + PLAN.md (84e01b0) HAZIR. 28 bite-sized task,
+TDD-per-task, her task self-contained (exact file path + full code + expected output).
 
-Şimdi Plan 4b (Admin Products CRUD) başla:
+Plan: docs/superpowers/plans/2026-04-21-faz1-plan4b-admin-products-crud.md
+Spec: docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md
 
-1. Spec oku: docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md
-2. superpowers:writing-plans → brainstorm (4-6 tasarım sorusu cevaplayacağım:
-   admin form UX, 4 dil "boşsa-gösterme" UX, 10 preset özellik yapısı,
-   görsel upload akışı, RFQ picker catalog entegrasyonu, sil/geri-yükle soft delete)
-3. docs/superpowers/plans/<tarih>-faz1-plan4b-admin-products-crud.md yaz
-4. Plan onaylanınca superpowers:subagent-driven-development ile execute
+Şu adımları izle:
+1. Plan'ı oku (task listesi + dependency map sonda)
+2. superpowers:subagent-driven-development skill'ini invoke et
+3. Task 1'den başla — foundations (T1-6) bağımsız, paralel dispatch edilebilir:
+   - T1: i18n productImageLabel key + alt-text helper
+   - T2: XSS-safe json-ld helper
+   - T3: Türkçe-aware slugify
+   - T4: uniqueSlug DB helper
+   - T5: 10 spec preset (4 dil label)
+   - T6: Zod product schemas (TR zorunlu + preset unique)
+4. Admin components (T11-14) de bağımsız — SlugField, SpecBuilder, ImageUploader, LocaleTabs paralel çalışabilir
+5. Task review pattern: mekanik task batch + self-review; medium task combined review; logic-heavy (T2,5,6,7,8,9,10,12,21) tam 3-stage review
 
-Kapsam: /admin/products CRUD (4 dil tab TR zorunlu, EN/RU/AR opsiyonel +
-"boşsa gösterme" pattern), 10 preset özellik, ana görsel + galeri upload,
-public /products grid + /products/[slug] detay, RFQ picker catalog-backed.
-Auto-translate yok (elle çeviri yapıştırma).
+Önemli kısıtlar (plan içinde detay var):
+- 4 dil "boşsa gösterme": TR zorunlu, EN/RU/AR opsiyonel. name->>{locale} filtresi.
+- Slug first-save lock + opt-in "Slug'ı düzenle" toggle
+- Alt text admin'de girilmez → runtime `name[locale] + productImageLabel` fallback
+- cloneProduct: Storage.copy() ile yeni UUID path'ler + partial failure rollback
+- ProductDetail'de JSON-LD `toSafeLdJson` helper kullan (XSS-safe: </script, <!--, U+2028/9 escape)
+- ImageUploader: client-side direct Storage upload, max 5×10MB JPG/PNG/WebP
+- RFQ ProductPicker: katalog autocomplete + boşsa özel üretim linki
 
-ultrathink
+Her task sonunda: commit at (task mesajı plan'da yazılı), sonraki task'a geç.
+
+Başla.
 ```
 
 ### 🌐 CF proxy + Let's Encrypt DNS-01 migration (infra, ~20-25 dk)
