@@ -220,95 +220,87 @@ Admin login aşaması tamamlandı, 5 commit atıldı, branch origin'den 58 commi
 - **Resend:** şimdiki FROM ile çalışıyor; `noreply@kitaplastik.com` için domain verify sonraki iş.
 - **Memory güncellendi:** `project_kitaplastik.md` + 2 yeni feedback (`cf_registrar_same_account`, `coolify_nixpacks_env`).
 
-## 2026-04-21 — Plan 4a URL migration (PAUSED mid-execute)
+## 2026-04-21 — Plan 4a URL migration ✅ + Auto-deploy kuruldu
 
-**Durum:** Plan 4a kod tamamlandı, PR #1 açık (https://github.com/berkayturk/kitaplastik/pull/1), ikinci CI run tetiklendi, oturum **user tarafından duraklatıldı** (başka iş çıktı). Hiçbir veri kaybı yok.
+**Durum:** Plan 4a MERGED, canlıda aktif (PR #1 squash → `d01f1bc`). 10 commit + 1 baseline fix + 1 auto-deploy workflow. Coolify auto-deploy GitHub Actions webhook ile kuruldu.
 
-### Ne yapıldı
+### Plan 4a sonucu (canlıda doğrulandı)
 
-- **Brainstorm → spec → plan:** Admin CRUD büyük kapsam 2 alt plana bölündü:
-  - `docs/superpowers/specs/2026-04-21-plan4a-url-migration-design.md`
-  - `docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md`
-  - `docs/superpowers/plans/2026-04-21-faz1-plan4a-url-migration.md` (13 task, 4 chunk)
-- **Plan 4a Chunk A-B-C** ✅ subagent-driven-development ile bitti (9 commit, main'den önde):
-  - Türkçe public route'lar → İngilizce slug (`/urunler` → `/products`, `/sektorler` → `/sectors`, vs.)
-  - 301 redirect'ler `next.config.ts`'de (12 public + 1 admin)
-  - Admin `/admin/ayarlar/bildirimler` → `/admin/settings/notifications`
-  - `lib/seo/routes.ts` PUBLIC_ROUTES İngilizce → sitemap + hreflang otomatik update
-  - Internal `<Link href=>` tamamen migrated (Header, Footer, LocaleSwitcher, home, teklif-iste, admin Shell, actions.ts)
-  - E2E url-redirects.spec.ts (45 test: GREEN)
-- **Plan 4a Chunk D:** push ✅, PR açıldı ✅, ilk CI baseline-failing test'leri ile kırık kaldı. **Baseline CI borcu** keşfedildi: main'in son 3 push'unun CI'ı da FAIL (RESUME "CI yeşil" eski/yanlış bilgi).
-- **Baseline fix commit** `ed4fd34` push edildi: 7 pre-existing fail'i düzeltti:
-  - `smoke.spec.ts` × 2: `/` → `/tr` explicit (CI runner Accept-Language EN fix)
-  - `references.spec.ts` × 3: Supabase placeholder koşullu `test.skip(!hasRealSupabase)`
-  - `rfq-custom.spec.ts` × 1: aynı Supabase-skip
-  - `rfq-standart.spec.ts` × 1: aynı Supabase-skip
-- **İkinci CI run tetiklendi:** https://github.com/berkayturk/kitaplastik/actions/runs/24717535375 — user oturumu kapatmadan önce başlamıştı, arka planda tamamlanacak (~10-12 dk)
+- TR public route'lar → İngilizce slug'lar: `/urunler → /products`, `/sektorler → /sectors`, `/referanslar → /references`, `/hakkimizda → /about`, `/iletisim → /contact`, `/teklif-iste → /request-quote` (+ 3 sektör alt + 2 teklif-iste alt)
+- 12 public + 1 admin 308 redirect'i `next.config.ts`'de (eski TR URL'ler → yeni EN slug'lara permanent redirect)
+- Admin: `/admin/ayarlar/bildirimler → /admin/settings/notifications`
+- `lib/seo/routes.ts` PUBLIC_ROUTES EN slug'lar → sitemap + hreflang otomatik güncel
+- Internal `<Link>` tamamen migrated (Header, Footer, LocaleSwitcher, home, teklif-iste, admin Shell, actions.ts)
+- E2E `url-redirects.spec.ts` (45 test, GREEN)
+- Baseline CI fix: `smoke.spec.ts` `/` → `/tr` explicit, Supabase placeholder koşullu `test.skip` (references/rfq specs)
 
-### Next session — Plan 4a'yı bitir
+**Canlı smoke 10/10 geçti** (commit `d01f1bc` deploy sonrası): 6× TR→EN 308, 5× EN 200, admin redirect, sitemap EN slug'lar.
 
-Yeni oturumda önce **CI durumunu kontrol et:**
+### Auto-deploy kurulumu (bu oturum yeniliği)
 
-```bash
-cd /Users/bt/claude/kitaplastik
-gh run list --branch feat/plan4a-url-migration --limit 1
-gh pr view 1 --json state,mergeable,statusCheckRollup
-```
+**Sorun:** Coolify UI'de "Automatically deploy new commits based on Git webhooks" toggle AÇIK olmasına rağmen `gh api repos/.../hooks` boş dönüyor — Coolify self-hosted, public repo source tipinde **webhook'u GitHub'a fiilen kurmamış**. Toggle effektif değildi.
 
-**Senaryo A: CI yeşil**
-1. `gh pr merge --squash --delete-branch`
-2. `git checkout main && git pull`
-3. User'a: "Coolify → Redeploy tıkla" (auto-deploy yok)
-4. Polling: `while true; do curl -sI https://kitaplastik.com/tr/urunler | head -1 | grep -q "308\|301" && break; sleep 20; done`
-5. Canlı smoke (10 curl test, eski → yeni redirect + yeni 200 + sitemap)
-6. Search Console (user manuel): yeni sitemap.xml submit
+**Çözüm:** GitHub Actions `workflow_run` → Coolify `/api/v1/deploy` webhook. `.github/workflows/deploy.yml` (commit `e096896`):
+- `workflow_run: CI completed on main` → CI success ise Coolify'a curl
+- **CI-gated deploy**: kırık commit canlıya gitmez (baseline CI fiyaskosu tekrar etmez)
+- GitHub Secrets: `COOLIFY_TOKEN`, `COOLIFY_DEPLOY_URL`
+- Coolify webhook URL: `https://coolify.brtapps.dev/api/v1/deploy?uuid=hmvzgaqgqy4ctrjog20laymu&force=false`
 
-**Senaryo B: CI hâlâ fail**
-- `gh run view <id> --log-failed | tail -50` → hangi test hâlâ kırık
-- Pre-existing listesinde değilse Plan 4a kaynaklı yeni fail — subagent ile fix
-- Pre-existing ama fix yetersizse → assertion güçlendir + yeni commit
+**Güvenlik borcu:** Coolify API token chat'e yazıldı (`1|D5aQv8w4...`). **Rotate edilmeli**: Coolify → Keys & Tokens → eski token'ı delete, yeni oluştur → `gh secret set COOLIFY_TOKEN --body '<yeni>'`.
 
-**Senaryo C: CI pending (hâlâ çalışıyor)**
-- `gh run watch` ile bekle (10-12 dk)
+### Next session — Plan 4b başlar
 
-### Plan 4b (Admin Products CRUD) Plan 4a merge sonrası başlar
+Spec: `docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md`. `superpowers:writing-plans` → PLAN.md → `superpowers:subagent-driven-development`.
 
-Spec: `docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md`. `superpowers:writing-plans` skill → PLAN.md → `superpowers:subagent-driven-development` execute.
+Kapsam: `/admin/products` CRUD (liste + yeni + düzenle + sil/geri yükle) + 4 dil tab (TR zorunlu, EN/RU/AR opsiyonel "boşsa gösterme") + 10 preset özellik + ana görsel + galeri upload + public `/products` grid + `/products/[slug]` detay + RFQ picker catalog-backed. **Auto-translate yok** (user: Türkçe elle yaz, diğer dilleri manuel yapıştır).
 
-Kapsam: `/admin/products` CRUD (liste + yeni + düzenle + sil/geri yükle) + 4 dil tab (TR zorunlu, EN/RU/AR opsiyonel "boşsa gösterme") + 10 preset özellik + ana görsel + galeri upload + public `/products` grid + `/products/[slug]` detay + RFQ picker catalog-backed. **Auto-translate yok** (user karar: elle Türkçe yaz, diğer dilleri manuel yapıştır).
+### Kritik bulgular
 
-### Kritik bulgular bu oturumdan
-
-1. **Baseline CI'ı kırık** — main'in son 3 push'u da CI fail ile gitti. RESUME "CI yeşil" iddiası yanlıştı. Plan 4a fix commit'iyle bu borç KAPATILDI, next session CI yeşil görmeli.
-2. **User "basit"** derken **UX ölçeğinde** kastediyor (admin form, tık sayısı, seçenek) — engineering kalite (TDD, subagent-driven, reviewer loop) bundan muaf. Memory: `feedback_basit_scope_split.md`.
-3. **Coolify auto-deploy kapalı** (user toggle'ı bulamadı) — her merge sonrası manuel Redeploy. Next session Coolify Settings → Configuration → "Deploy on push" gibi bir toggle aramaya değer (opsiyonel 1 dakikalık iş).
-4. **Baseline 6 E2E fail'i Supabase placeholder + locale detection** kaynaklı. Fix pattern: env koşullu `test.skip`. CI config'ine gerçek Supabase public key + anon key eklemek daha sağlam (next iteration).
+1. **Coolify "Public Repository" source tipinde webhook otomatik kurulmaz.** Toggle UI'de açık gözükebilir ama GitHub'a gerçek webhook inject etmez. Debug: `gh api repos/<owner>/<repo>/hooks` → boşsa toggle çalışmıyor demek.
+2. **GitHub Actions `workflow_run` → Coolify `/api/v1/deploy` pattern'ı** daha iyi: git history'de görünür, CI-gated, secret'lar managed.
+3. **Baseline E2E fail'leri** env koşullu `test.skip(!hasRealSupabase)` pattern ile yumuşatıldı. Kalıcı fix CI config'ine gerçek Supabase anon key + public env eklemek (ayrı iş).
 
 ### Dosyalar
-- 10 commit branch'te (`feat/plan4a-url-migration`) — push edilmiş, GitHub'da
-- PR #1 açık, merge hazır (CI yeşil olunca)
-- Spec + plan dosyaları main'de commit `9bb961e`
-- Memory: `feedback_basit_scope_split.md` eklendi
+- PR #1 MERGED (squash `d01f1bc`); feat branch silindi
+- Auto-deploy workflow: `.github/workflows/deploy.yml` (commit `e096896`)
+- Spec + plan dosyaları: merge içinde (Plan 4a PR)
+- Memory: `feedback_basit_scope_split.md` (önceki oturum) + bu oturum yeni: `feedback_coolify_autodeploy_via_gha.md`
 
 ## Yeni Session Başlangıç Komutları
 
-### 🟢 Plan 4a'yı bitir (PAUSED mid-execute, en öncelikli)
+### 🚀 Plan 4b başlat (en öncelikli — Plan 4a canlıda, auto-deploy hazır)
 
 ```
-Kitaplastik Plan 4a PR #1 açık (feat/plan4a-url-migration), ikinci CI run
-tetiklendi, user oturumu duraklatmak zorunda kaldı. docs/superpowers/RESUME.md
-"2026-04-21 Plan 4a URL migration (PAUSED mid-execute)" bölümünü oku.
+Kitaplastik Plan 4a MERGED + canlıda (d01f1bc). Auto-deploy kuruldu
+(.github/workflows/deploy.yml, CI-gated). docs/superpowers/RESUME.md
+"2026-04-21 Plan 4a URL migration ✅" bölümünü oku.
 
-Başla: gh run list --branch feat/plan4a-url-migration --limit 1
+Şimdi Plan 4b (Admin Products CRUD) başla:
 
-CI yeşilse: gh pr merge --squash --delete-branch → git pull main → user'a
-"Coolify Redeploy tıkla" → /tr/urunler polling 308 signal → canlı smoke
-(10 curl test) → Search Console talimat.
+1. Spec oku: docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md
+2. superpowers:writing-plans → docs/superpowers/plans/<tarih>-faz1-plan4b-admin-products-crud.md
+3. Brainstorm sorularını bana sor (admin UX, 4 dil "boşsa gösterme" UX, 10 preset
+   özellik, görsel upload akışı)
+4. Plan onaylanınca superpowers:subagent-driven-development ile execute
 
-CI kırıksa: gh run view <id> --log-failed → pre-existing mi yeni mi, fix veya
-eskalasyon.
+Kapsam özet: /admin/products CRUD (4 dil tab TR zorunlu, EN/RU/AR opsiyonel),
+10 preset özellik, ana görsel + galeri, public /products grid + /products/[slug],
+RFQ picker catalog-backed. Auto-translate yok.
 
 ultrathink
+```
+
+### 🔒 Coolify token rotate (güvenlik borcu)
+
+```
+Coolify API token önceki oturumda chat'e yazıldı (transcript'te duruyor).
+Rotate lazım:
+1. https://coolify.brtapps.dev/ → Keys & Tokens
+2. Eski token sil (1|D5aQv8w... ile başlayan)
+3. Yeni API token oluştur (scope: read+write, name: deploy-from-gh-actions-v2)
+4. gh secret set COOLIFY_TOKEN --body '<yeni-token>'
+5. Test: git commit --allow-empty -m "chore: verify auto-deploy" + push,
+   CI bekle, deploy.yml workflow success olmalı, /kitaplastik.com canlı güncel.
 ```
 
 ### 🔄 Redeploy + smoke (hemen yarın)
