@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   user: AdminUser;
-  active: "inbox" | "bildirimler";
+  active: "inbox" | "products" | "bildirimler";
   children: ReactNode;
 }
 
@@ -32,6 +32,9 @@ export function Shell({ user, active, children }: Props) {
             </span>
             <NavLink href="/admin/inbox" active={active === "inbox"}>
               Gelen Kutusu
+            </NavLink>
+            <NavLink href="/admin/products" active={active === "products"}>
+              Ürünler
             </NavLink>
             <NavLink href="/admin/settings/notifications" active={active === "bildirimler"}>
               Bildirim Alıcıları
