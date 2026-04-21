@@ -2,7 +2,7 @@
 import { test, expect } from "@playwright/test";
 
 test("custom RFQ submits successfully", async ({ page }) => {
-  await page.goto("/tr/teklif-iste/ozel-uretim");
+  await page.goto("/tr/request-quote/custom");
 
   await page.fill('input[name="name"]', "Test Mühendis");
   await page.fill('input[name="company"]', "TestCo");
