@@ -20,15 +20,21 @@ describe("toSafeLdJson", () => {
     expect(out).toMatch(/\\u003c!--/);
   });
 
+  it("string içindeki ampersand'ı escape eder", () => {
+    const out = toSafeLdJson({ x: "a&b" });
+    expect(out).not.toContain("&");
+    expect(out).toContain("\\u0026");
+  });
+
   it("U+2028 / U+2029 line separators escape edilir (JSON'da geçerli, JS'de değil)", () => {
-    const out = toSafeLdJson({ x: "line sep" });
-    expect(out).not.toContain(" ");
+    const out = toSafeLdJson({ x: "line\u2028sep" });
+    expect(out).not.toContain("\u2028");
     expect(out).toContain("\\u2028");
   });
 
   it("U+2029 paragraph separator da escape edilir", () => {
-    const out = toSafeLdJson({ x: "para sep" });
-    expect(out).not.toContain(" ");
+    const out = toSafeLdJson({ x: "para\u2029sep" });
+    expect(out).not.toContain("\u2029");
     expect(out).toContain("\\u2029");
   });
 
