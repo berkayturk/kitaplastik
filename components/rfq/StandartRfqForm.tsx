@@ -13,7 +13,9 @@ type Status = "idle" | "submitting" | "success" | "error";
 export function StandartRfqForm() {
   const t = useTranslations("rfq.standart");
   const locale = useLocale() as "tr" | "en" | "ru" | "ar";
-  const [items, setItems] = useState<ItemRow[]>([{ productSlug: "", variant: "", qty: 100 }]);
+  const [items, setItems] = useState<ItemRow[]>([
+    { productSlug: "", productName: "", variant: "", qty: 100 },
+  ]);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [err, setErr] = useState<string | null>(null);
@@ -80,7 +82,7 @@ export function StandartRfqForm() {
       }
       setStatus("success");
       form.reset();
-      setItems([{ productSlug: "", variant: "", qty: 100 }]);
+      setItems([{ productSlug: "", productName: "", variant: "", qty: 100 }]);
       setTurnstileToken(null);
     } catch {
       setErr(t("errorGeneric"));
@@ -98,7 +100,7 @@ export function StandartRfqForm() {
     <form onSubmit={onSubmit} noValidate className="space-y-6">
       <fieldset className="space-y-3">
         <legend className="text-text-primary text-sm font-semibold">{t("itemsSection")}</legend>
-        <ProductPicker value={items} onChange={setItems} />
+        <ProductPicker value={items} onChange={setItems} locale={locale} />
       </fieldset>
 
       <fieldset className="space-y-3">
