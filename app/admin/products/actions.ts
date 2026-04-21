@@ -162,3 +162,70 @@ export async function restoreProduct(id: string): Promise<void> {
   revalidatePublicProducts();
   revalidatePath("/admin/products");
 }
+
+export async function cloneProduct(sourceId: string): Promise<void> {
+  const user = await requireAdminRole();
+  const svc = createServiceClient();
+
+  const source = await getProductById(sourceId);
+  if (!source) throw new Error("Kaynak ürün bulunamadı");
+
+  const newSlug = await uniqueSlug(`${source.slug}-kopya`, (s) => slugExists(s));
+
+  type ClonedImage = { path: string; order: number; alt_text: Record<string, string> };
+  const cloned: ClonedImage[] = [];
+  let insertedId: string | null = null;
+
+  try {
+    for (const img of source.images ?? []) {
+      const newUuid = crypto.randomUUID();
+      const ext = img.path.split(".").pop() || "jpg";
+      const newPath = `${newSlug}/${newUuid}.${ext}`;
+      const { error } = await svc.storage.from("product-images").copy(img.path, newPath);
+      if (error) throw new Error(`storage.copy ${img.path} → ${newPath}: ${error.message}`);
+      cloned.push({
+        path: newPath,
+        order: img.order,
+        alt_text: img.alt_text ?? { tr: "", en: "", ru: "", ar: "" },
+      });
+    }
+
+    const { data, error } = await svc
+      .from("products")
+      .insert({
+        slug: newSlug,
+        sector_id: source.sector_id,
+        name: source.name,
+        description: source.description,
+        specs: source.specs.map((s) => ({ preset_id: s.preset_id, value: s.value })),
+        images: cloned,
+        active: true,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+
+    insertedId = data.id;
+
+    await recordAudit({
+      action: "product_cloned",
+      entity_type: "product",
+      entity_id: data.id,
+      user_id: user.id,
+      ip: null,
+      diff: { source_id: sourceId, new_slug: newSlug, image_count: cloned.length },
+    });
+
+    revalidatePublicProducts();
+  } catch (err) {
+    if (cloned.length > 0) {
+      await svc.storage
+        .from("product-images")
+        .remove(cloned.map((c) => c.path))
+        .catch(() => {});
+    }
+    throw err;
+  }
+
+  redirect(`/admin/products/${insertedId}/edit?cloned=1`);
+}
