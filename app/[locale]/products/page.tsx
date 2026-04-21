@@ -5,7 +5,7 @@ import { buildAlternates } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 import { ProductGrid } from "@/components/public/products/ProductGrid";
 import type { PublicProduct } from "@/components/public/products/ProductCard";
-import { createServiceClient } from "@/lib/supabase/service";
+import { createClient } from "@/lib/supabase/server";
 
 interface PageProps {
   params: Promise<{ locale: Locale }>;
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function loadLocalizedProducts(locale: Locale): Promise<PublicProduct[]> {
-  const svc = createServiceClient();
+  const svc = await createClient();
   const nameKey = `name->>${locale}`;
   const { data, error } = await svc
     .from("products")

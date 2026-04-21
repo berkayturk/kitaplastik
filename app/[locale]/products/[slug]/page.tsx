@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import type { Locale } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
-import { createServiceClient } from "@/lib/supabase/service";
+import { createClient } from "@/lib/supabase/server";
 import { ProductDetail } from "@/components/public/products/ProductDetail";
 
 interface PageProps {
@@ -12,7 +12,7 @@ interface PageProps {
 }
 
 async function loadProduct(locale: Locale, slug: string) {
-  const svc = createServiceClient();
+  const svc = await createClient();
   const nameKey = `name->>${locale}`;
   const { data, error } = await svc
     .from("products")

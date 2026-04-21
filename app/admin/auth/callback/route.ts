@@ -5,7 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
-  const next = searchParams.get("next") ?? "/admin/inbox";
+  const rawNext = searchParams.get("next") ?? "/admin/inbox";
+  // Open-redirect guard: only internal absolute paths (reject scheme-relative like "//evil.com")
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/admin/inbox";
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const code = searchParams.get("code");
