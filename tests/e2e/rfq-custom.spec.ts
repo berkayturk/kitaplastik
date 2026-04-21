@@ -1,6 +1,12 @@
 // tests/e2e/rfq-custom.spec.ts
 import { test, expect } from "@playwright/test";
 
+const hasRealSupabase =
+  process.env.NEXT_PUBLIC_SUPABASE_URL != null &&
+  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
+
+test.skip(!hasRealSupabase, "RFQ submit requires real Supabase (CI uses placeholder)");
+
 test("custom RFQ submits successfully", async ({ page }) => {
   await page.goto("/tr/request-quote/custom");
 

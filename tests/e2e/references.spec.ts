@@ -1,6 +1,15 @@
 import { test, expect } from "@playwright/test";
 
+const hasRealSupabase =
+  process.env.NEXT_PUBLIC_SUPABASE_URL != null &&
+  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
+
 test.describe("references", () => {
+  test.skip(
+    !hasRealSupabase,
+    "Supabase placeholder (CI without real backend); production smoke covers this",
+  );
+
   test("ReferencesStrip visible above the fold on 1440x900", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/tr");
