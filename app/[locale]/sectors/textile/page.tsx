@@ -5,7 +5,7 @@ import type { Locale } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 
-const ROUTE = "/sektorler/tekstil";
+const ROUTE = "/sectors/textile";
 const NS = "sectors.tekstil";
 
 interface PageProps {
@@ -81,13 +81,13 @@ export default async function TekstilPage({ params }: PageProps) {
 
       <div className="mt-16 flex flex-wrap gap-4">
         <Link
-          href="/iletisim"
+          href="/contact"
           className="rounded bg-[var(--color-accent-red)] px-6 py-3 font-medium text-white transition hover:opacity-90"
         >
           {tCta("requestQuote")}
         </Link>
         <Link
-          href="/sektorler"
+          href="/sectors"
           className="text-text-primary rounded border border-[var(--color-border-subtle-dark)] px-6 py-3 font-medium transition hover:border-[var(--color-accent-red)]"
         >
           ← {tCta("exploreSectors")}

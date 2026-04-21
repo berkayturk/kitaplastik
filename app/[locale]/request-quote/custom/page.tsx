@@ -1,4 +1,4 @@
-// app/[locale]/teklif-iste/ozel-uretim/page.tsx
+// app/[locale]/request-quote/custom/page.tsx
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${t("title")} | Kıta Plastik`,
     description: t("subtitle"),
     alternates: {
-      canonical: `${origin}/${locale}/teklif-iste/ozel-uretim`,
-      languages: buildAlternates("/teklif-iste/ozel-uretim", origin).languages,
+      canonical: `${origin}/${locale}/request-quote/custom`,
+      languages: buildAlternates("/request-quote/custom", origin).languages,
     },
   };
 }

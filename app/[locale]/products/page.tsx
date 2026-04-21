@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${t("title")} | Kıta Plastik`,
     description: t("subtitle"),
     alternates: {
-      canonical: `${origin}/${locale}/urunler`,
-      languages: buildAlternates("/urunler", origin).languages,
+      canonical: `${origin}/${locale}/products`,
+      languages: buildAlternates("/products", origin).languages,
     },
   };
 }
@@ -43,13 +43,13 @@ export default async function UrunlerPage({ params }: PageProps) {
         <p className="text-text-secondary">{t("notice")}</p>
         <div className="mt-6 flex flex-wrap gap-4">
           <Link
-            href="/iletisim"
+            href="/contact"
             className="rounded bg-[var(--color-accent-red)] px-6 py-3 font-medium text-white transition hover:opacity-90"
           >
             {tCta("requestQuote")}
           </Link>
           <Link
-            href="/sektorler"
+            href="/sectors"
             className="text-text-primary rounded border border-[var(--color-border-subtle-dark)] px-6 py-3 font-medium transition hover:border-[var(--color-accent-red)]"
           >
             {tCta("exploreSectors")}

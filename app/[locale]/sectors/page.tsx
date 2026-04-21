@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${t("title")} | Kıta Plastik`,
     description: t("subtitle"),
     alternates: {
-      canonical: `${origin}/${locale}/sektorler`,
-      languages: buildAlternates("/sektorler", origin).languages,
+      canonical: `${origin}/${locale}/sectors`,
+      languages: buildAlternates("/sectors", origin).languages,
     },
   };
 }
@@ -48,7 +48,7 @@ export default async function SectorsHubPage({ params }: PageProps) {
         {SECTORS.map((sector) => (
           <Link
             key={sector.slug}
-            href={`/sektorler/${sector.slug}`}
+            href={`/sectors/${sector.slug}`}
             className="group flex flex-col gap-3 rounded-lg border border-[var(--color-border-subtle-dark)] p-6 transition hover:border-[var(--color-accent-red)]"
           >
             <h2 className="text-text-primary text-xl font-semibold">

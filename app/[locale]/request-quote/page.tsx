@@ -1,4 +1,4 @@
-// app/[locale]/teklif-iste/page.tsx
+// app/[locale]/request-quote/page.tsx
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${t("title")} | Kıta Plastik`,
     description: t("customDescription"),
     alternates: {
-      canonical: `${origin}/${locale}/teklif-iste`,
-      languages: buildAlternates("/teklif-iste", origin).languages,
+      canonical: `${origin}/${locale}/request-quote`,
+      languages: buildAlternates("/request-quote", origin).languages,
     },
   };
 }
@@ -39,14 +39,14 @@ export default async function Page({ params }: PageProps) {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Link
-          href="/teklif-iste/ozel-uretim"
+          href="/request-quote/custom"
           className="bg-bg-secondary/40 block rounded-lg border border-[var(--color-border-subtle-dark)] p-6 transition hover:border-[var(--color-accent-red)]/50"
         >
           <h2 className="text-text-primary text-xl font-semibold">{t("customTitle")}</h2>
           <p className="text-text-secondary mt-2 text-sm">{t("customDescription")}</p>
         </Link>
         <Link
-          href="/teklif-iste/standart"
+          href="/request-quote/standard"
           className="bg-bg-secondary/40 block rounded-lg border border-[var(--color-border-subtle-dark)] p-6 transition hover:border-[var(--color-accent-blue)]/50"
         >
           <h2 className="text-text-primary text-xl font-semibold">{t("standartTitle")}</h2>

@@ -21,17 +21,17 @@ export function Header() {
           </Link>
 
           <nav aria-label={t("primary")} className="hidden items-center gap-8 lg:flex">
-            <HeaderLink href="/sektorler">{t("sectors")}</HeaderLink>
-            <HeaderLink href="/urunler">{t("products")}</HeaderLink>
-            <HeaderLink href="/referanslar">{t("references")}</HeaderLink>
-            <HeaderLink href="/hakkimizda">{t("about")}</HeaderLink>
-            <HeaderLink href="/iletisim">{t("contact")}</HeaderLink>
+            <HeaderLink href="/sectors">{t("sectors")}</HeaderLink>
+            <HeaderLink href="/products">{t("products")}</HeaderLink>
+            <HeaderLink href="/references">{t("references")}</HeaderLink>
+            <HeaderLink href="/about">{t("about")}</HeaderLink>
+            <HeaderLink href="/contact">{t("contact")}</HeaderLink>
           </nav>
 
           <div className="flex items-center gap-5">
             <LocaleSwitcher />
             <Link
-              href="/teklif-iste"
+              href="/request-quote"
               className={buttonVariants({ variant: "primary", size: "sm" })}
             >
               {tCta("requestQuote")}

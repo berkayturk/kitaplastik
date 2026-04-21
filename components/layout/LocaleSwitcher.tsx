@@ -31,7 +31,7 @@ export function LocaleSwitcher() {
   const pathname = usePathname();
   const t = useTranslations("nav");
   // `usePathname` from @/i18n/navigation strips the locale prefix. Root → "/"
-  // for which we want targets like "/en"; for "/iletisim" we want "/en/iletisim".
+  // for which we want targets like "/en"; for "/contact" we want "/en/contact".
   const pathTail = pathname === "/" ? "" : pathname;
 
   return (

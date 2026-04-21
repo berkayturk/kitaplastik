@@ -1,4 +1,4 @@
-// app/admin/ayarlar/bildirimler/page.tsx
+// app/admin/settings/notifications/page.tsx
 import { requireAdmin } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
 import { Shell } from "@/components/admin/Shell";
