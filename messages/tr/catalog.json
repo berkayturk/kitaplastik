@@ -10,6 +10,8 @@
       "emailPlaceholder": "isim@firma.com",
       "localeLabel": "Katalog dili",
       "localeHint": "Katalog PDF'i seçtiğiniz dilde gönderilecek.",
+      "sectorLabel": "Katalog kapsamı",
+      "sectorHint": "Tek bir sektöre özel veya tüm cildi içeren katalog seçebilirsiniz.",
       "submit": "Katalogu Gönder",
       "submitting": "Gönderiliyor…",
       "successTitle": "Katalog yolda",
@@ -23,6 +25,12 @@
       "en": "English",
       "ru": "Русский",
       "ar": "العربية"
+    },
+    "sectors": {
+      "all": "Tüm katalog — bütün sektörler",
+      "cam-yikama": "Cam Yıkama",
+      "kapak": "Kapak",
+      "tekstil": "Tekstil"
     }
   }
 }

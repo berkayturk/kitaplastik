@@ -10,7 +10,7 @@
 
 export type PlausibleEvent =
   | { name: "Contact Submitted" }
-  | { name: "Catalog Requested"; props: { locale: string } }
+  | { name: "Catalog Requested"; props: { locale: string; sector: string } }
   | { name: "Locale Changed"; props: { to: string } }
   | { name: "Sector Clicked"; props: { slug: string } };
 

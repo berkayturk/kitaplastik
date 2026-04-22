@@ -24,6 +24,14 @@ const serverEnvSchema = z.object({
   RESEND_FROM_EMAIL: z.string().email().default("noreply@kitaplastik.com"),
   RESEND_TEAM_EMAIL: z.string().email().default("info@kitaplastik.com"),
   SENTRY_AUTH_TOKEN: z.string().optional(),
+  // Catalog PDF generator (Puppeteer). Empty in local dev when no Chromium
+  // is installed; in Coolify the nixpacks.toml path is injected at build
+  // time and mirrored at runtime.
+  PUPPETEER_EXECUTABLE_PATH: z.string().optional(),
+  // Shared secret the PDF route sets in an x-catalog-template-secret
+  // header when calling /catalog-template/*; middleware rejects template
+  // requests without it. Optional in dev (template accessible locally).
+  CATALOG_TEMPLATE_SECRET: z.string().optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
@@ -41,6 +49,8 @@ const serverRaw = {
   RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
   RESEND_TEAM_EMAIL: process.env.RESEND_TEAM_EMAIL,
   SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+  PUPPETEER_EXECUTABLE_PATH: process.env.PUPPETEER_EXECUTABLE_PATH,
+  CATALOG_TEMPLATE_SECRET: process.env.CATALOG_TEMPLATE_SECRET,
 };
 
 const result = serverEnvSchema.safeParse(serverRaw);

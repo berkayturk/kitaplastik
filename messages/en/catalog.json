@@ -10,6 +10,8 @@
       "emailPlaceholder": "name@company.com",
       "localeLabel": "Catalog language",
       "localeHint": "The catalog PDF will be sent in the language you choose.",
+      "sectorLabel": "Catalog scope",
+      "sectorHint": "Limit the catalog to a single sector, or send the complete volume.",
       "submit": "Send Catalog",
       "submitting": "Sending…",
       "successTitle": "Catalog on its way",
@@ -23,6 +25,12 @@
       "en": "English",
       "ru": "Русский",
       "ar": "العربية"
+    },
+    "sectors": {
+      "all": "Complete catalog — all sectors",
+      "cam-yikama": "Glass Washing",
+      "kapak": "Caps & Closures",
+      "tekstil": "Textile"
     }
   }
 }

@@ -1,0 +1,25 @@
+# Coolify / Nixpacks build configuration.
+# -----------------------------------------------------------------------
+# Why this file exists:
+#   The dynamic catalog PDF endpoint (/api/catalog/[sector]/[lang]) uses
+#   Puppeteer + headless Chromium. Nixpacks' default Node.js image has no
+#   browser binary, so we install Chromium as a system package and pin
+#   PUPPETEER_EXECUTABLE_PATH so puppeteer-core uses it.
+#
+# Notes:
+#   - `nixPkgs` ships Chromium + its runtime libs (nss, freetype, etc.) via
+#     the Nix profile. The path is stable inside Nixpacks' runtime image.
+#   - We set PUPPETEER_SKIP_DOWNLOAD=1 so the npm install step does NOT try
+#     to download a second Chrome blob (we use puppeteer-core).
+#   - Node is pinned by .nvmrc (22.22.2).
+#
+# Coolify runtime env (set in UI, "Available at Runtime" ON):
+#   - PUPPETEER_EXECUTABLE_PATH   (mirrors build-time value for safety)
+#   - CATALOG_TEMPLATE_SECRET     (internal header shared secret)
+
+[phases.setup]
+nixPkgs = ["nodejs_22", "pnpm-9_x", "chromium"]
+
+[variables]
+PUPPETEER_SKIP_DOWNLOAD = "1"
+PUPPETEER_EXECUTABLE_PATH = "/root/.nix-profile/bin/chromium"

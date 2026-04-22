@@ -16,9 +16,10 @@ import { recordAudit } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
-function catalogPdfUrl(locale: "tr" | "en" | "ru" | "ar"): string {
+function catalogPdfUrl(sector: string, locale: "tr" | "en" | "ru" | "ar"): string {
   const origin = env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com";
-  return `${origin}/catalogs/kitaplastik-${locale}.pdf`;
+  // Dynamic endpoint; generates + caches the PDF on first hit per dataHash.
+  return `${origin}/api/catalog/${sector}/${locale}`;
 }
 
 export async function POST(request: NextRequest) {
@@ -71,6 +72,9 @@ export async function POST(request: NextRequest) {
       locale: input.locale,
       ip_address: ip === "unknown" ? null : ip,
       user_agent: userAgent,
+      // sector is part of the request payload but not yet a column on
+      // catalog_requests — logged into the audit_log row instead so no
+      // schema change is required for the sector selector rollout.
     });
   } catch (e) {
     const Sentry = await import("@sentry/nextjs");
@@ -79,7 +83,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 5) Send email
-  const pdfUrl = catalogPdfUrl(input.locale);
+  const pdfUrl = catalogPdfUrl(input.sector, input.locale);
   const mail = renderCatalogDeliveryEmail({
     email: input.email,
     locale: input.locale,
@@ -107,7 +111,7 @@ export async function POST(request: NextRequest) {
     entity_id: null,
     user_id: null,
     ip,
-    diff: { locale: input.locale },
+    diff: { locale: input.locale, sector: input.sector },
   });
 
   return NextResponse.json({ ok: true });

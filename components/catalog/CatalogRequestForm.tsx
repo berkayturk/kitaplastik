@@ -15,11 +15,14 @@ import { trackPlausible } from "@/lib/analytics/plausible";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Locale = "tr" | "en" | "ru" | "ar";
+type Sector = "all" | "cam-yikama" | "kapak" | "tekstil";
 const LOCALES: readonly Locale[] = ["tr", "en", "ru", "ar"];
+const SECTORS: readonly Sector[] = ["all", "cam-yikama", "kapak", "tekstil"];
 
 export function CatalogRequestForm() {
   const t = useTranslations("catalog.form");
   const tLocale = useTranslations("catalog.locales");
+  const tSector = useTranslations("catalog.sectors");
   const uiLocale = useLocale() as Locale;
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
@@ -37,6 +40,7 @@ export function CatalogRequestForm() {
     const payload = {
       email: String(data.get("email") ?? "").trim(),
       locale: String(data.get("locale") ?? uiLocale) as Locale,
+      sector: String(data.get("sector") ?? "all") as Sector,
       turnstileToken,
       honeypot: String(data.get("website") ?? ""),
     };
@@ -71,7 +75,10 @@ export function CatalogRequestForm() {
       setStatus("success");
       form.reset();
       setTurnstileToken(null);
-      trackPlausible({ name: "Catalog Requested", props: { locale: payload.locale } });
+      trackPlausible({
+        name: "Catalog Requested",
+        props: { locale: payload.locale, sector: payload.sector },
+      });
     } catch {
       setErr(t("errorGeneric"));
       setStatus("error");
@@ -162,20 +169,36 @@ export function CatalogRequestForm() {
           />
         </label>
 
-        <label className="block">
-          <span className="text-text-primary mb-1.5 block text-[12px] font-medium">
-            {t("localeLabel")}
-            <span className="ms-1 text-[var(--color-alert-red)]">*</span>
-          </span>
-          <select name="locale" required defaultValue={uiLocale} className={inputClass}>
-            {LOCALES.map((l) => (
-              <option key={l} value={l}>
-                {tLocale(l)}
-              </option>
-            ))}
-          </select>
-          <span className="text-text-secondary mt-1.5 block text-[11px]">{t("localeHint")}</span>
-        </label>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <label className="block">
+            <span className="text-text-primary mb-1.5 block text-[12px] font-medium">
+              {t("localeLabel")}
+              <span className="ms-1 text-[var(--color-alert-red)]">*</span>
+            </span>
+            <select name="locale" required defaultValue={uiLocale} className={inputClass}>
+              {LOCALES.map((l) => (
+                <option key={l} value={l}>
+                  {tLocale(l)}
+                </option>
+              ))}
+            </select>
+            <span className="text-text-secondary mt-1.5 block text-[11px]">{t("localeHint")}</span>
+          </label>
+
+          <label className="block">
+            <span className="text-text-primary mb-1.5 block text-[12px] font-medium">
+              {t("sectorLabel")}
+            </span>
+            <select name="sector" defaultValue="all" className={inputClass}>
+              {SECTORS.map((s) => (
+                <option key={s} value={s}>
+                  {tSector(s)}
+                </option>
+              ))}
+            </select>
+            <span className="text-text-secondary mt-1.5 block text-[11px]">{t("sectorHint")}</span>
+          </label>
+        </div>
 
         {/* Honeypot */}
         <label aria-hidden="true" className="sr-only" tabIndex={-1}>

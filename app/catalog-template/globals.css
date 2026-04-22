@@ -1,0 +1,233 @@
+/* app/catalog-template/globals.css
+ * ------------------------------------------------------------
+ * Scoped stylesheet for the internal PDF render target. Kept
+ * SEPARATE from app/globals.css so it never leaks into the
+ * marketing site: only routes under /catalog-template/* load it.
+ *
+ * Source of truth for the editorial catalog's visual language
+ * (navy ground, single blue accent, IBM Plex families, A4 print).
+ * Do NOT add Tailwind utility classes here — the template is
+ * hand-authored to exact 210×297 mm proportions.
+ */
+
+/* Self-hosted IBM Plex fonts (fontsource). Keeps Puppeteer from
+   waiting on external network + avoids CSP font-src expansion. */
+@import "@fontsource/ibm-plex-sans/300.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-serif/400.css";
+@import "@fontsource/ibm-plex-serif/500.css";
+@import "@fontsource/ibm-plex-serif/400-italic.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-sans-arabic/300.css";
+@import "@fontsource/ibm-plex-sans-arabic/400.css";
+@import "@fontsource/ibm-plex-sans-arabic/500.css";
+
+:root {
+  --kp-navy: #0b2545;
+  --kp-blue: #2563eb;
+  --kp-white: #ffffff;
+  --kp-surface: #f4f6f8;
+  --kp-muted: rgba(11, 37, 69, 0.55);
+  --kp-hairline: rgba(11, 37, 69, 0.2);
+  --kp-hairline-light: rgba(11, 37, 69, 0.1);
+
+  --kp-font-serif: "IBM Plex Serif", "Times New Roman", serif;
+  --kp-font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --kp-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --kp-font-arabic: "IBM Plex Sans Arabic", "IBM Plex Sans", system-ui, sans-serif;
+}
+
+/* Arabic override — serif family does not exist for Plex Arabic,
+   so titles fall back to sans. Rule is applied via dir="rtl" on <html>. */
+[dir="rtl"] {
+  --kp-font-serif: var(--kp-font-arabic);
+  --kp-font-sans: var(--kp-font-arabic);
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--kp-white);
+  color: var(--kp-navy);
+  font-family: var(--kp-font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+.kp-page {
+  width: 210mm;
+  height: 297mm;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+  page-break-inside: avoid;
+  break-after: page;
+  break-inside: avoid;
+}
+.kp-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+.kp-mono {
+  font-family: var(--kp-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* LTR-lock technical tokens in RTL mode (product codes, dimensions). */
+[dir="rtl"] .kp-mono,
+[dir="rtl"] .kp-ltr {
+  direction: ltr;
+  unicode-bidi: embed;
+  display: inline-block;
+}
+
+.kp-muted {
+  color: var(--kp-muted);
+}
+.kp-blue {
+  color: var(--kp-blue);
+}
+
+/* Strips — top/bottom navigation bars on body pages. */
+.kp-strip-top,
+.kp-strip-bottom {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--kp-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kp-navy);
+}
+.kp-strip-top {
+  top: 18px;
+  padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--kp-hairline);
+}
+.kp-strip-bottom {
+  bottom: 18px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--kp-hairline);
+}
+.kp-strip-top .kp-muted,
+.kp-strip-bottom .kp-muted {
+  color: var(--kp-muted);
+}
+
+/* Product row — spec: 3 rows/page, hairline top divider only. */
+.product-row {
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 0.5px solid var(--kp-hairline);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+[dir="rtl"] .product-row {
+  grid-template-columns: 1fr 118px;
+}
+
+.product-row__thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--kp-surface);
+  border: 0.5px solid var(--kp-hairline-light);
+}
+.product-row__thumb img {
+  position: absolute;
+  inset: 12px;
+  width: calc(100% - 24px);
+  height: calc(100% - 24px);
+  object-fit: contain;
+  object-position: center;
+}
+.product-row__index {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  font-family: var(--kp-font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  color: var(--kp-muted);
+}
+[dir="rtl"] .product-row__index {
+  left: auto;
+  right: 8px;
+}
+
+.product-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 2px;
+}
+.product-row__code {
+  font-family: var(--kp-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--kp-muted);
+  text-transform: uppercase;
+}
+.product-row__name {
+  font-family: var(--kp-font-serif);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  color: var(--kp-navy);
+  margin: 0;
+}
+.product-row__info {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  column-gap: 14px;
+  row-gap: 4px;
+  margin-top: 4px;
+  font-size: 9.5px;
+}
+[dir="rtl"] .product-row__info {
+  grid-template-columns: 1fr 74px;
+}
+.product-row__info dt {
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kp-muted);
+  margin: 0;
+}
+.product-row__info dd {
+  font-family: var(--kp-font-sans);
+  color: var(--kp-navy);
+  margin: 0;
+}
+
+/* Prevent any accidental page-break overflow. */
+img {
+  max-width: 100%;
+  height: auto;
+}

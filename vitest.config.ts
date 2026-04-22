@@ -15,6 +15,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
+      // server-only throws in client contexts (jsdom); stub it so pure
+      // utilities living in RSC-marked modules can still be unit-tested.
+      "server-only": path.resolve(__dirname, "./tests/stubs/server-only.ts"),
     },
   },
 });

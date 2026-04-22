@@ -53,6 +53,11 @@ export const contactLimiter = createRateLimiter({ windowMs: 5 * 60_000, max: 5 }
 // download). 3 requests per hour per IP covers legitimate re-requests
 // (wrong language, lost email) while cheaply deterring scraping.
 export const catalogLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 3 });
+// PDF endpoint is heavier (Puppeteer render ~10 s cold, cache hits are cheap).
+// Allow 10/hour/IP — legitimate use is "email me → click link once", but
+// cache hits from the same IP should still feel free. Bots bulk-scraping
+// are deflected at 10.
+export const catalogPdfLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 10 });
 
 export function ipFromHeaders(h: Headers): string {
   return h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip")?.trim() ?? "unknown";

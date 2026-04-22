@@ -35,6 +35,9 @@ export default async function middleware(request: NextRequest) {
   return intlMiddleware(request);
 }
 
+// Matcher excludes /catalog-template/* so next-intl does not apply a locale
+// prefix to the internal PDF render target. Access to those routes is
+// guarded by app/catalog-template/layout.tsx (shared-secret header check).
 export const config = {
-  matcher: ["/((?!_next|_vercel|api|.*\\..*).*)"],
+  matcher: ["/((?!_next|_vercel|api|catalog-template|.*\\..*).*)"],
 };
