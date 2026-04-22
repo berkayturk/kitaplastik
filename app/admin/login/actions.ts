@@ -21,12 +21,11 @@ export async function signIn(_prevState: Result, formData: FormData): Promise<Re
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    console.error(
-      "[admin/login] signInWithPassword failed:",
-      error.status,
-      error.code,
-      error.message,
-    );
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.captureException(error, {
+      tags: { module: "admin_login" },
+      extra: { status: error.status, code: error.code, message: error.message },
+    });
     if (error.code === "invalid_credentials") {
       return { ok: false, message: "E-posta veya şifre hatalı." };
     }

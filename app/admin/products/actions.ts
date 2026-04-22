@@ -192,7 +192,11 @@ export async function cloneProduct(sourceId: string): Promise<void> {
       const newPath = `${newSlug}/${newUuid}.${ext}`;
       const { error } = await svc.storage.from("product-images").copy(img.path, newPath);
       if (error) {
-        console.error("[clone] storage.copy failed:", img.path, "→", newPath, error.message);
+        const Sentry = await import("@sentry/nextjs");
+        Sentry.captureException(error, {
+          tags: { module: "admin_products", phase: "clone" },
+          extra: { from: img.path, to: newPath },
+        });
         throw new Error("Görsel kopyalama başarısız. Tekrar deneyin.");
       }
       cloned.push({

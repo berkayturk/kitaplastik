@@ -73,7 +73,8 @@ export async function POST(request: NextRequest) {
       user_agent: userAgent,
     });
   } catch (e) {
-    console.error("[catalog] failed to record request", e);
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.captureException(e, { tags: { route: "api/catalog", phase: "record_request" } });
     // Continue — delivering the catalog is more important than the log.
   }
 
@@ -94,7 +95,8 @@ export async function POST(request: NextRequest) {
       text: mail.text,
     });
   } catch (e) {
-    console.error("[catalog] resend failed", e);
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.captureException(e, { tags: { route: "api/catalog", phase: "resend" } });
     return NextResponse.json({ ok: false, error: "email_failed" }, { status: 502 });
   }
 

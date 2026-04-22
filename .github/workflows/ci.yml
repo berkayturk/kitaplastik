@@ -72,6 +72,9 @@ jobs:
           RESEND_API_KEY: re_placeholder_ci
           RESEND_FROM_EMAIL: noreply@kitaplastik.com
           RESEND_TEAM_EMAIL: info@kitaplastik.com
+          NEXT_PUBLIC_SENTRY_DSN: ""
+          NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ""
+          NEXT_PUBLIC_PLAUSIBLE_HOST: ""
         run: pnpm build
 
   e2e:
@@ -124,6 +127,9 @@ jobs:
           RESEND_API_KEY: re_placeholder_ci
           RESEND_FROM_EMAIL: noreply@kitaplastik.com
           RESEND_TEAM_EMAIL: info@kitaplastik.com
+          NEXT_PUBLIC_SENTRY_DSN: ""
+          NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ""
+          NEXT_PUBLIC_PLAUSIBLE_HOST: ""
         run: pnpm test:e2e
 
       - name: Upload Playwright report

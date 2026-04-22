@@ -1,5 +1,6 @@
 import createNextIntlPlugin from "next-intl/plugin";
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -137,4 +138,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+// Existing withNextIntl wrap composed with Sentry's webpack plugin.
+// Source map upload runs at build time when SENTRY_AUTH_TOKEN is set.
+export default withSentryConfig(withNextIntl(nextConfig), {
+  org: "kitaplastik",
+  project: "web",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  disableLogger: true,
+  automaticVercelMonitors: false,
+});

@@ -23,9 +23,11 @@ export async function recordAudit(entry: AuditEntry): Promise<void> {
       diff: entry.diff as never,
     });
     if (error) {
-      console.warn("[audit] insert failed", error.message);
+      const Sentry = await import("@sentry/nextjs");
+      Sentry.captureMessage(`[audit] insert failed: ${error.message}`, "warning");
     }
   } catch (e) {
-    console.warn("[audit] unexpected", e);
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.captureException(e, { tags: { module: "audit", phase: "unexpected" } });
   }
 }

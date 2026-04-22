@@ -27,7 +27,8 @@ export async function getReferences(): Promise<ReadonlyArray<Reference>> {
     .eq("active", true)
     .order("display_order", { ascending: true });
   if (error || !data) {
-    console.warn("[references] fetch failed", error?.message);
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.captureMessage(`[references] fetch failed: ${error?.message ?? "unknown"}`, "warning");
     return [];
   }
   return (data as Row[]).map(mapRow);

@@ -21,6 +21,10 @@ const testServerEnv = {
   RESEND_API_KEY: "re_placeholder_ci",
   RESEND_FROM_EMAIL: "noreply@kitaplastik.com",
   RESEND_TEAM_EMAIL: "info@kitaplastik.com",
+  // Plan 5a: observability disabled in tests (no real Sentry/Plausible calls from CI)
+  NEXT_PUBLIC_SENTRY_DSN: "",
+  NEXT_PUBLIC_PLAUSIBLE_DOMAIN: "",
+  NEXT_PUBLIC_PLAUSIBLE_HOST: "",
 };
 
 export default defineConfig({

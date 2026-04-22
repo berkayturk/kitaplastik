@@ -83,7 +83,8 @@ export async function POST(request: NextRequest) {
       }),
     ]);
   } catch (e) {
-    console.error("[contact] resend failed", e);
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.captureException(e, { tags: { route: "api/contact", phase: "resend" } });
     return NextResponse.json({ ok: false, error: "email_failed" }, { status: 502 });
   }
 
