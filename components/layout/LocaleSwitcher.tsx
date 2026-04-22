@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { locales, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { trackPlausible } from "@/lib/analytics/plausible";
 
 const LABEL: Record<Locale, string> = {
   tr: "TR",
@@ -49,6 +50,9 @@ export function LocaleSwitcher() {
               href={`/${locale}${pathTail}`}
               hrefLang={locale}
               aria-current={active ? "true" : undefined}
+              onMouseDown={() => {
+                if (!active) trackPlausible({ name: "Locale Changed", props: { to: locale } });
+              }}
               className={cn(
                 "tracking-[0.08em] transition-colors duration-200 ease-out",
                 active

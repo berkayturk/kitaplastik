@@ -11,6 +11,7 @@ import { WhatsAppFab } from "@/components/contact/WhatsAppFab";
 import { getDir } from "@/lib/rtl";
 import { cn } from "@/lib/utils";
 import { fraunces, hankenGrotesk, jetbrainsMono } from "@/lib/fonts";
+import { PlausibleScript } from "@/components/PlausibleScript";
 import "@fontsource-variable/noto-sans-arabic/wght.css";
 import "@/app/globals.css";
 
@@ -61,6 +62,9 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       dir={dir}
       className={`${fraunces.variable} ${hankenGrotesk.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        <PlausibleScript />
+      </head>
       <body className={cn("text-text-primary antialiased", locale === "ar" && "font-arabic")}>
         <AtmosphereScene />
         <NextIntlClientProvider locale={locale} messages={messages}>

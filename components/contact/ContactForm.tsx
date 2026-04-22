@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { PhoneField } from "@/components/forms/PhoneField";
 import { TurnstileWidget } from "@/components/rfq/TurnstileWidget";
+import { trackPlausible } from "@/lib/analytics/plausible";
 
 type SubjectKey = "general" | "quote" | "support" | "other";
 const SUBJECT_KEYS: readonly SubjectKey[] = ["general", "quote", "support", "other"];
@@ -70,6 +71,7 @@ export function ContactForm() {
       setStatus("success");
       form.reset();
       setTurnstileToken(null);
+      trackPlausible({ name: "Contact Submitted" });
     } catch {
       setError(t("errorGeneric"));
       setStatus("error");

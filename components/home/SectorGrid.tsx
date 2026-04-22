@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { Container } from "../layout/Container";
 import { Card, CardEyebrow, CardTitle, CardBody, CardFooter } from "@/components/ui";
+import { SectorCardLink } from "./SectorCardLink";
 
 type SectorPathname = "/sectors/bottle-washing" | "/sectors/caps" | "/sectors/textile";
 
@@ -49,9 +49,12 @@ export function SectorGrid() {
 
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {SECTORS.map((sector) => (
-            <Link
+            <SectorCardLink
               key={sector.pathname}
-              href={sector.pathname}
+              pathname={sector.pathname}
+              slug={
+                sector.pathname.replace("/sectors/", "") as "bottle-washing" | "caps" | "textile"
+              }
               className="group block focus-visible:outline-none"
             >
               <Card interactive className="h-full">
@@ -71,7 +74,7 @@ export function SectorGrid() {
                   </span>
                 </CardFooter>
               </Card>
-            </Link>
+            </SectorCardLink>
           ))}
         </div>
       </Container>

@@ -11,6 +11,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { TurnstileWidget } from "@/components/rfq/TurnstileWidget";
+import { trackPlausible } from "@/lib/analytics/plausible";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Locale = "tr" | "en" | "ru" | "ar";
@@ -70,6 +71,7 @@ export function CatalogRequestForm() {
       setStatus("success");
       form.reset();
       setTurnstileToken(null);
+      trackPlausible({ name: "Catalog Requested", props: { locale: payload.locale } });
     } catch {
       setErr(t("errorGeneric"));
       setStatus("error");
