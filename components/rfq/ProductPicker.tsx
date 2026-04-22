@@ -105,6 +105,9 @@ function Row({
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null);
   const [searched, setSearched] = useState(false);
   const supa = useSupabase();
+  // TR uses pretty-URL pattern (next.config redirect handles the rewrite to /request-quote/custom).
+  // Other locales go straight to canonical English slug.
+  const customRequestHref = locale === "tr" ? "/teklif-iste/ozel-uretim" : "/request-quote/custom";
 
   useEffect(() => {
     let cancelled = false;
@@ -201,7 +204,7 @@ function Row({
           <p className="text-text-secondary mt-2 text-sm">
             {t("noMatchPrompt")}{" "}
             <Link
-              href="/request-quote/ozel-uretim"
+              href={customRequestHref}
               className="text-[var(--color-accent-cobalt)] hover:underline"
             >
               {t("noMatchLinkText")}

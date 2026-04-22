@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { slugify } from "@/lib/utils/slugify";
+import { slugify, slugifyDraft } from "@/lib/utils/slugify";
 
 type Mode = "create" | "edit";
 
@@ -33,7 +33,8 @@ export function SlugField({ mode, initialSlug, previewFromName, name = "slug_ove
           type="text"
           value={editable ? value : previewValue}
           readOnly={!editable}
-          onChange={(e) => setValue(slugify(e.target.value))}
+          onChange={(e) => setValue(slugifyDraft(e.target.value))}
+          onBlur={(e) => setValue(slugify(e.target.value))}
           className="bg-bg-primary/60 text-text-primary flex-1 rounded-sm border border-[var(--color-border-subtle-dark)] px-3 py-2 font-mono text-sm focus:border-[var(--color-accent-blue)] focus:outline-none"
           aria-label="URL slug"
         />

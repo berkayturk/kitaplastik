@@ -14,13 +14,26 @@ const TR_MAP: Record<string, string> = {
   Ç: "c",
 };
 
-export function slugify(input: string): string {
-  if (!input) return "";
-  const asciified = Array.from(input)
+function toAscii(input: string): string {
+  return Array.from(input)
     .map((ch) => TR_MAP[ch] ?? ch)
     .join("");
-  return asciified
+}
+
+export function slugify(input: string): string {
+  if (!input) return "";
+  return toAscii(input)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+// Permissive variant for in-progress editing: preserves dashes (incl. trailing),
+// so users can type "pet-" without the dash being stripped mid-keystroke.
+// Apply slugify() on blur/submit for the final cleanup.
+export function slugifyDraft(input: string): string {
+  if (!input) return "";
+  return toAscii(input)
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-");
 }
