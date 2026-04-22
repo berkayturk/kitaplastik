@@ -26,6 +26,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function loadLocalizedProducts(locale: Locale): Promise<PublicProduct[]> {
+  // CI build uses placeholder Supabase URL — skip fetch; prod gets real data at runtime
+  if (env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder")) return [];
   const svc = await createClient();
   const nameKey = `name->>${locale}`;
   const { data, error } = await svc
