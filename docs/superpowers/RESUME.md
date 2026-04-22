@@ -459,40 +459,51 @@ Bulgular (synthesized ve fix edildi — 6 commit):
 
 ## Yeni Session Başlangıç Komutları
 
-### 🚀 Plan 4b EXECUTE (subagent-driven — brainstorm + plan hazır)
+### ✅ Plan 4b TAMAM (canlıda, kapanış notu — geçmişten)
+
+Plan 4b spec/plan commit'leri: `d7f9e62` (spec) + `84e01b0` (plan). 50 commit execute + security audit + bug fix'ler (`8b64d53..e32cfe7`). Migration `20260421200000` prod DB'de. Detay: 2026-04-22 entry yukarıda.
+
+### 🚀 Plan 4c mini-batch (quick-win — SONRAKİ OTURUMA PASTE EDİLECEK)
 
 ```
-Kitaplastik Plan 4b spec (d7f9e62) + PLAN.md (84e01b0) HAZIR. 28 bite-sized task,
-TDD-per-task, her task self-contained (exact file path + full code + expected output).
+Kitaplastik Plan 4b tamam ✅ canlıda (50 commit + migration applied — docs/superpowers/RESUME.md
+2026-04-22 entry'de full durum). Plan 4c mini-batch — 2 P0 iş:
 
-Plan: docs/superpowers/plans/2026-04-21-faz1-plan4b-admin-products-crud.md
-Spec: docs/superpowers/specs/2026-04-21-plan4b-admin-products-crud-design.md
+1. **Coolify webhook force=true** (5dk): GHA secret COOLIFY_DEPLOY_URL'i güncelle.
+   Şu an `?force=false` → build cache'e takılıyor, her push container'ı güncellemeyebiliyor.
+   Coolify dashboard → App kitaplastik → Webhooks → Deploy Webhook URL kopyala (?force=true
+   ile). Sonra `gh secret set COOLIFY_DEPLOY_URL < <(pbpaste)` (clipboard'dan, chat'e
+   düşmesin). Saga detayı RESUME 2026-04-22 "Coolify deploy saga" bölümünde.
 
-Şu adımları izle:
-1. Plan'ı oku (task listesi + dependency map sonda)
-2. superpowers:subagent-driven-development skill'ini invoke et
-3. Task 1'den başla — foundations (T1-6) bağımsız, paralel dispatch edilebilir:
-   - T1: i18n productImageLabel key + alt-text helper
-   - T2: XSS-safe json-ld helper
-   - T3: Türkçe-aware slugify
-   - T4: uniqueSlug DB helper
-   - T5: 10 spec preset (4 dil label)
-   - T6: Zod product schemas (TR zorunlu + preset unique)
-4. Admin components (T11-14) de bağımsız — SlugField, SpecBuilder, ImageUploader, LocaleTabs paralel çalışabilir
-5. Task review pattern: mekanik task batch + self-review; medium task combined review; logic-heavy (T2,5,6,7,8,9,10,12,21) tam 3-stage review
+2. **Custom RFQ form post-migration smoke** (5dk): https://kitaplastik.com/tr/teklif-iste/ozel-uretim
+   → form doldur (ad/email/50+ karakter açıklama) + 1 PDF upload (<10MB) + Turnstile + submit.
+   Email geldi mi + RFQ admin inbox'ta göründü mü. Plan 3 feature'ı; yeni bucket MIME/size
+   limit + path traversal regex uyumluluğu gerek.
 
-Önemli kısıtlar (plan içinde detay var):
-- 4 dil "boşsa gösterme": TR zorunlu, EN/RU/AR opsiyonel. name->>{locale} filtresi.
-- Slug first-save lock + opt-in "Slug'ı düzenle" toggle
-- Alt text admin'de girilmez → runtime `name[locale] + productImageLabel` fallback
-- cloneProduct: Storage.copy() ile yeni UUID path'ler + partial failure rollback
-- ProductDetail'de JSON-LD `toSafeLdJson` helper kullan (XSS-safe: </script, <!--, U+2028/9 escape)
-- ImageUploader: client-side direct Storage upload, max 5×10MB JPG/PNG/WebP
-- RFQ ProductPicker: katalog autocomplete + boşsa özel üretim linki
+İkisini bitirince RESUME'yi güncelle. Diğer follow-up'lar (pathnames, v4 upgrade, Sentry) ayrı
+oturum. ultrathink.
+```
 
-Her task sonunda: commit at (task mesajı plan'da yazılı), sonraki task'a geç.
+### 🗺️ Kalan follow-up'lar (Plan 4c sonrası — priority order)
 
-Başla.
+1. **P1 — next-intl pathnames mapping** (1-2sa): TR kullanıcı `/tr/request-quote/custom` yerine `/tr/teklif-iste/ozel-uretim` canonical URL görsün. i18n/routing.ts'ye `pathnames` config ekle, Link'lerde single pathname kullan. SEO polish.
+2. **P1 — next-intl v3 → v4 upgrade** (2-4sa): Breaking change, GHSA-8f24-v5vv-gm5j open redirect fix. CSP + auth callback fix halihazırda attack surface'i büyük ölçüde kapattı, ama sürüm güncellemesi gerek.
+3. **P2 — Sentry SDK wiring** (30dk): `NEXT_PUBLIC_SENTRY_DSN` env'de var ama kod bağlı değil. `console.error` yerine structured logger. instrumentation.ts + `@sentry/nextjs` install.
+4. **P2 — Smoke test ürünü cleanup** (2dk): Admin panelinden "Silinmiş" tab'dan hard-delete. Storage `product-images/smoke-test-*` path'leri Supabase Studio'dan temizle.
+5. P3 — `exactOptionalPropertyTypes` tsconfig strictness
+6. P3 — notification page redundant Supabase cast (`supabase gen types` sync ile)
+7. P3 — middleware admin_role DB check (defense-in-depth)
+8. P3 — SlugField onBlur trailing-tire strip UX polish
+
+### 🌐 CF proxy + Let's Encrypt DNS-01 migration (infra, ~20-25 dk)
+
+```
+Kitaplastik CF proxy + SSL Full (strict) için Let's Encrypt cert renewal'ı
+DNS-01'e geçirmek lazım (HTTP-01/TLS-ALPN-01 CF proxy ile çakışır).
+docs/superpowers/RESUME.md "CF proxy + Let's Encrypt DNS-01 (ERTELENEN İŞ)"
+bölümünü oku, 6 adımı uygula.
+
+Ön gerekli: CF API token (Zone:DNS:Edit scope, kitaplastik.com zone).
 ```
 
 ### 🌐 CF proxy + Let's Encrypt DNS-01 migration (infra, ~20-25 dk)
