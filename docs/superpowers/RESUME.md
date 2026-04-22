@@ -653,7 +653,87 @@ Per-locale native URL slug'lar: TR `/urunler` · EN `/products` · RU `/produkts
 ### Açık follow-up
 
 - **Google Search Console sitemap resubmit** (opsiyonel one-shot): GSC → Sitemaps → `https://kitaplastik.com/sitemap.xml` resubmit. Google 1-2 hafta içinde native URL'leri ranking transfer ile reindex eder.
-- Kalan P2/P3 follow-up'lar `## 2026-04-22 (devam 2)` listesindeki gibi: Sentry wiring, GWS + birleşik SPF, CF proxy DNS-01, Coolify token rotate, catalog PDF placeholder → gerçek.
+- Kalan polish / upgrade / legal / admin genişletme işleri **Plan 5 roadmap'e konsolide edildi**: `docs/superpowers/specs/2026-04-22-plan5-post-mvp-polish-roadmap.md`
+
+## 2026-04-23+ — Plan 5 kickoff (multi-session, ~15-22 saat)
+
+Catalog PDF replace user tarafında (içerik). Geri kalan tüm operasyonel olgunluk işleri Plan 5 altında 4 batch. Roadmap: `docs/superpowers/specs/2026-04-22-plan5-post-mvp-polish-roadmap.md`.
+
+### Batch sırası (önerilen)
+
+| Batch | İsim | Süre | Prereq (user prep) |
+|---|---|---|---|
+| 5a | Observability + infra config | ~4sa | CF API token (Zone:DNS:Edit), GWS hesap kararı, Plausible self-host vs SaaS, Sentry DSN |
+| 5d | Upgrade borcu (next-intl v4 + Upstash) | ~3-4sa | Upstash hesap + Redis DB create |
+| 5c | Admin CRUD (sectors + settings + analytics) | ~5-7sa | Sektör görselleri yüksek çöz, şirket bilgileri tam |
+| 5b | Legal pages (KVKK + Gizlilik) | ~3-4sa | Tüzel kişilik, VERBIS, Mersis, DPO iletişim, **hukuk müşaviri onayı (kritik)** |
+
+5b user prereq topladığı sürece 5a/5d/5c paralel ilerleyebilir.
+
+### User prep checklist (Plan 5'e başlamadan önce)
+
+**5a için:**
+- [ ] CF API token oluştur (Zone:DNS:Edit scope, `kitaplastik.com` only)
+- [ ] Google Workspace hesap kararı: yeni Business Starter ($7.2/user/ay) mı, mevcut hesap mı?
+- [ ] Plausible tercihi: Hetzner VPS self-host (ücretsiz) mı, plausible.io ($9/ay) mı?
+- [ ] Sentry hesabı (ücretsiz 5K err/ay) + project create + DSN
+
+**5d için:**
+- [ ] Upstash Redis DB create (free tier: 10K req/gün, 256MB)
+- [ ] REST URL + token değerleri 1Password'e kaydet
+
+**5c için:**
+- [ ] Cam yıkama, kapak, tekstil 3 sektör için yüksek çöz görseller (1920×1080 min)
+- [ ] Şirket bilgileri doğrula: tam ünvan, adres (4 dilde?), telefon, social URL'ler
+
+**5b için (en kritik):**
+- [ ] Tüzel kişilik tam ünvan: "Kıta Plastik ve Tekstil San. Tic. Ltd. Şti." doğru mu?
+- [ ] VERBIS kayıt numarası (varsa veya kayıt başlat)
+- [ ] Mersis numarası
+- [ ] Veri sorumlusu/DPO email + telefon
+- [ ] **Hukuk müşaviri ile KVKK + Gizlilik metni review** — placeholder yerine gerçek legal text ile canlıya git
+
+### Kick-off prompts (user hangi batch ile başlamak istediğini seçer)
+
+**5a ile başla:**
+```
+Plan 5a — Observability + infra config. docs/superpowers/specs/2026-04-22-plan5-post-mvp-polish-roadmap.md
+"5a" bölümünü oku. 6 task (Sentry, Plausible, Coolify token, GWS, SPF, CF proxy DNS-01).
+brainstorming skill ile eksik karar varsa sor, ardından spec + plan yaz, subagent-driven execute.
+Prereq'ler hazır: CF API token, GWS kararı, Plausible tercihi, Sentry DSN.
+
+ultrathink
+```
+
+**5d ile başla:**
+```
+Plan 5d — Upgrade borcu: next-intl v3→v4 + Upstash Redis. Roadmap dosyası "5d" bölümü.
+next-intl changelog + Upstash SDK docs research'ten başla (context7 MCP + WebFetch).
+Spec yaz, plan yaz, subagent-driven execute. next-intl v4 migration TDD kritik — pathnames
+config + alternates + LocaleSwitcher davranışları unit test + E2E ile assert et.
+
+ultrathink
+```
+
+**5c ile başla:**
+```
+Plan 5c.1 — /admin/sectors CRUD. Roadmap "5c.1" bölümü. Plan 4b /admin/products pattern'i
+birebir örnek. Migration + RLS + seed + admin pages + public dynamic route + Storage bucket.
+Brainstorm skill ile belirsiz karar topla, ardından spec + plan + subagent-driven execute.
+
+ultrathink
+```
+
+**5b ile başla (legal content hazırsa):**
+```
+Plan 5b — KVKK + Gizlilik Politikası + Çerez Politikası, 4 dilde. Roadmap "5b" bölümü.
+Legal text hazır: [user paste etsin ya da dosya yolu verir].
+TR legal text base, EN/RU/AR çeviri Claude session'da doğrudan (script yok, Plan 2 pattern).
+pathnames config'e 3 yeni canonical ekle, native slug'lar belirle (brainstorm bu kararları).
+Subagent-driven execute.
+
+ultrathink
+```
 
 ## Ortam Notları
 
