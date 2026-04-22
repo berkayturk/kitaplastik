@@ -34,6 +34,19 @@
 - [ ] Verify: mail-tester score ≥ 9/10 (contact form test mail) — post-deploy check
 - [x] Done: 2026-04-22
 
+### 1.4 Stable Server Action encryption key
+
+**Problem (2026-04-23):** Plan 5a Faz 2 deploy sonrası `/admin/products/new` POST → 404 `"Server action not found"`. Root cause: `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` unset → her build yeni rastgele key üretiyor → deploy sırasında açık olan admin session'ları invalidate oluyor. Inline server action'lar (`new/page.tsx:26-29`, `[id]/edit/page.tsx:36-43`) en hassas pattern.
+
+Tek seferlik hard refresh semptomu geçirir; kalıcı fix = stable key.
+
+- [ ] Generate: `openssl rand -base64 32`
+- [ ] Coolify env (kitaplastik app): `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=<generated>` (Available at Runtime ✅ — Nixpacks build-time'da da geçirir)
+- [x] `.env.example` placeholder + doc comment (bu commit)
+- [ ] Redeploy — bu deploy sırasında açık session'lar son kez invalidate olur, sonrasında stable
+- [ ] Verify: deploy sonrası admin tek sekmede önce fresh load, sonra `pnpm build` tekrar tetikle (dummy commit) → açık sekmede POST hâlâ çalışıyor mu (eski ID'ler artık geçerli olmalı)
+- [ ] Done: _____
+
 ## Faz 2 — Plausible
 
 ### 2.1–2.3 Runtime (Coolify deploy + DNS + SSL) — ⏸️ PENDING (next session)
