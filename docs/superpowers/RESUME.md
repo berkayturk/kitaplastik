@@ -373,6 +373,60 @@ Her task self-contained: exact file paths, full code blocks, TDD cycle (failing 
 - T28 canlı smoke kalan (plan'da Step 3-4 listesi var — admin CRUD 4 locale × clone × delete/restore × RFQ picker empty state × Schema.org JSON-LD kontrolü)
 - RESUME "Plan 4b ✅" entry smoke sonrası (plan'da T28 Step 6 template hazır)
 
+## 2026-04-22 — Plan 4b ✅ TAMAMLANDI — canlıda, smoke geçti
+
+**Durum:** 11 smoke adımı geçti, 2 canlı-tespit bug fix'lendi, 49 commit canlıda + migration prod DB'de.
+
+### Final commit count (Plan 4b tüm saga)
+
+`8b64d53..HEAD` = **49 commit** — 28 task + 10 code-review fix inline + 4 polish + 7 security/CI fix.
+
+### Canlı-tespit bug'lar (user smoke sırasında buldu)
+
+1. **URL 404** (`/tr/request-quote/ozel-uretim` "Sayfa bulunamadı"): ProductPicker empty-state link'inde + ProductDetail CTA'sında locale-aware olmayan hardcoded path. Fix `9f31176`: locale === "tr" ? TR pretty path : EN canonical. next.config Plan 4a redirect'i TR pretty → canonical dönüştürüyor.
+2. **Slug edit'te tire girilemiyor**: `slugify()` onChange'te trailing dash'i hemen silerek kullanıcıyı input'a karakter yazdırmaz etmişti. Fix `9f31176`: `slugifyDraft()` yeni export — tire preserve, onChange'te permissive; `slugify()` sadece onBlur'da tam temizlik.
+
+### Coolify deploy saga (aksaklık + workaround)
+
+Deploy webhook URL `force=false` ile kuruluydu (`feedback_coolify_autodeploy_via_gha.md` ref). İlk iki yeni deploy (`9f31176` + `417acf6`) build cache'e çarpıp prod container'ı güncellemedi. Son deploy manuel trigger (veya Coolify cache expire) sonrası oturdu. **TODO (follow-up):** GHA secret `COOLIFY_DEPLOY_URL`'i `force=true` ile güncelle — yoksa her deploy'da bu yaşanabilir.
+
+### Prod DB (migration 20260421200000 applied)
+
+`pnpm exec supabase db push` ile uygulandı:
+- Param-less `is_admin()` / `is_admin_role()` — SECURITY DEFINER + `(select auth.uid())` + search_path locked
+- 11 RLS policy yeniden kuruldu (memoization)
+- `authenticated insert audit_log` dead+dangerous policy drop
+- 3 bucket için `file_size_limit` + `allowed_mime_types` (product-images / rfq-attachments / sector-images)
+- rfq-attachments path traversal regex (UUID prefix + whitelisted ext)
+- 4 perf index (`(active, display_order)`, `sector_id`, `assigned_to`, `notification_recipients(active)`)
+
+### Programmatic smoke sonuçları (anon RLS)
+
+- 4 locale `/products` → 200 ✓
+- Security headers aktif (CSP, HSTS, X-Frame, Permissions, Referrer, X-Content-Type) ✓
+- Anon sectors read → 200 content-range `0-0/3` ✓
+- Anon rfqs/audit_log/admin_users SELECT → `[]` (RLS filter) ✓
+- Anon POST audit_log → **401** ✓ (spoof kapandı)
+- rfq-attachments badpath.txt → **400** ✓
+- rfq-attachments UUID/test.txt (bad ext) → **400** ✓
+
+### Browser smoke sonuçları (user yaptı)
+
+Adım 1-11 hepsi geçti: admin login + Ürünler nav + yeni ürün (TR spec görsel) + liste görünür + JSON-LD var + EN tab + boşsa gösterme (ru/ar'da görünmez) + clone (-kopya suffix) + slug toggle uyarı + sil/restore + autocomplete + empty-state → özel üretim link ✓
+
+### Plan 4b kapsam DIŞI (Plan 4c / follow-up adayları)
+
+1. **Custom RFQ form (özel üretim)** end-to-end re-smoke — Plan 3 feature, theoretically migration'dan etkilenmedi ama end-to-end validation yapılmadı
+2. **next-intl v3 → v4** breaking upgrade (GHSA-8f24-v5vv-gm5j open redirect). Mevcut CSP + auth callback fix attack surface'i büyük ölçüde kapattı. Defer.
+3. **Structured logger** (Sentry SDK) — `console.error` yerine prod'da. NEXT_PUBLIC_SENTRY_DSN schema'da var, kod tarafı bağlanmadı.
+4. **next-intl pathnames mapping** — TR kullanıcısı URL'de İngilizce slug görmesin diye (`/tr/request-quote/custom` → `/tr/teklif-iste/ozel-uretim`). Şu an redirect sayesinde çalışıyor ama canonical URL İngilizce. SEO-pretty-URL fix.
+5. **`exactOptionalPropertyTypes`** tsconfig strictness
+6. **Notification page** `as unknown as Recipient[]` cast — Supabase generated types sync edilince temizlenir (`supabase gen types typescript --linked > lib/supabase/types.ts`)
+7. **Coolify webhook `force=true`** — yukarıdaki deploy saga'yı önler
+8. **Smoke test ürünü** — admin panelinden hard-delete (Silinmiş → DB row). Storage path'leri `product-images/smoke-test-*` da silinebilir.
+9. **Admin `id` middleware admin_role check** — defense-in-depth (H4-db). Şu an page-level `requireAdmin()` yeterli, ama edge middleware'de check eklemek brief expose window'unu kapatır.
+10. **Tire sonrası whitespace/strip UX** — SlugField onBlur'da `slugify()` trailing tire temizliyor, ama user typing flow'unda görülebilir bir glitch olmayacak.
+
 ### Security audit kararı
 
 Smoke test ÖNCESİ user'ın talebiyle comprehensive security audit başlatıldı:
