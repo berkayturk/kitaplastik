@@ -45,71 +45,89 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // Public route'lar — locale-prefixed (tr|en|ru|ar)
+      // Plan 3 legacy TR deep links → new TR canonical (catalog) 1-hop
       {
-        source: "/:locale(tr|en|ru|ar)/urunler",
-        destination: "/:locale/products",
+        source: "/tr/teklif-iste",
+        destination: "/tr/katalog",
         permanent: true,
       },
       {
-        source: "/:locale(tr|en|ru|ar)/urunler/:rest*",
-        destination: "/:locale/products/:rest*",
+        source: "/tr/teklif-iste/:rest*",
+        destination: "/tr/katalog",
+        permanent: true,
+      },
+      // Plan 4a legacy EN-canonical → new per-locale native (TR)
+      { source: "/tr/products", destination: "/tr/urunler", permanent: true },
+      { source: "/tr/products/:slug", destination: "/tr/urunler/:slug", permanent: true },
+      { source: "/tr/about", destination: "/tr/hakkimizda", permanent: true },
+      { source: "/tr/contact", destination: "/tr/iletisim", permanent: true },
+      { source: "/tr/references", destination: "/tr/referanslar", permanent: true },
+      { source: "/tr/request-quote", destination: "/tr/katalog", permanent: true },
+      {
+        source: "/tr/request-quote/:sub(custom|standard)",
+        destination: "/tr/katalog",
         permanent: true,
       },
       {
-        source: "/:locale(tr|en|ru|ar)/sektorler/cam-yikama",
-        destination: "/:locale/sectors/bottle-washing",
+        source: "/tr/sectors/bottle-washing",
+        destination: "/tr/sektorler/cam-yikama",
+        permanent: true,
+      },
+      { source: "/tr/sectors/caps", destination: "/tr/sektorler/kapak", permanent: true },
+      { source: "/tr/sectors/textile", destination: "/tr/sektorler/tekstil", permanent: true },
+      { source: "/tr/sectors", destination: "/tr/sektorler", permanent: true },
+
+      // Plan 4a legacy EN-canonical → new per-locale native (RU)
+      { source: "/ru/products", destination: "/ru/produktsiya", permanent: true },
+      { source: "/ru/products/:slug", destination: "/ru/produktsiya/:slug", permanent: true },
+      { source: "/ru/about", destination: "/ru/o-nas", permanent: true },
+      { source: "/ru/contact", destination: "/ru/kontakty", permanent: true },
+      { source: "/ru/references", destination: "/ru/otzyvy", permanent: true },
+      { source: "/ru/request-quote", destination: "/ru/katalog", permanent: true },
+      {
+        source: "/ru/request-quote/:sub(custom|standard)",
+        destination: "/ru/katalog",
         permanent: true,
       },
       {
-        source: "/:locale(tr|en|ru|ar)/sektorler/kapak",
-        destination: "/:locale/sectors/caps",
+        source: "/ru/sectors/bottle-washing",
+        destination: "/ru/otrasli/moyka-butylok",
+        permanent: true,
+      },
+      { source: "/ru/sectors/caps", destination: "/ru/otrasli/kryshki", permanent: true },
+      { source: "/ru/sectors/textile", destination: "/ru/otrasli/tekstil", permanent: true },
+      { source: "/ru/sectors", destination: "/ru/otrasli", permanent: true },
+
+      // Plan 4a legacy EN-canonical → new per-locale native (AR)
+      { source: "/ar/products", destination: "/ar/al-muntajat", permanent: true },
+      { source: "/ar/products/:slug", destination: "/ar/al-muntajat/:slug", permanent: true },
+      { source: "/ar/about", destination: "/ar/man-nahnu", permanent: true },
+      { source: "/ar/contact", destination: "/ar/ittisal", permanent: true },
+      { source: "/ar/references", destination: "/ar/maraji", permanent: true },
+      { source: "/ar/request-quote", destination: "/ar/al-katalog", permanent: true },
+      {
+        source: "/ar/request-quote/:sub(custom|standard)",
+        destination: "/ar/al-katalog",
         permanent: true,
       },
       {
-        source: "/:locale(tr|en|ru|ar)/sektorler/tekstil",
-        destination: "/:locale/sectors/textile",
+        source: "/ar/sectors/bottle-washing",
+        destination: "/ar/al-qitaat/ghasil-zujajat",
         permanent: true,
       },
       {
-        source: "/:locale(tr|en|ru|ar)/sektorler",
-        destination: "/:locale/sectors",
+        source: "/ar/sectors/caps",
+        destination: "/ar/al-qitaat/al-aghtiya",
         permanent: true,
       },
       {
-        source: "/:locale(tr|en|ru|ar)/hakkimizda",
-        destination: "/:locale/about",
+        source: "/ar/sectors/textile",
+        destination: "/ar/al-qitaat/al-mansujat",
         permanent: true,
       },
-      {
-        source: "/:locale(tr|en|ru|ar)/iletisim",
-        destination: "/:locale/contact",
-        permanent: true,
-      },
-      {
-        source: "/:locale(tr|en|ru|ar)/referanslar",
-        destination: "/:locale/references",
-        permanent: true,
-      },
-      // Catalog pivot (2026-04-22): the legacy /request-quote/{custom,standard}
-      // sub-pages have been removed. Any bookmarked or indexed URL now
-      // redirects up to the single catalog-request page.
-      {
-        source: "/:locale(tr|en|ru|ar)/request-quote/:sub(custom|standard)",
-        destination: "/:locale/request-quote",
-        permanent: true,
-      },
-      {
-        source: "/:locale(tr|en|ru|ar)/teklif-iste/:sub(ozel-uretim|standart)",
-        destination: "/:locale/request-quote",
-        permanent: true,
-      },
-      {
-        source: "/:locale(tr|en|ru|ar)/teklif-iste",
-        destination: "/:locale/request-quote",
-        permanent: true,
-      },
-      // Admin route
+      { source: "/ar/sectors", destination: "/ar/al-qitaat", permanent: true },
+
+      // Admin (preserved from Plan 4a)
       {
         source: "/admin/ayarlar/bildirimler",
         destination: "/admin/settings/notifications",
