@@ -610,6 +610,51 @@ Büyük bir sonraki faz planlarsan:
 - Catalog request analytics (per-locale split, daily trend)
 - Catalog version tracking (PDF update'de log)
 
+## 2026-04-22 (devam 3) — Plan 4d pathnames canlıda
+
+Per-locale native URL slug'lar: TR `/urunler` · EN `/products` · RU `/produktsiya` · AR `/al-muntajat` (10 canonical route × 4 locale). next-intl v3 `pathnames` config ile. Eski EN-canonical URL'ler 308 → native.
+
+### Commit serisi (`5ae1b57..e3718bd`, 9 commit, subagent-driven)
+
+| # | SHA | Task |
+|---|---|---|
+| T1 | `5ae1b57` | feat(slugify): RU (BGN/PCGN) + AR (consonant-only) + `locale` option |
+| T2 | `40c451a` | feat(i18n): pathnames config (10 canonical × 4 locale) + Footer/Header/SectorGrid/sectors-page/ProductCard/ProductDetail tsc-gate migration |
+| T3 | `2e2fccf` | feat(seo): buildAlternates uses getPathname (latent double-prefix bug fix) |
+| T3+fix | `b97c8d3` | fix(seo): buildProductAlternates for dynamic `[slug]` alternates (SEO regresyon fix) |
+| T4 | `f48f588` | test(sitemap): 40 URL native slug coverage |
+| T6 | `8340dfd` | feat(redirects): 36 rule legacy EN-canonical → per-locale native matrix |
+| T7 | `4ccc219` | test(e2e): pathname-mapping canonical + legacy 308 + sitemap |
+| T8.1 | `d538240` | test(e2e): delete obsolete url-redirects spec (Plan 4a ters yönü) |
+| T8.2 | `e3718bd` | test(e2e): migrate hardcoded paths to per-locale native canonical |
+
+### Kritik bulgular
+
+- **`getPathname` `localePrefix:"always"` prefix içerir** — `getPathname({href:"/about", locale:"tr"})` → `"/tr/hakkimizda"` (sadece `/hakkimizda` değil). Plan T3 code bloğu manuel `/${locale}${pathname}` prefix ekliyordu → double-prefix bug. T3 implementer catch etti, fix `${origin}${pathname}`. Gelecek next-intl iş: pathnames kullanırken URL concat yaparken her zaman bu davranışı akılda tut.
+- **T2 scope expansion build-gate için zorunlu** — pathnames config `<Link href>` type'ını daraltıyor, `string` → literal union. 6 ek dosya fix edilmeden `tsc --noEmit` geçmezdi (Footer, Header, SectorGrid, sectors/page, ProductCard, ProductDetail). Tüm fix minimal + behavior-preserving. T5 planı böylece no-op; audit-only.
+- **T3 product detail alternates SEO regresyon** — T3 ilk commit `buildAlternates("/products", ...)` ile tsc'yi geçirdi ama ürün detay sayfası alternates LIST page'e döndü (slug kaybı). Fix commit `b97c8d3` `buildProductAlternates(slug, origin)` helper eklediği için canonical + languages dynamic slug ile doğru.
+- **AR `ة` taa marbuta `"h"` mapping** — spec dokuman `"a"` yazmıştı ama test assertion `alrbyh` için `"h"` gerekli (pause form fonetik olarak /h/). Linguistik doğru. Plan 4d static AR slug tablosu taa marbuta içermiyor → zero downstream impact.
+- **Plan 3 teklif-iste 1-hop korundu** — `/tr/teklif-iste{/alt}*` → `/tr/katalog` direct 308. Plan 4c collapse pattern'i bozulmadı (2-hop teklif-iste → request-quote → katalog dance yok).
+
+### Verify + deploy
+
+- `pnpm verify` lokalde yeşil: typecheck + lint + format:check + 139 unit + audit + build (55 static page) + 60 E2E / 13 skipped / 0 failed
+- İlk `pnpm verify` run'da `/tr/katalog` + `/en/catalog` 500 döndü (Playwright dev-compile race, parallel workers). Retest'te yeşil — flaky, fix gerekmedi.
+- GHA CI 6m14s, Coolify webhook → deploy ~5 dk
+- Canlı geçiş: `/tr/urunler` 308 (eski container) → 200 (yeni container)
+
+### Canlı smoke sonuçları
+
+- **Canonical 200:** 36/36 (4 locale × 9 URL)
+- **Legacy redirect 308→200:** 22/22 (TR 9 + RU 5 + AR 5 + Plan 3 teklif-iste 3 variant)
+- **sitemap.xml:** 40 URL, native slug'lar mevcut (`/tr/urunler`, `/tr/katalog`, `/ru/produktsiya`, `/ar/al-muntajat`, `/ar/al-qitaat/ghasil-zujajat`, `/en/products`, `/en/catalog`)
+- **Browser walk-through (user):** LocaleSwitcher 4 locale geçiş ✓, SectorGrid → `/tr/sektorler/cam-yikama` ✓, Katalog İndir → `/tr/katalog` ✓, form submit regresyon yok ✓
+
+### Açık follow-up
+
+- **Google Search Console sitemap resubmit** (opsiyonel one-shot): GSC → Sitemaps → `https://kitaplastik.com/sitemap.xml` resubmit. Google 1-2 hafta içinde native URL'leri ranking transfer ile reindex eder.
+- Kalan P2/P3 follow-up'lar `## 2026-04-22 (devam 2)` listesindeki gibi: Sentry wiring, GWS + birleşik SPF, CF proxy DNS-01, Coolify token rotate, catalog PDF placeholder → gerçek.
+
 ## Ortam Notları
 
 - Node 22.22.2 + pnpm 9.15.9 + corepack aktif
