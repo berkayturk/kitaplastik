@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: description?.slice(0, 160),
     alternates: {
       canonical: `${origin}/${locale}/products/${slug}`,
-      languages: buildAlternates(`/products/${slug}`, origin).languages,
+      languages: buildAlternates("/products", origin).languages,
     },
   };
 }

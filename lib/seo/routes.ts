@@ -1,4 +1,5 @@
 import { locales, defaultLocale, type Locale } from "@/i18n/routing";
+import { getPathname } from "@/i18n/navigation";
 
 export const PUBLIC_ROUTES = [
   "/",
@@ -20,20 +21,24 @@ export interface Alternates {
   "x-default": string;
 }
 
-function joinPath(path: string): string {
-  return path === "/" ? "" : path;
+function buildLocaleUrl(route: PublicRoute, locale: Locale, origin: string): string {
+  // getPathname already includes the locale prefix under localePrefix: "always".
+  // Example: getPathname({ href: "/about", locale: "tr" }) -> "/tr/hakkimizda"
+  //          getPathname({ href: "/",       locale: "tr" }) -> "/tr"
+  const pathname = getPathname({ href: route, locale });
+  return `${origin}${pathname}`;
 }
 
-export function buildAlternates(route: string, origin: string): Alternates {
+export function buildAlternates(route: PublicRoute, origin: string): Alternates {
   const languages = locales.reduce<Record<Locale, string>>(
     (acc, locale) => {
-      acc[locale] = `${origin}/${locale}${joinPath(route)}`;
+      acc[locale] = buildLocaleUrl(route, locale, origin);
       return acc;
     },
     {} as Record<Locale, string>,
   );
   return {
     languages,
-    "x-default": `${origin}/${defaultLocale}${joinPath(route)}`,
+    "x-default": languages[defaultLocale],
   };
 }

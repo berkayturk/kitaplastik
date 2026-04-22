@@ -16,14 +16,14 @@ describe("seo routes", () => {
     expect(PUBLIC_ROUTES).toHaveLength(10);
   });
 
-  it("buildAlternates produces hreflang map with x-default", () => {
+  it("buildAlternates produces hreflang map with x-default (native URLs)", () => {
     const alt = buildAlternates("/about", "https://kitaplastik.com");
     expect(alt.languages).toEqual({
-      tr: "https://kitaplastik.com/tr/about",
+      tr: "https://kitaplastik.com/tr/hakkimizda",
       en: "https://kitaplastik.com/en/about",
-      ru: "https://kitaplastik.com/ru/about",
-      ar: "https://kitaplastik.com/ar/about",
+      ru: "https://kitaplastik.com/ru/o-nas",
+      ar: "https://kitaplastik.com/ar/man-nahnu",
     });
-    expect(alt["x-default"]).toBe("https://kitaplastik.com/tr/about");
+    expect(alt["x-default"]).toBe("https://kitaplastik.com/tr/hakkimizda");
   });
 });
