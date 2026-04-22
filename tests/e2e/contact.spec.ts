@@ -5,7 +5,10 @@ test("contact form submits and shows success state", async ({ page }) => {
   await page.goto("/tr/contact");
   await page.fill('input[name="name"]', "Test Kullanıcı");
   await page.fill('input[name="email"]', "test@example.com");
-  await page.fill('input[name="phone"]', "+905551112233");
+  // PhoneField exposes a hidden input[name="phone"] that combines the dial
+  // code selector + visible tel input on submit. Target the visible tel
+  // input directly so Playwright does not time out on the hidden carrier.
+  await page.fill('input[type="tel"]', "5551112233");
   await page.fill('input[name="company"]', "Acme");
   await page.selectOption('select[name="subject"]', "general");
   await page.fill(
