@@ -1,0 +1,28 @@
+{
+  "catalog": {
+    "page": {
+      "eyebrow": "Catalog",
+      "title": "Download the Kıta Plastik catalog",
+      "description": "Enter your email address and we'll send the catalog in your preferred language within seconds."
+    },
+    "form": {
+      "emailLabel": "Your email address",
+      "emailPlaceholder": "name@company.com",
+      "localeLabel": "Catalog language",
+      "localeHint": "The catalog PDF will be sent in the language you choose.",
+      "submit": "Send Catalog",
+      "submitting": "Sending…",
+      "successTitle": "Catalog on its way",
+      "successBody": "Check your inbox in a few minutes. If you don't see it, please check your spam folder.",
+      "errorRateLimit": "Too many requests. Please try again in {minutes} minutes.",
+      "errorTurnstile": "Security check failed. Please refresh the page and try again.",
+      "errorGeneric": "Could not send the catalog. Please try again."
+    },
+    "locales": {
+      "tr": "Türkçe",
+      "en": "English",
+      "ru": "Русский",
+      "ar": "العربية"
+    }
+  }
+}

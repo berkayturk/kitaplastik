@@ -41,6 +41,6 @@ export async function requireAdmin(): Promise<AdminUser> {
 
 export async function requireAdminRole(): Promise<AdminUser> {
   const user = await requireAdmin();
-  if (user.role !== "admin") redirect("/admin/inbox");
+  if (user.role !== "admin") redirect("/admin/catalog-requests");
   return user;
 }

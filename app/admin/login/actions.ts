@@ -35,5 +35,5 @@ export async function signIn(_prevState: Result, formData: FormData): Promise<Re
     }
     return { ok: false, message: "Giriş başarısız. Tekrar deneyin." };
   }
-  redirect("/admin/inbox");
+  redirect("/admin/catalog-requests");
 }

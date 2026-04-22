@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   user: AdminUser;
-  active: "inbox" | "products" | "bildirimler";
+  active: "catalog" | "products" | "bildirimler";
   children: ReactNode;
 }
 
@@ -30,8 +30,8 @@ export function Shell({ user, active, children }: Props) {
             >
               Kıta <span className="text-[var(--color-text-tertiary)]">— Admin</span>
             </span>
-            <NavLink href="/admin/inbox" active={active === "inbox"}>
-              Gelen Kutusu
+            <NavLink href="/admin/catalog-requests" active={active === "catalog"}>
+              Katalog İstekleri
             </NavLink>
             <NavLink href="/admin/products" active={active === "products"}>
               Ürünler

@@ -1,0 +1,28 @@
+{
+  "catalog": {
+    "page": {
+      "eyebrow": "Katalog",
+      "title": "Kıta Plastik katalogunu indirin",
+      "description": "E-posta adresinizi girin, seçtiğiniz dildeki katalogu birkaç saniye içinde gönderelim."
+    },
+    "form": {
+      "emailLabel": "E-posta adresiniz",
+      "emailPlaceholder": "isim@firma.com",
+      "localeLabel": "Katalog dili",
+      "localeHint": "Katalog PDF'i seçtiğiniz dilde gönderilecek.",
+      "submit": "Katalogu Gönder",
+      "submitting": "Gönderiliyor…",
+      "successTitle": "Katalog yolda",
+      "successBody": "E-posta kutunuzu birkaç dakika içinde kontrol edin. Gelen kutunda yoksa spam klasörüne de bakın.",
+      "errorRateLimit": "Çok fazla talep. Lütfen {minutes} dakika sonra tekrar deneyin.",
+      "errorTurnstile": "Güvenlik kontrolü başarısız. Sayfayı yenileyip tekrar deneyin.",
+      "errorGeneric": "Katalog gönderilemedi. Lütfen tekrar deneyin."
+    },
+    "locales": {
+      "tr": "Türkçe",
+      "en": "English",
+      "ru": "Русский",
+      "ar": "العربية"
+    }
+  }
+}

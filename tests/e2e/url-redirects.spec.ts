@@ -13,8 +13,11 @@ const REDIRECTS: Array<[string, string]> = [
   ["/iletisim", "/contact"],
   ["/referanslar", "/references"],
   ["/teklif-iste", "/request-quote"],
-  ["/teklif-iste/ozel-uretim", "/request-quote/custom"],
-  ["/teklif-iste/standart", "/request-quote/standard"],
+  // Catalog pivot: legacy sub-paths now collapse up to /request-quote.
+  ["/teklif-iste/ozel-uretim", "/request-quote"],
+  ["/teklif-iste/standart", "/request-quote"],
+  ["/request-quote/custom", "/request-quote"],
+  ["/request-quote/standard", "/request-quote"],
 ];
 
 test.describe("Plan 4a: public URL 301 redirects", () => {

@@ -91,14 +91,17 @@ const nextConfig: NextConfig = {
         destination: "/:locale/references",
         permanent: true,
       },
+      // Catalog pivot (2026-04-22): the legacy /request-quote/{custom,standard}
+      // sub-pages have been removed. Any bookmarked or indexed URL now
+      // redirects up to the single catalog-request page.
       {
-        source: "/:locale(tr|en|ru|ar)/teklif-iste/ozel-uretim",
-        destination: "/:locale/request-quote/custom",
+        source: "/:locale(tr|en|ru|ar)/request-quote/:sub(custom|standard)",
+        destination: "/:locale/request-quote",
         permanent: true,
       },
       {
-        source: "/:locale(tr|en|ru|ar)/teklif-iste/standart",
-        destination: "/:locale/request-quote/standard",
+        source: "/:locale(tr|en|ru|ar)/teklif-iste/:sub(ozel-uretim|standart)",
+        destination: "/:locale/request-quote",
         permanent: true,
       },
       {

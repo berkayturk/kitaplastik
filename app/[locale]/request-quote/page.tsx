@@ -1,10 +1,16 @@
 // app/[locale]/request-quote/page.tsx
+//
+// Catalog request landing page. Users enter their email + preferred PDF
+// locale; the /api/catalog endpoint delivers the catalog to their inbox.
+// Path kept at /request-quote for SEO continuity after the RFQ -> catalog
+// pivot (with pretty /teklif-iste redirect for TR).
+
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
-import { Link } from "@/i18n/navigation";
 import { buildAlternates } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
+import { CatalogRequestForm } from "@/components/catalog/CatalogRequestForm";
 
 interface PageProps {
   params: Promise<{ locale: Locale }>;
@@ -12,11 +18,11 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "rfq.hub" });
+  const t = await getTranslations({ locale, namespace: "catalog.page" });
   const origin = env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com";
   return {
     title: `${t("title")} | Kıta Plastik`,
-    description: t("customDescription"),
+    description: t("description"),
     alternates: {
       canonical: `${origin}/${locale}/request-quote`,
       languages: buildAlternates("/request-quote", origin).languages,
@@ -27,32 +33,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function Page({ params }: PageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("rfq.hub");
+  const t = await getTranslations("catalog.page");
   return (
-    <section className="container mx-auto max-w-5xl px-6 py-12">
-      <header className="mb-10 max-w-2xl">
+    <section className="container mx-auto max-w-3xl px-6 py-10 md:py-14">
+      <header className="mb-8">
         <p className="eyebrow">{t("eyebrow")}</p>
         <h1 className="text-text-primary mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
           {t("title")}
         </h1>
+        <p className="text-text-secondary mt-3 text-sm md:text-base">{t("description")}</p>
       </header>
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <Link
-          href="/request-quote/custom"
-          className="bg-bg-secondary/40 block rounded-lg border border-[var(--color-border-subtle-dark)] p-6 transition hover:border-[var(--color-accent-red)]/50"
-        >
-          <h2 className="text-text-primary text-xl font-semibold">{t("customTitle")}</h2>
-          <p className="text-text-secondary mt-2 text-sm">{t("customDescription")}</p>
-        </Link>
-        <Link
-          href="/request-quote/standard"
-          className="bg-bg-secondary/40 block rounded-lg border border-[var(--color-border-subtle-dark)] p-6 transition hover:border-[var(--color-accent-blue)]/50"
-        >
-          <h2 className="text-text-primary text-xl font-semibold">{t("standartTitle")}</h2>
-          <p className="text-text-secondary mt-2 text-sm">{t("standartDescription")}</p>
-        </Link>
-      </div>
+      <CatalogRequestForm />
     </section>
   );
 }

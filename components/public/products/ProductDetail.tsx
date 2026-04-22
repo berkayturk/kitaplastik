@@ -36,9 +36,10 @@ export function ProductDetail({ product, locale, ctaLabel, imageLabel, specsLabe
     url: `${siteUrl}/${locale}/products/${product.slug}`,
   };
 
-  // TR kullanıcısı TR pretty-URL'e gider (redirect → /request-quote/standard). Diğer locale'ler direkt canonical.
-  const standardRfqPathname =
-    locale === "tr" ? "/teklif-iste/standart" : "/request-quote/standard";
+  // Catalog pivot: the old per-product standart RFQ CTA now points to the
+  // unified /request-quote catalog form. TR pretty path redirects via
+  // next.config.
+  const catalogPathname = locale === "tr" ? "/teklif-iste" : "/request-quote";
 
   // JSON-LD: JSON.stringify içerik HTML context'ine girdiği için toSafeLdJson ile </script, <!-- ve U+2028/9 escape edilir
   return (
@@ -63,7 +64,7 @@ export function ProductDetail({ product, locale, ctaLabel, imageLabel, specsLabe
           <ProductSpecTable specs={product.specs} locale={locale} />
         </div>
         <Link
-          href={{ pathname: standardRfqPathname, query: { product: product.slug } }}
+          href={{ pathname: catalogPathname }}
           className="mt-8 inline-block rounded-sm bg-[var(--color-accent-red)] px-6 py-3 font-medium text-white hover:opacity-90"
         >
           {ctaLabel}

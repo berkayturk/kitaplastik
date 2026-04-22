@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { renderContactTeamEmail } from "@/lib/email/templates/contact-team";
 import { renderContactCustomerEmail } from "@/lib/email/templates/contact-customer";
-import { renderRfqTeamEmail } from "@/lib/email/templates/rfq-team";
-import { renderRfqCustomerEmail } from "@/lib/email/templates/rfq-customer";
+import { renderCatalogDeliveryEmail } from "@/lib/email/templates/catalog-delivery";
 
 describe("email templates", () => {
   it("contact team: escapes HTML in name/message", () => {
@@ -29,28 +28,34 @@ describe("email templates", () => {
     }
   });
 
-  it("rfq team: includes admin URL as anchor", () => {
-    const r = renderRfqTeamEmail({
-      id: "abc",
-      type: "custom",
-      locale: "tr",
-      contact: { name: "N", email: "n@x.com", company: "C", phone: "+90" },
-      payload: { description: "test" },
-      attachmentCount: 2,
-      ip: "0",
-      adminUrl: "https://site/admin/inbox/abc",
-    });
-    expect(r.html).toContain("https://site/admin/inbox/abc");
-    expect(r.subject).toContain("Ozel");
+  it("contact customer: includes English italic secondary for non-EN locales", () => {
+    const tr = renderContactCustomerEmail({ name: "Ali", locale: "tr" });
+    expect(tr.html).toContain("font-style:italic");
+    expect(tr.html).toContain("Dear Ali");
+    const en = renderContactCustomerEmail({ name: "Ali", locale: "en" });
+    // EN primary = EN secondary; no redundant italic block expected.
+    expect(en.html).not.toContain("font-style:italic");
   });
 
-  it("rfq customer: subject includes short id", () => {
-    const r = renderRfqCustomerEmail({
-      name: "Ali",
-      rfqId: "11111111-aaaa-bbbb-cccc-222222222222",
-      type: "custom",
-      locale: "en",
+  it("catalog delivery: embeds the locale-specific PDF URL", () => {
+    for (const loc of ["tr", "en", "ru", "ar"] as const) {
+      const r = renderCatalogDeliveryEmail({
+        email: "a@b.com",
+        locale: loc,
+        pdfUrl: `https://kitaplastik.com/catalogs/kitaplastik-${loc}.pdf`,
+      });
+      expect(r.subject).toBeTruthy();
+      expect(r.html).toContain(`kitaplastik-${loc}.pdf`);
+      expect(r.text).toContain(`kitaplastik-${loc}.pdf`);
+    }
+  });
+
+  it("catalog delivery: RTL direction for Arabic", () => {
+    const ar = renderCatalogDeliveryEmail({
+      email: "a@b.com",
+      locale: "ar",
+      pdfUrl: "https://x/a.pdf",
     });
-    expect(r.subject).toContain("11111111");
+    expect(ar.html).toContain('dir="rtl"');
   });
 });

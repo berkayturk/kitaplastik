@@ -48,8 +48,11 @@ export function createRateLimiter(opts: RateLimiterOptions) {
   };
 }
 
-export const rfqLimiter = createRateLimiter({ windowMs: 5 * 60_000, max: 3 });
 export const contactLimiter = createRateLimiter({ windowMs: 5 * 60_000, max: 5 });
+// Catalog is a low-value, high-abuse target (email enumeration, bulk PDF
+// download). 3 requests per hour per IP covers legitimate re-requests
+// (wrong language, lost email) while cheaply deterring scraping.
+export const catalogLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 3 });
 
 export function ipFromHeaders(h: Headers): string {
   return h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip")?.trim() ?? "unknown";

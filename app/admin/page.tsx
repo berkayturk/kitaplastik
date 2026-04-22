@@ -2,5 +2,5 @@
 import { redirect } from "next/navigation";
 
 export default function Page() {
-  redirect("/admin/inbox");
+  redirect("/admin/catalog-requests");
 }

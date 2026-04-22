@@ -11,8 +11,6 @@ export const PUBLIC_ROUTES = [
   "/contact",
   "/references",
   "/request-quote",
-  "/request-quote/custom",
-  "/request-quote/standard",
 ] as const;
 
 export type PublicRoute = (typeof PUBLIC_ROUTES)[number];

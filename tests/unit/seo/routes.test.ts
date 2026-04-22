@@ -13,9 +13,7 @@ describe("seo routes", () => {
     expect(PUBLIC_ROUTES).toContain("/contact");
     expect(PUBLIC_ROUTES).toContain("/references");
     expect(PUBLIC_ROUTES).toContain("/request-quote");
-    expect(PUBLIC_ROUTES).toContain("/request-quote/custom");
-    expect(PUBLIC_ROUTES).toContain("/request-quote/standard");
-    expect(PUBLIC_ROUTES).toHaveLength(12);
+    expect(PUBLIC_ROUTES).toHaveLength(10);
   });
 
   it("buildAlternates produces hreflang map with x-default", () => {
