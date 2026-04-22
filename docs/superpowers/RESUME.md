@@ -695,12 +695,24 @@ Catalog PDF replace user tarafında (içerik). Geri kalan tüm operasyonel olgun
 
 ### Kick-off prompts (user hangi batch ile başlamak istediğini seçer)
 
-**5a ile başla:**
+**5a resume (Faz 1 + Faz 2 code canlıda — Faz 2 infra + Faz 3 + Faz 4 kaldı):**
 ```
-Plan 5a — Observability + infra config. docs/superpowers/specs/2026-04-22-plan5-post-mvp-polish-roadmap.md
-"5a" bölümünü oku. 6 task (Sentry, Plausible, Coolify token, GWS, SPF, CF proxy DNS-01).
-brainstorming skill ile eksik karar varsa sor, ardından spec + plan yaz, subagent-driven execute.
-Prereq'ler hazır: CF API token, GWS kararı, Plausible tercihi, Sentry DSN.
+Plan 5a resume. Faz 1 (Sentry) canlıda commit d9e26c8. Faz 2 code (Plausible wrapper + 4 event)
+push commit ce37fc4. Plausible runtime (Coolify deploy) + Faz 3 (GWS) + Faz 4 (CF proxy DNS-01)
+henüz yapılmadı.
+
+Plan: docs/superpowers/plans/2026-04-22-faz1-plan5a-observability-infra.md
+Runbook: docs/runbooks/plan5a-infra.md (Faz 2/3/4 section'ları dolu, user checkbox takibi)
+Memory: reference_sentry_project.md
+
+Kalan işler:
+1. Task 12-14 (Plausible runtime) ~20dk user UI — Coolify template deploy + CF DNS A + SSL + admin wizard
+2. Faz 3 Task 23-25 (GWS) ~60dk — trial start, MX, info@ user + MFA, reply-to E2E
+3. Faz 4 Task 26-29 (RISKY) ~60dk — CF API token + Traefik DNS-01 + Proxied + Full strict
+4. Task 30 final (runbook Done stamps + MEMORY.md entries: plausible + gws + cf-proxy)
+
+Ek bilgi: Sentry v10 kullanıldı (plan v8 demişti, forward-compat). sentry.client.config.ts →
+instrumentation-client.ts rename (Turbopack + v10 filename convention).
 
 ultrathink
 ```
@@ -734,6 +746,48 @@ Subagent-driven execute.
 
 ultrathink
 ```
+
+## 2026-04-22 (devam 5) — Plan 5a Faz 1 + Faz 2 code ✅
+
+**Session commit'leri (5):**
+
+- `5c52c95` docs(runbook): add Plan 5a infra runbook skeleton
+- `d9e26c8` feat(observability): wire Sentry SDK with errors-only scope
+- `ce37fc4` feat(analytics): wire Plausible with 4 event tracking points
+- `af27546` docs(runbook): Plan 5a Faz 1 complete, Faz 2 code done, Faz 2 infra + Faz 3/4 deferred
+- (bu commit) docs(resume): Plan 5a partial + next session resume prompt
+
+**Canlıda:**
+
+- Faz 1 — Sentry `@sentry/nextjs` v10 tri-runtime (instrumentation-client for Turbopack, server, edge), 6 file console.error/warn → Sentry.captureException/captureMessage, Playwright + CI env Sentry/Plausible placeholder
+- Faz 1.3 — SPF birleşik root `@` TXT `v=spf1 include:_spf.google.com include:amazonses.com ~all` (CREATE, önce yoktu)
+- Faz 1.1 — Coolify token rotate `gha-autodeploy-v2`, GHA secret `COOLIFY_TOKEN` update
+- Faz 2.4 kod — `components/PlausibleScript.tsx` env-guarded script, `lib/analytics/plausible.ts` type-safe wrapper (discriminated union, 4 TDD unit test), `layout.tsx` `<head>` inject, 4 event (Contact / Catalog + locale / Locale + to / Sector + slug), `components/home/SectorCardLink.tsx` client wrapper
+
+**Pending (next session, ~2–2.5 saat):**
+
+- Task 12-14 Plausible runtime — Coolify CE template deploy + CF DNS A plausible → 188.245.42.178 (grey cloud) + Let's Encrypt SSL + admin wizard (user berkaytrk6@gmail.com + site add) + Coolify env `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` + `NEXT_PUBLIC_PLAUSIBLE_HOST` — **~20dk user UI**
+- Faz 3 (Task 23-25) GWS — Business Starter trial + domain verify TXT + 5 Google MX + info@ user + MFA + reply-to E2E — **~60dk user UI**
+- Faz 4 (Task 26-29, RISKY) — CF API token (Zone:DNS:Edit) + VPS SSH Traefik DNS-01 YAML edit + cert renewal smoke + CF A Proxied + SSL Full (strict) + 4-locale E2E smoke + cf-ray check — **~60dk**
+- Task 30 final — runbook Done stamps + memory entries (plausible + gws + cf-proxy-dns01)
+
+**Deviations from plan:**
+
+- `@sentry/nextjs` v10 install (plan targeted v8; API forward-compat accepted)
+- `sentry.client.config.ts` → `instrumentation-client.ts` rename (Turbopack + v10 filename convention required)
+
+**Known non-blocking warnings (deferred to Plan 5d or cleanup batch):**
+
+- Sentry v10→v11 deprecation: `disableLogger`, `automaticVercelMonitors` → `webpack.*` rename
+- `[@sentry/nextjs] ACTION REQUIRED: onRouterTransitionStart` navigation hook (tracesSampleRate 0 olduğu için skip)
+- OpenTelemetry peer deps `import-in-the-middle` + `require-in-the-middle` external resolution advisory (server tracing disabled)
+- `next lint` deprecated Next.js 16 → ESLint CLI migrate
+
+**Paralel akış kararı (ultrathink):** Faz 2 code push Plausible runtime'a BAĞIMSIZ (no-op guard: env boşsa PlausibleScript null render, `window.plausible` yoksa trackPlausible silent return). User Task 12-14 yapmadan bile kod canlıda safe. Gece 23:30 kesim — Faz 3/4 (concentration-heavy + RISKY) fresh session'a bırakıldı.
+
+Runbook: `docs/runbooks/plan5a-infra.md` (Faz 2/3/4 sections dolu checkbox takibine hazır)
+Plan: `docs/superpowers/plans/2026-04-22-faz1-plan5a-observability-infra.md`
+Memory: `reference_sentry_project.md`
 
 ## Ortam Notları
 
