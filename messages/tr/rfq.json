@@ -82,6 +82,9 @@
     "upload": {
       "uploading": "Yükleniyor…",
       "remove": "Kaldır",
+      "dropZoneTitle": "Dosyaları seçin",
+      "dropZoneSubtitle": "veya buraya sürükleyip bırakın",
+      "pickButton": "Dosya Seç",
       "hint": "En fazla {max} dosya, her biri {mb} MB.",
       "errMaxFiles": "En fazla {max} dosya yükleyebilirsiniz.",
       "errUnsupported": "Desteklenmeyen dosya: {name}",

@@ -82,6 +82,9 @@
     "upload": {
       "uploading": "Uploading…",
       "remove": "Remove",
+      "dropZoneTitle": "Select files",
+      "dropZoneSubtitle": "or drag and drop them here",
+      "pickButton": "Browse Files",
       "hint": "Up to {max} files, each up to {mb} MB.",
       "errMaxFiles": "You can upload up to {max} files.",
       "errUnsupported": "Unsupported file: {name}",

@@ -82,6 +82,9 @@
     "upload": {
       "uploading": "جارٍ الرفع…",
       "remove": "إزالة",
+      "dropZoneTitle": "اختر الملفات",
+      "dropZoneSubtitle": "أو اسحبها وأفلتها هنا",
+      "pickButton": "تصفّح الملفات",
       "hint": "حتى {max} ملفات، كل منها حتى {mb} ميغابايت.",
       "errMaxFiles": "يمكنك رفع {max} ملفات كحد أقصى.",
       "errUnsupported": "ملف غير مدعوم: {name}",

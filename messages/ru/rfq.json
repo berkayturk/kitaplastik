@@ -82,6 +82,9 @@
     "upload": {
       "uploading": "Загрузка…",
       "remove": "Удалить",
+      "dropZoneTitle": "Выберите файлы",
+      "dropZoneSubtitle": "или перетащите их сюда",
+      "pickButton": "Выбрать файлы",
       "hint": "Не более {max} файлов, каждый до {mb} МБ.",
       "errMaxFiles": "Можно загрузить не более {max} файлов.",
       "errUnsupported": "Неподдерживаемый файл: {name}",

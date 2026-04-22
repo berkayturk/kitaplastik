@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
 import { Shell } from "@/components/admin/Shell";
 import { StatusBadge, type RfqStatus } from "@/components/admin/StatusBadge";
+import { formatRfqPayload } from "@/lib/admin/rfq-format";
 import { updateStatus, saveNotes } from "./actions";
 
 interface Attachment {
@@ -126,10 +127,8 @@ export default async function Page({ params }: PageProps) {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-text-primary mb-2 text-sm font-semibold">Form Verisi</h2>
-        <pre className="bg-bg-secondary/30 overflow-x-auto rounded-lg border border-[var(--color-border-subtle-dark)] p-4 text-xs">
-          {JSON.stringify(rfq.payload, null, 2)}
-        </pre>
+        <h2 className="text-text-primary mb-3 text-sm font-semibold">Form Verisi</h2>
+        <PayloadDisplay type={rfq.type} payload={rfq.payload} />
       </section>
 
       <section className="mt-6">
@@ -153,5 +152,75 @@ export default async function Page({ params }: PageProps) {
         </form>
       </section>
     </Shell>
+  );
+}
+
+function PayloadDisplay({
+  type,
+  payload,
+}: {
+  type: "custom" | "standart";
+  payload: Record<string, unknown>;
+}) {
+  const entries = formatRfqPayload(type, payload);
+  const longEntries = entries.filter((e) => e.fullWidth);
+  const shortEntries = entries.filter((e) => !e.fullWidth);
+
+  return (
+    <div className="bg-bg-secondary/30 space-y-5 rounded-lg border border-[var(--color-border-subtle-dark)] p-5">
+      {shortEntries.length > 0 && (
+        <dl className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+          {shortEntries.map((e) => (
+            <div key={e.key} className="flex flex-col gap-0.5">
+              <dt className="text-text-secondary text-[11px] tracking-wide uppercase">{e.label}</dt>
+              <dd className="text-text-primary text-sm">
+                {e.kind === "chips" ? (
+                  <span className="flex flex-wrap gap-1.5">
+                    {e.value.split(",").map((chip) => (
+                      <span
+                        key={chip.trim()}
+                        className="inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--color-accent-cobalt)]/10 px-2 py-0.5 text-[11px] font-medium text-[var(--color-accent-cobalt)]"
+                      >
+                        {chip.trim()}
+                      </span>
+                    ))}
+                  </span>
+                ) : e.kind === "boolean" ? (
+                  <span
+                    className={
+                      e.value === "Evet"
+                        ? "inline-flex items-center rounded-[var(--radius-sm)] bg-[var(--color-accent-jade)]/10 px-2 py-0.5 text-[11px] font-medium text-[var(--color-accent-jade)]"
+                        : "text-text-secondary text-sm"
+                    }
+                  >
+                    {e.value}
+                  </span>
+                ) : (
+                  e.value
+                )}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {longEntries.map((e) => (
+        <div key={e.key} className="space-y-1.5">
+          <p className="text-text-secondary text-[11px] tracking-wide uppercase">{e.label}</p>
+          <div className="text-text-primary bg-bg-primary/60 rounded-[var(--radius-sm)] border border-[var(--color-border-hairline)] p-3.5 text-sm leading-relaxed whitespace-pre-wrap">
+            {e.value}
+          </div>
+        </div>
+      ))}
+
+      <details className="group mt-2">
+        <summary className="text-text-secondary hover:text-text-primary cursor-pointer text-[11px] select-none">
+          Ham veri (JSON)
+        </summary>
+        <pre className="bg-bg-primary/60 mt-2 overflow-x-auto rounded-[var(--radius-sm)] border border-[var(--color-border-hairline)] p-3 font-mono text-[11px]">
+          {JSON.stringify(payload, null, 2)}
+        </pre>
+      </details>
+    </div>
   );
 }
