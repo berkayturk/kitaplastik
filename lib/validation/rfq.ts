@@ -7,12 +7,29 @@ export const rfqVolumes = ["1k", "5k", "10k", "50k", "100k+", "unknown"] as cons
 export const rfqTolerances = ["low", "medium", "high"] as const;
 export const rfqIncoterms = ["EXW", "FOB", "CIF", "DAP"] as const;
 
+// ISO-2 country code (e.g. "TR"). Enforced uppercase, exactly two A-Z letters.
+const iso2Country = z
+  .string()
+  .trim()
+  .regex(/^[A-Z]{2}$/, { message: "country must be an ISO-2 code" });
+
+// Combined international phone: "+<dial> <digits...>" from PhoneField.
+// Accepts spaces, parens and dashes inside the number part; single leading +.
+const combinedPhone = z
+  .string()
+  .trim()
+  .min(5)
+  .max(40)
+  .regex(/^\+\d{1,4}\s[\d\s()\-]{3,}$/, {
+    message: "phone must be '+<dial> <number>' format",
+  });
+
 const contact = z.object({
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(254),
   company: z.string().trim().min(2).max(200),
-  phone: z.string().trim().min(5).max(40),
-  country: z.string().trim().min(2).max(4),
+  phone: combinedPhone,
+  country: iso2Country,
 });
 
 const attachment = z.object({
@@ -60,7 +77,7 @@ export const standartRfqSchema = z.object({
     )
     .min(1)
     .max(20),
-  deliveryCountry: z.string().max(4).optional().or(z.literal("")),
+  deliveryCountry: iso2Country.optional().or(z.literal("")),
   incoterm: z.enum(rfqIncoterms).optional(),
   notes: z.string().max(1000).optional().or(z.literal("")),
   urgent: z.boolean().default(false),

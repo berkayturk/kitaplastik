@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { CountrySelect } from "@/components/forms/CountrySelect";
+import { PhoneField } from "@/components/forms/PhoneField";
 import { FileUploader, type UploadedFile } from "./FileUploader";
 import { TurnstileWidget } from "./TurnstileWidget";
 
@@ -145,16 +147,10 @@ export function CustomRfqForm() {
               />
             </L>
             <L label={t("phoneLabel")} required>
-              <input name="phone" type="tel" required className={inputClass} autoComplete="tel" />
+              <PhoneField name="phone" required />
             </L>
             <L label={t("countryLabel")} required>
-              <input
-                name="country"
-                defaultValue="TR"
-                maxLength={4}
-                required
-                className={inputClass}
-              />
+              <CountrySelect name="country" required defaultValue="TR" />
             </L>
           </div>
         </FormSection>

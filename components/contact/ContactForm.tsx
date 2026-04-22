@@ -4,6 +4,7 @@
 import { useState, type FormEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { PhoneField } from "@/components/forms/PhoneField";
 import { TurnstileWidget } from "@/components/rfq/TurnstileWidget";
 
 type SubjectKey = "general" | "quote" | "support" | "other";
@@ -124,13 +125,7 @@ export function ContactForm() {
           />
         </Field>
         <Field label={t("phoneLabel")}>
-          <input
-            type="tel"
-            name="phone"
-            autoComplete="tel"
-            placeholder={t("phonePlaceholder")}
-            className={inputClass}
-          />
+          <PhoneField name="phone" placeholder={t("phonePlaceholder")} />
         </Field>
       </div>
 

@@ -29,5 +29,9 @@
     "links": "Ссылки",
     "legalName": "Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. — Бурса, Турция"
   },
-  "productImageLabel": "изображение"
+  "productImageLabel": "изображение",
+  "country": {
+    "popularGroup": "Популярные страны",
+    "othersGroup": "Все страны"
+  }
 }

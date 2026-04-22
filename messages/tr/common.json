@@ -29,5 +29,9 @@
     "links": "Bağlantılar",
     "legalName": "Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. — Bursa, Türkiye"
   },
-  "productImageLabel": "görsel"
+  "productImageLabel": "görsel",
+  "country": {
+    "popularGroup": "Popüler ülkeler",
+    "othersGroup": "Tüm ülkeler"
+  }
 }

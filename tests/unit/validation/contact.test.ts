@@ -5,7 +5,7 @@ const valid = {
   name: "Ali Veli",
   email: "a@b.com",
   company: "Acme",
-  phone: "+905551112233",
+  phone: "+90 5551112233",
   subject: "general" as const,
   message: "Merhaba, lütfen bilgi veriniz.",
   locale: "tr" as const,

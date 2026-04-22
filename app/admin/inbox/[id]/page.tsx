@@ -5,6 +5,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { Shell } from "@/components/admin/Shell";
 import { StatusBadge, type RfqStatus } from "@/components/admin/StatusBadge";
 import { formatRfqPayload } from "@/lib/admin/rfq-format";
+import { getCountryName } from "@/lib/countries";
 import { updateStatus, saveNotes } from "./actions";
 
 interface Attachment {
@@ -87,12 +88,15 @@ export default async function Page({ params }: PageProps) {
         <div className="bg-bg-secondary/30 rounded-lg border border-[var(--color-border-subtle-dark)] p-4">
           <h2 className="text-text-primary mb-2 text-sm font-semibold">İletişim</h2>
           <dl className="text-xs">
-            {Object.entries(rfq.contact).map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-2 py-0.5">
-                <dt className="text-text-secondary">{k}</dt>
-                <dd className="text-text-primary">{String(v)}</dd>
-              </div>
-            ))}
+            {Object.entries(rfq.contact).map(([k, v]) => {
+              const display = k === "country" ? getCountryName(String(v), "tr") : String(v);
+              return (
+                <div key={k} className="flex justify-between gap-2 py-0.5">
+                  <dt className="text-text-secondary">{k}</dt>
+                  <dd className="text-text-primary">{display}</dd>
+                </div>
+              );
+            })}
             <div className="flex justify-between gap-2 py-0.5">
               <dt className="text-text-secondary">IP</dt>
               <dd className="text-text-primary">{rfq.ip_address ?? "—"}</dd>

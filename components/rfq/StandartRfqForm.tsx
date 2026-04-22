@@ -4,6 +4,8 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { CountrySelect } from "@/components/forms/CountrySelect";
+import { PhoneField } from "@/components/forms/PhoneField";
 import { ProductPicker, type ItemRow } from "./ProductPicker";
 import { TurnstileWidget } from "./TurnstileWidget";
 
@@ -139,28 +141,9 @@ export function StandartRfqForm() {
             className={inputClass}
             autoComplete="email"
           />
-          <input
-            name="phone"
-            type="tel"
-            required
-            placeholder={t("phonePlaceholder")}
-            className={inputClass}
-            autoComplete="tel"
-          />
-          <input
-            name="country"
-            defaultValue="TR"
-            maxLength={4}
-            required
-            placeholder={t("countryPlaceholder")}
-            className={inputClass}
-          />
-          <input
-            name="deliveryCountry"
-            maxLength={4}
-            placeholder={t("deliveryCountryLabel")}
-            className={inputClass}
-          />
+          <PhoneField name="phone" required placeholder={t("phonePlaceholder")} />
+          <CountrySelect name="country" required defaultValue="TR" />
+          <CountrySelect name="deliveryCountry" defaultValue="TR" />
           <select name="incoterm" defaultValue="" className={inputClass}>
             <option value="">{t("incotermPlaceholder")}</option>
             {INCOTERMS.map((x) => (

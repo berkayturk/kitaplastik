@@ -4,6 +4,8 @@
 // admin detail view and team notification email. TR-only labels (admin is
 // Turkish-only). Unknown keys fall back to a generic rendering.
 
+import { getCountryName } from "@/lib/countries";
+
 export interface FieldEntry {
   key: string;
   label: string;
@@ -161,7 +163,7 @@ export function formatStandartPayload(payload: Record<string, unknown>): FieldEn
     entries.push({
       key: "deliveryCountry",
       label: "Teslimat Ülkesi",
-      value: String(payload.deliveryCountry),
+      value: getCountryName(String(payload.deliveryCountry), "tr"),
     });
   }
 

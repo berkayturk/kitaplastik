@@ -29,5 +29,9 @@
     "links": "روابط",
     "legalName": "Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. — بورصة، تركيا"
   },
-  "productImageLabel": "صورة"
+  "productImageLabel": "صورة",
+  "country": {
+    "popularGroup": "الدول الشائعة",
+    "othersGroup": "جميع الدول"
+  }
 }
