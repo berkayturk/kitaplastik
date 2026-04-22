@@ -121,23 +121,33 @@ function Row({
         .replace(/\\/g, "\\\\")
         .replace(/%/g, "\\%")
         .replace(/_/g, "\\_");
-      const { data } = await supa
-        .from("products")
-        .select(`slug, name`)
-        .eq("active", true)
-        .not(nameKey, "is", null)
-        .neq(nameKey, "")
-        .ilike(nameKey, `%${escaped}%`)
-        .limit(8);
-      if (cancelled) return;
-      const rows = (data ?? []) as Array<{ slug: string; name: Record<string, string> | null }>;
-      setSuggestions(
-        rows.map((p) => ({
-          slug: p.slug,
-          nameLocalized: (p.name ?? {})[locale] ?? p.slug,
-        })),
-      );
-      setSearched(true);
+      try {
+        const { data } = await supa
+          .from("products")
+          .select(`slug, name`)
+          .eq("active", true)
+          .not(nameKey, "is", null)
+          .neq(nameKey, "")
+          .ilike(nameKey, `%${escaped}%`)
+          .limit(8);
+        if (cancelled) return;
+        const rows = (data ?? []) as Array<{
+          slug: string;
+          name: Record<string, string> | null;
+        }>;
+        setSuggestions(
+          rows.map((p) => ({
+            slug: p.slug,
+            nameLocalized: (p.name ?? {})[locale] ?? p.slug,
+          })),
+        );
+        setSearched(true);
+      } catch {
+        // Fetch failed (network/placeholder) — show empty-state so user sees özel üretim link
+        if (cancelled) return;
+        setSuggestions([]);
+        setSearched(true);
+      }
     })();
     return () => {
       cancelled = true;

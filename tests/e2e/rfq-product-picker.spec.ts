@@ -1,5 +1,11 @@
 import { test, expect } from "@playwright/test";
 
+const hasSupabase = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder"),
+);
+test.skip(!hasSupabase, "gerçek Supabase gerekli");
+
 test("standart RFQ ürün picker: aranan yok → özel üretim formuna link gösterir", async ({
   page,
 }) => {
