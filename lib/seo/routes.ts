@@ -42,3 +42,21 @@ export function buildAlternates(route: PublicRoute, origin: string): Alternates 
     "x-default": languages[defaultLocale],
   };
 }
+
+export function buildProductAlternates(slug: string, origin: string): Alternates {
+  const languages = locales.reduce<Record<Locale, string>>(
+    (acc, locale) => {
+      const pathname = getPathname({
+        href: { pathname: "/products/[slug]", params: { slug } },
+        locale,
+      });
+      acc[locale] = `${origin}${pathname}`;
+      return acc;
+    },
+    {} as Record<Locale, string>,
+  );
+  return {
+    languages,
+    "x-default": languages[defaultLocale],
+  };
+}
