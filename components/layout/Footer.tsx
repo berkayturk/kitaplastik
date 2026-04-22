@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "./Container";
@@ -74,7 +75,13 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
   );
 }
 
-function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+function FooterLink({
+  href,
+  children,
+}: {
+  href: ComponentProps<typeof Link>["href"];
+  children: React.ReactNode;
+}) {
   return (
     <li>
       <Link

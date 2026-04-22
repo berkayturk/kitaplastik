@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "./Container";
@@ -43,7 +44,13 @@ export function Header() {
   );
 }
 
-function HeaderLink({ href, children }: { href: string; children: React.ReactNode }) {
+function HeaderLink({
+  href,
+  children,
+}: {
+  href: ComponentProps<typeof Link>["href"];
+  children: React.ReactNode;
+}) {
   return (
     <Link
       href={href}

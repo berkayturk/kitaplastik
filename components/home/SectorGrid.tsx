@@ -3,18 +3,25 @@ import { Link } from "@/i18n/navigation";
 import { Container } from "../layout/Container";
 import { Card, CardEyebrow, CardTitle, CardBody, CardFooter } from "@/components/ui";
 
+type SectorPathname = "/sectors/bottle-washing" | "/sectors/caps" | "/sectors/textile";
+
 interface SectorDef {
-  slug: string;
+  pathname: SectorPathname;
   nsKey: "camYikama" | "kapak" | "tekstil";
   number: string;
   spec: string;
 }
 
 const SECTORS: readonly SectorDef[] = [
-  { slug: "cam-yikama", nsKey: "camYikama", number: "01", spec: "Ø 80–320 mm · 12–480 g" },
-  { slug: "kapak", nsKey: "kapak", number: "02", spec: "26–83 mm · HDPE / PP / PET" },
   {
-    slug: "tekstil",
+    pathname: "/sectors/bottle-washing",
+    nsKey: "camYikama",
+    number: "01",
+    spec: "Ø 80–320 mm · 12–480 g",
+  },
+  { pathname: "/sectors/caps", nsKey: "kapak", number: "02", spec: "26–83 mm · HDPE / PP / PET" },
+  {
+    pathname: "/sectors/textile",
     nsKey: "tekstil",
     number: "03",
     spec: "POM · PA6 · abrasif aşınmaya dayanıklı",
@@ -43,8 +50,8 @@ export function SectorGrid() {
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {SECTORS.map((sector) => (
             <Link
-              key={sector.slug}
-              href={`/sectors/${sector.slug}`}
+              key={sector.pathname}
+              href={sector.pathname}
               className="group block focus-visible:outline-none"
             >
               <Card interactive className="h-full">

@@ -8,4 +8,67 @@ export const routing = defineRouting({
   locales,
   defaultLocale,
   localePrefix: "always",
+  pathnames: {
+    "/": "/",
+    "/about": {
+      tr: "/hakkimizda",
+      en: "/about",
+      ru: "/o-nas",
+      ar: "/man-nahnu",
+    },
+    "/contact": {
+      tr: "/iletisim",
+      en: "/contact",
+      ru: "/kontakty",
+      ar: "/ittisal",
+    },
+    "/products": {
+      tr: "/urunler",
+      en: "/products",
+      ru: "/produktsiya",
+      ar: "/al-muntajat",
+    },
+    "/products/[slug]": {
+      tr: "/urunler/[slug]",
+      en: "/products/[slug]",
+      ru: "/produktsiya/[slug]",
+      ar: "/al-muntajat/[slug]",
+    },
+    "/references": {
+      tr: "/referanslar",
+      en: "/references",
+      ru: "/otzyvy",
+      ar: "/maraji",
+    },
+    "/request-quote": {
+      tr: "/katalog",
+      en: "/catalog",
+      ru: "/katalog",
+      ar: "/al-katalog",
+    },
+    "/sectors": {
+      tr: "/sektorler",
+      en: "/sectors",
+      ru: "/otrasli",
+      ar: "/al-qitaat",
+    },
+    "/sectors/bottle-washing": {
+      tr: "/sektorler/cam-yikama",
+      en: "/sectors/bottle-washing",
+      ru: "/otrasli/moyka-butylok",
+      ar: "/al-qitaat/ghasil-zujajat",
+    },
+    "/sectors/caps": {
+      tr: "/sektorler/kapak",
+      en: "/sectors/caps",
+      ru: "/otrasli/kryshki",
+      ar: "/al-qitaat/al-aghtiya",
+    },
+    "/sectors/textile": {
+      tr: "/sektorler/tekstil",
+      en: "/sectors/textile",
+      ru: "/otrasli/tekstil",
+      ar: "/al-qitaat/al-mansujat",
+    },
+  },
 });

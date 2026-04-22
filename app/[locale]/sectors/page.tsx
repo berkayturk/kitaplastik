@@ -24,10 +24,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 const SECTORS = [
-  { slug: "cam-yikama", nsKey: "camYikama" },
-  { slug: "kapak", nsKey: "kapak" },
-  { slug: "tekstil", nsKey: "tekstil" },
-] as const;
+  { pathname: "/sectors/bottle-washing" as const, nsKey: "camYikama" as const },
+  { pathname: "/sectors/caps" as const, nsKey: "kapak" as const },
+  { pathname: "/sectors/textile" as const, nsKey: "tekstil" as const },
+];
 
 export default async function SectorsHubPage({ params }: PageProps) {
   const { locale } = await params;
@@ -47,8 +47,8 @@ export default async function SectorsHubPage({ params }: PageProps) {
       <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
         {SECTORS.map((sector) => (
           <Link
-            key={sector.slug}
-            href={`/sectors/${sector.slug}`}
+            key={sector.pathname}
+            href={sector.pathname}
             className="group flex flex-col gap-3 rounded-lg border border-[var(--color-border-subtle-dark)] p-6 transition hover:border-[var(--color-accent-red)]"
           >
             <h2 className="text-text-primary text-xl font-semibold">

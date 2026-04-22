@@ -36,11 +36,6 @@ export function ProductDetail({ product, locale, ctaLabel, imageLabel, specsLabe
     url: `${siteUrl}/${locale}/products/${product.slug}`,
   };
 
-  // Catalog pivot: the old per-product standart RFQ CTA now points to the
-  // unified /request-quote catalog form. TR pretty path redirects via
-  // next.config.
-  const catalogPathname = locale === "tr" ? "/teklif-iste" : "/request-quote";
-
   // JSON-LD: JSON.stringify içerik HTML context'ine girdiği için toSafeLdJson ile </script, <!-- ve U+2028/9 escape edilir
   return (
     <article className="grid gap-8 lg:grid-cols-[3fr_2fr]">
@@ -64,7 +59,7 @@ export function ProductDetail({ product, locale, ctaLabel, imageLabel, specsLabe
           <ProductSpecTable specs={product.specs} locale={locale} />
         </div>
         <Link
-          href={{ pathname: catalogPathname }}
+          href="/request-quote"
           className="mt-8 inline-block rounded-sm bg-[var(--color-accent-red)] px-6 py-3 font-medium text-white hover:opacity-90"
         >
           {ctaLabel}
