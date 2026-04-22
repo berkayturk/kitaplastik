@@ -7,8 +7,8 @@ const hasSupabase = Boolean(
 test.skip(!hasSupabase, "gerçek Supabase gerekli");
 
 test("ürün detay: Schema.org Product + alt text auto-fallback", async ({ page }) => {
-  await page.goto("/tr/products");
-  const firstCard = page.locator("a[href*='/products/']").first();
+  await page.goto("/tr/urunler");
+  const firstCard = page.locator("a[href*='/urunler/']").first();
   const cardCount = await firstCard.count();
   if (cardCount === 0) test.skip(true, "canlıda ürün yok");
   await firstCard.click();

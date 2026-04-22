@@ -2,7 +2,7 @@
 import { test, expect } from "@playwright/test";
 
 test("contact form submits and shows success state", async ({ page }) => {
-  await page.goto("/tr/contact");
+  await page.goto("/tr/iletisim");
   await page.fill('input[name="name"]', "Test Kullanıcı");
   await page.fill('input[name="email"]', "test@example.com");
   // PhoneField exposes a hidden input[name="phone"] that combines the dial
@@ -28,7 +28,7 @@ test("contact form keeps submit disabled when Turnstile is blocked", async ({ br
   const ctx = await browser.newContext();
   await ctx.route("**/challenges.cloudflare.com/**", (route) => route.abort());
   const page = await ctx.newPage();
-  await page.goto("/tr/contact");
+  await page.goto("/tr/iletisim");
   await expect(page.locator('button[type="submit"]')).toBeDisabled();
   await ctx.close();
 });

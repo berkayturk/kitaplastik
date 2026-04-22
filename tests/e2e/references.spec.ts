@@ -20,15 +20,15 @@ test.describe("references", () => {
     expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(900);
   });
 
-  test("clicking 'Tüm referanslar' navigates to /references", async ({ page }) => {
+  test("clicking 'Tüm referanslar' navigates to /referanslar", async ({ page }) => {
     await page.goto("/tr");
     await page.getByRole("link", { name: /Tüm referanslar/ }).click();
-    await expect(page).toHaveURL(/\/references/);
+    await expect(page).toHaveURL(/\/referanslar/);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });
 
-  test("/references lists 8 client cards", async ({ page }) => {
-    await page.goto("/tr/references");
+  test("/tr/referanslar lists 8 client cards", async ({ page }) => {
+    await page.goto("/tr/referanslar");
     const cards = page.locator("article");
     await expect(cards).toHaveCount(8);
   });
