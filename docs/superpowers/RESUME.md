@@ -457,43 +457,103 @@ Bulgular (synthesized ve fix edildi — 6 commit):
 
 **Son durum**: 44 commit toplam, hepsi push-hazır. Local green: typecheck ✓, vitest 108/108 ✓, lint ✓, build ✓. Smoke test + migration push bekliyor.
 
+## 2026-04-22 (devam 2) — Catalog pivot + CI optimize + E2E parity
+
+**Durum:** 5 commit canlıda (`7389b43..a19ef7d`), 2 migration uygulandı, 1 bucket silindi, tüm CI/deploy yeşil.
+
+### Bu oturumun saga'sı (özet)
+
+Plan 4c mini-batch ile başladı, büyük pivot'la bitti:
+
+1. **Coolify webhook `force=true`** (`gh secret set COOLIFY_DEPLOY_URL`) — build cache bypass aktif
+2. **Custom RFQ smoke** → 3 UX sorunu çıktı (team email raw JSON, admin detail raw JSON, file uploader native ugly)
+3. **Form UI premium overhaul** (`8102f75` deployed): FileUploader drop-zone redesign, CustomRfqForm Card wrap + 01/02/03 section headers + cobalt accents, admin inbox structured `<dl>` + JSON details collapsible, team email branded HTML table + chips/badges + mailto/tel links
+4. **Country picker + phone dial code + bilingual customer emails** (`4de8204`): `i18n-iso-countries` 250+ ülke TR/EN/RU/AR native + popüler optgroup (TR/DE/US/GB/FR/IT/ES/NL/RU/SA/AE/AZ/IR/QA/SY/IQ), flag emoji derived from ISO-2, 240+ dial code static map, 2-col dial+number layout, hidden input combined "+90 5551234567". ISO-2 regex validation. rfq-customer + contact-customer bilingual (locale primary + EN italic küçük + RTL for AR).
+5. **CI cache + concurrency** (`7389b43` deployed): workflow-level `concurrency.cancel-in-progress` + Next.js `.next/cache` persist + Playwright browsers cache (conditional install-deps). Push-to-live ~10-15 → ~7-9 dk (cache-hit ile).
+6. **BÜYÜK PIVOT: RFQ → Catalog PDF email flow** (`353b393`): Tüm RFQ sistemi kaldırıldı. Yeni: email + locale select → `/api/catalog` → locale-specific PDF link branded bilingual mail. 15 dosya silindi (custom/standart form, ProductPicker, FileUploader, RFQ API, rfq validation, rfq email templates, admin/inbox, rfq.json 4 dil, rfq unit + 3 E2E spec). 9 dosya eklendi (`lib/validation/catalog.ts`, `lib/email/templates/catalog-delivery.ts` bilingual + cobalt download button + RTL, `app/api/catalog/route.ts` rate-limit 3/hr per IP, `components/catalog/CatalogRequestForm.tsx` premium form + success state, `app/[locale]/request-quote/page.tsx` landing rewrite, `app/admin/catalog-requests/page.tsx` log listesi, `messages/*/catalog.json` × 4 dil, `public/catalogs/kitaplastik-{tr,en,ru,ar}.pdf` 705-byte valid placeholder, migration `20260422100000`). Nav label "Teklif İste" → "Katalog İndir" 4 dil. `next.config` collapse: `/teklif-iste/{ozel-uretim,standart}` + `/request-quote/{custom,standard}` → `/request-quote`. ProductDetail CTA → `/request-quote`. `/admin/inbox` → `/admin/catalog-requests`. RLS (service-only insert + is_admin select).
+7. **CI fail saga**: forms + catalog push'ları E2E'de **contact spec `input[name="phone"]` timeout** ile fail. PhoneField hidden carrier pattern — visible input name yok. Fix (`773eee3`): selector `input[type="tel"]`. Her iki commit deploy skipped olmuş, 3. fix sonrası HEAD canlıya indi.
+8. **Bucket cleanup**: `rfq-attachments` bucket + 7 obje silindi. Supabase `storage.objects` direct DELETE blocked → Node service-role script (list + remove recursive + deleteBucket) ile yapıldı. Script one-off, silindi.
+9. **Local/CI E2E parity** (`a19ef7d`): `playwright.config.ts` webServer env override (CI'daki placeholder Supabase + test Turnstile keys + test Resend). Test port 3001 (dev 3000 collision önleme). `pnpm verify` script eklendi = full CI pipeline (typecheck + lint + format:check + test + audit + build + test:e2e). Lokalde 104 passed, 0 failed — CI %100 parity.
+
+### Git state (son 5 commit)
+
+- `a19ef7d` test(e2e): local/CI parity + verify script
+- `773eee3` fix(e2e): visible tel input for contact phone
+- `353b393` feat(catalog): RFQ → catalog PDF download pivot
+- `4de8204` feat(forms): country + phone dial + bilingual emails
+- `7389b43` ci: concurrency cancel + Playwright + Next caches
+
+### Supabase state
+
+- Migration `20260422100000_drop_rfq_add_catalog_requests` applied ✅
+- `rfqs` table dropped
+- `catalog_requests` table created (RLS + 2 policy + 3 index: PK + created_at desc + email)
+- `rfq-attachments` bucket + 7 obje silindi
+
+### Coolify state
+
+- `COOLIFY_DEPLOY_URL` GHA secret'ında `?force=true` aktif (build cache bypass)
+- `COOLIFY_TOKEN` hâlâ rotate edilmedi (chat-leak borç — önceki oturumlarda not edildi)
+
+### Canlı doğrulama (curl)
+
+- `/tr/teklif-iste` → 308 → `/tr/request-quote` ✓
+- `/catalogs/kitaplastik-tr.pdf` → 200 (placeholder PDF) ✓
+- `/admin/catalog-requests` → authed admin sayfası ✓
+
+### Kritik bulgular (bu oturum)
+
+1. **CI ile local E2E parity şarttır** — `.env.local` prod Turnstile key + gerçek Supabase URL local'de E2E'yi false-negative yapar. playwright webServer env override çözüm.
+2. **`pnpm verify` her push öncesi** — unit test + typecheck + build yeterli değil. E2E atlanırsa PhoneField hidden carrier gibi regression 2 deploy sonra farkedilir.
+3. **Supabase `storage.objects` direct DELETE BLOCKED** — migration'da storage cleanup yapılamaz (`protect_delete()` trigger). Service-role JS client (Storage API) ile walk + remove + deleteBucket.
+4. **Playwright `reuseExistingServer: !CI` riskli** — developer dev server 3000'de açıksa Playwright reuse eder, webServer env override atlanır. Test port 3001 ile collision önle.
+
 ## Yeni Session Başlangıç Komutları
 
-### ✅ Plan 4b TAMAM (canlıda, kapanış notu — geçmişten)
+### ✅ Plan 4b + Plan 4c pivot TAMAM (canlıda, kapanış notu — geçmişten)
 
-Plan 4b spec/plan commit'leri: `d7f9e62` (spec) + `84e01b0` (plan). 50 commit execute + security audit + bug fix'ler (`8b64d53..e32cfe7`). Migration `20260421200000` prod DB'de. Detay: 2026-04-22 entry yukarıda.
+Plan 4b spec/plan commit'leri: `d7f9e62` (spec) + `84e01b0` (plan). 50 commit execute + security audit + bug fix'ler (`8b64d53..e32cfe7`). Migration `20260421200000` prod DB'de. **Plan 4c RFQ → Catalog pivot** tamamlandı (`7389b43..a19ef7d`). Detay: 2026-04-22 entry'leri yukarıda.
 
-### 🚀 Plan 4c mini-batch (quick-win — SONRAKİ OTURUMA PASTE EDİLECEK)
+### 🚀 P0 — Gerçek katalog PDF'leri (SONRAKİ OTURUMA PASTE EDİLECEK)
 
 ```
-Kitaplastik Plan 4b tamam ✅ canlıda (50 commit + migration applied — docs/superpowers/RESUME.md
-2026-04-22 entry'de full durum). Plan 4c mini-batch — 2 P0 iş:
+Kitaplastik Catalog pivot canlıda ✅ (docs/superpowers/RESUME.md 2026-04-22
+"devam 2" entry'de full durum). Şu an public/catalogs/kitaplastik-{tr,en,ru,ar}.pdf
+705-byte placeholder PDF'ler — kullanıcılar mail'de bunu alıyor. Gerçek
+katalog PDF'leri (4 dil) hazırlansa veya sağlansa 4 dosyayı replace + commit
++ push edelim. Coolify auto-deploy ile ~7-9 dk canlıda.
 
-1. **Coolify webhook force=true** (5dk): GHA secret COOLIFY_DEPLOY_URL'i güncelle.
-   Şu an `?force=false` → build cache'e takılıyor, her push container'ı güncellemeyebiliyor.
-   Coolify dashboard → App kitaplastik → Webhooks → Deploy Webhook URL kopyala (?force=true
-   ile). Sonra `gh secret set COOLIFY_DEPLOY_URL < <(pbpaste)` (clipboard'dan, chat'e
-   düşmesin). Saga detayı RESUME 2026-04-22 "Coolify deploy saga" bölümünde.
+Adımlar:
+1. Gerçek PDF'ler sağlansın (TR/EN/RU/AR — aynı içerik, ayrı dosya adları)
+2. public/catalogs/ altına dosya adlarını koru (kitaplastik-tr.pdf vb.)
+3. `pnpm verify` koş (CI mirror — 3-5 dk)
+4. Commit: "feat(catalog): upload real catalog PDFs"
+5. Push → CI → Coolify
+6. Canlı test: /tr/teklif-iste form submit → mail'e real PDF link
 
-2. **Custom RFQ form post-migration smoke** (5dk): https://kitaplastik.com/tr/teklif-iste/ozel-uretim
-   → form doldur (ad/email/50+ karakter açıklama) + 1 PDF upload (<10MB) + Turnstile + submit.
-   Email geldi mi + RFQ admin inbox'ta göründü mü. Plan 3 feature'ı; yeni bucket MIME/size
-   limit + path traversal regex uyumluluğu gerek.
+Ek: /admin/catalog-requests'ten ilk gerçek submit'leri izle (spam/test).
+Bucket yok (rfq-attachments silindi). catalog_requests table'da hepsi.
 
-İkisini bitirince RESUME'yi güncelle. Diğer follow-up'lar (pathnames, v4 upgrade, Sentry) ayrı
-oturum. ultrathink.
+ultrathink
 ```
 
-### 🗺️ Kalan follow-up'lar (Plan 4c sonrası — priority order)
+### 🗺️ Kalan follow-up'lar (priority order)
 
-1. **P1 — next-intl pathnames mapping** (1-2sa): TR kullanıcı `/tr/request-quote/custom` yerine `/tr/teklif-iste/ozel-uretim` canonical URL görsün. i18n/routing.ts'ye `pathnames` config ekle, Link'lerde single pathname kullan. SEO polish.
-2. **P1 — next-intl v3 → v4 upgrade** (2-4sa): Breaking change, GHSA-8f24-v5vv-gm5j open redirect fix. CSP + auth callback fix halihazırda attack surface'i büyük ölçüde kapattı, ama sürüm güncellemesi gerek.
-3. **P2 — Sentry SDK wiring** (30dk): `NEXT_PUBLIC_SENTRY_DSN` env'de var ama kod bağlı değil. `console.error` yerine structured logger. instrumentation.ts + `@sentry/nextjs` install.
-4. **P2 — Smoke test ürünü cleanup** (2dk): Admin panelinden "Silinmiş" tab'dan hard-delete. Storage `product-images/smoke-test-*` path'leri Supabase Studio'dan temizle.
-5. P3 — `exactOptionalPropertyTypes` tsconfig strictness
-6. P3 — notification page redundant Supabase cast (`supabase gen types` sync ile)
-7. P3 — middleware admin_role DB check (defense-in-depth)
-8. P3 — SlugField onBlur trailing-tire strip UX polish
+**P1 — SEO + i18n**
+1. **next-intl pathnames mapping** (1-2sa): TR kullanıcı `/tr/request-quote` yerine `/tr/teklif-iste` canonical URL görsün (şu an redirect ile gidiyor, URL EN). `i18n/routing.ts` pathnames config. Canvas: artık sadece root `/request-quote`, `/products/[slug]`, sector path'leri. Katalog pivot sonrası scope küçüldü.
+2. **next-intl v3 → v4 upgrade** (2-4sa): Breaking change, GHSA-8f24-v5vv-gm5j open redirect fix. Mevcut CSP + auth callback fix attack surface'i büyük ölçüde kapatmış.
+
+**P2 — Observability + deliverability**
+3. **Sentry SDK wiring** (30dk): `NEXT_PUBLIC_SENTRY_DSN` env'de var, kod bağlı değil. `instrumentation.ts` + `@sentry/nextjs` install. `console.error` yerine structured logger.
+4. **Google Workspace** `info@kitaplastik.com` inbox + MX/SPF/DKIM CF DNS. Birleşik SPF (google + amazonses) root `@` TXT'e eklenecek — mevcut sadece `send.` subdomain'de SPF var.
+
+**P3 — Infra + polish**
+5. **CF proxy + SSL Full (strict)** (~20-25dk): Let's Encrypt cert renewal'ı DNS-01'e migrate (HTTP-01 CF proxy ile çakışır). Ön gerekli: CF API token `Zone:DNS:Edit`.
+6. **Coolify token rotate**: chat'te leak olan `COOLIFY_TOKEN` hâlâ aktif. Coolify → Keys & Tokens → eski sil + yeni `gh secret set`.
+7. **`exactOptionalPropertyTypes` tsconfig strictness** — orthogonal polish.
+8. **middleware admin_role DB check** — defense-in-depth; page-level `requireAdminRole` zaten yeterli ama edge'de check ek brief expose window kapatır.
+9. **SlugField onBlur trailing-tire strip UX** — `slugify()` onBlur'da tire temizliyor, user typing flow'u minor glitch.
+10. **Smoke test ürünü cleanup** (2dk): Admin panel → Silinmiş tab → hard-delete. `product-images/smoke-test-*` path'leri Supabase Studio'dan temizle.
 
 ### 🌐 CF proxy + Let's Encrypt DNS-01 migration (infra, ~20-25 dk)
 
@@ -506,104 +566,49 @@ bölümünü oku, 6 adımı uygula.
 Ön gerekli: CF API token (Zone:DNS:Edit scope, kitaplastik.com zone).
 ```
 
-### 🔄 Redeploy + smoke (hemen yarın)
+### 📧 Google Workspace inbox + birleşik SPF
 
 ```
-Kitaplastik canlıda (https://kitaplastik.com). cbc8874 commit'i henüz deploy'a
-gitmedi — Coolify'da Redeploy tetikle (design-debug prod guard + favicon + robots
-disallow gelir). Sonra smoke: 4 locale (TR/EN/RU/AR, AR RTL), mobile, iletişim
-form (Turnstile + Resend mail), RFQ custom + standart (file upload), admin login
-→ /admin/inbox. Sorun çıkarsa fix, çıkmazsa durum özeti.
+Kitaplastik için info@kitaplastik.com mail kutusu kuralım (Google Workspace).
+Resend zaten domain verified ve noreply@kitaplastik.com branded sender ile
+mail atıyor — şu an sadece `send.` subdomain'de SPF var, root @ boş.
+
+Plan:
+1. Google Workspace kurulum + MX kayıtları (CF DNS)
+2. Birleşik SPF string root @ TXT'e: v=spf1 include:_spf.google.com include:amazonses.com ~all
+3. DKIM public key GWS'ten CF DNS'e ekle
+4. info@ alias/inbox test mail gönder/al
+5. Contact form reply-to noreply@ yerine info@ olabilir mi düşün
+
+Başla: GWS hesabı var mı, yoksa workspace.google.com'dan mı açıyoruz?
 
 ultrathink
 ```
 
-### 📧 Resend domain verify + Google Workspace kurulum
+### 🌐 CF proxy + Let's Encrypt DNS-01 migration (infra)
 
 ```
-Kitaplastik için info@kitaplastik.com mail kutusu + noreply@kitaplastik.com
-outbound sender kuralım. Plan:
-1. Google Workspace: kurulum + MX kayıtları (CF DNS)
-2. Resend: Domains → kitaplastik.com ekle, SPF/DKIM kayıtları CF DNS'e
-3. Birleşik SPF string (google + resend include'ları)
-4. Coolify env: RESEND_FROM_EMAIL=noreply@kitaplastik.com
-5. Redeploy + smoke contact form
+Kitaplastik CF proxy + SSL Full (strict) için Let's Encrypt cert renewal'ı
+DNS-01'e geçirmek lazım (HTTP-01/TLS-ALPN-01 CF proxy ile çakışır).
+docs/superpowers/RESUME.md "CF proxy + Let's Encrypt DNS-01 (ERTELENEN İŞ)"
+bölümünü oku, 6 adımı uygula.
 
-Başla: önce Resend dashboard'da domain add'le başla mı, yoksa GWS önce mi?
+Ön gerekli: CF API token (Zone:DNS:Edit scope, kitaplastik.com zone).
 
 ultrathink
 ```
 
-### 🗺️ Plan 4 planlama (büyük — admin CRUD + SEO + analytics)
+### 🗺️ Gelecek büyük iş (öneri)
 
-```
-Kitaplastik MVP ve production deploy tamam. Plan 4'ü `superpowers:writing-plans`
-ile planla: `docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md`.
-
-Kapsam:
-- /admin/urunler + /admin/sektorler CRUD (4-dil tab, görsel upload)
-- /admin/ayarlar/sirket + sablonlar
-- Müşteri RFQ tracking /[locale]/rfq/[uuid]/
-- Upstash Redis rate limit upgrade
-- SEO: Schema.org Organization/Product, OG image, apple-icon
-- KVKK + Gizlilik Politikası sayfaları
-- Plausible + Sentry
-- Admin E2E programatik login
-- Node 22 pin (NIXPACKS_NODE_VERSION=22.22.2)
-- Turnstile secret rotate
-- CF proxy open (orange) + SSL "Full (strict)"
-- 404 sayfası i18n
-- E2E regresyon (redesign sonrası)
-
-Kod haritasını gör → brainstorm sorularını başlat.
-
-ultrathink
-```
-
-### Deprecated — Config devamı (config aşaması tamamlandı)
-
-```
-docs/superpowers/RESUME.md oku — "2026-04-19 follow-up" bölümü güncel. Admin
-login çalışıyor, branch pushed. Kalan Release task'ları: Turnstile (3),
-Resend (4), host seçimi + deploy (5 — VERCEL KULLANILMAYACAK, güven sorunu),
-smoke test (7). Turnstile + Resend hesap kurma benim (berkay) manuel işim,
-sen talimat koordine et. Host seçimini birlikte yapıyoruz — top picks:
-Cloudflare Pages (Turnstile zaten CF), self-host VPS (Hetzner + Coolify),
-Netlify. Önce ben tercih/constraint'lerimi söylerim, sen 2-3 seçeneği
-karşılaştır, birlikte karar veririz.
-
-Başlamak için: `pnpm dev` zaten çalışıyor (/tmp/kitaplastik-dev.log) veya
-yoksa başlat. Önce `git log origin/main..HEAD --oneline | head -3` ile branch
-durumuna bak (push sonrası 0 olmalı). Turnstile ile başla — Cloudflare
-hesabı zaten var mı sor.
-
-ultrathink
-```
-
-### Plan 4 planlama (büyük — admin CRUD + SEO + analytics için)
-
-```
-docs/superpowers/RESUME.md oku. Plan 1-3 + redesign + config aşaması
-tamamlandı. Plan 4'ü `superpowers:writing-plans` skill'i ile planla:
-`docs/superpowers/plans/<date>-faz1-plan4-admin-crud-seo-analytics.md`.
-
-Kapsam:
-- `/admin/urunler` + `/admin/sektorler` CRUD (4-dil tab, görsel upload)
-- `/admin/ayarlar/sirket` + `/admin/ayarlar/sablonlar`
-- Müşteri RFQ tracking sayfası `/[locale]/rfq/[uuid]/`
-- Upstash Redis rate limit upgrade (in-memory → distributed)
-- SEO ileri: Schema.org Organization/Product, OG image generator
-- Plausible analytics
-- Sentry error tracking
+Büyük bir sonraki faz planlarsan:
+- `/admin/sectors` + `/admin/settings/company` CRUD (sektör içerik admin'den yönetilsin)
+- Upstash Redis rate limit upgrade (multi-instance ready)
+- SEO ileri: Schema.org Organization, OG image generator, apple-icon
+- KVKK + Gizlilik Politikası sayfaları (TR legal)
+- Plausible analytics integration
 - Admin authenticated E2E programatik login hook
-- Opsiyonel: Spline frosted polymer cap Tier 2 hero object
-- Opsiyonel: Fraunces Cyrillic için Noto Serif / IBM Plex Serif RU fallback
-
-Önce mevcut kod haritasını çıkar (admin layout pattern, RLS, middleware),
-sonra writing-plans brainstorm'u — ben cevaplayacağım.
-
-ultrathink
-```
+- Catalog request analytics (per-locale split, daily trend)
+- Catalog version tracking (PDF update'de log)
 
 ## Ortam Notları
 
