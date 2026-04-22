@@ -506,17 +506,6 @@ bölümünü oku, 6 adımı uygula.
 Ön gerekli: CF API token (Zone:DNS:Edit scope, kitaplastik.com zone).
 ```
 
-### 🌐 CF proxy + Let's Encrypt DNS-01 migration (infra, ~20-25 dk)
-
-```
-Kitaplastik CF proxy + SSL Full (strict) için Let's Encrypt cert renewal'ı
-DNS-01'e geçirmek lazım (HTTP-01/TLS-ALPN-01 CF proxy ile çakışır).
-docs/superpowers/RESUME.md "CF proxy + Let's Encrypt DNS-01 (ERTELENEN İŞ)"
-bölümünü oku, 6 adımı uygula.
-
-Ön gerekli: CF API token (Zone:DNS:Edit scope, kitaplastik.com zone).
-```
-
 ### 🔄 Redeploy + smoke (hemen yarın)
 
 ```
