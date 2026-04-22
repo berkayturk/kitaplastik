@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
 
+# Cancel in-flight runs for the same ref when a new push/PR arrives.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   install-and-check:
     name: install + lint + typecheck + test + build
@@ -43,6 +48,17 @@ jobs:
         run: pnpm audit --audit-level=high --prod
         continue-on-error: false
 
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          # Exact hit when deps + Next/TS config unchanged AND no source files changed;
+          # otherwise fall through to restore-keys and Next handles incremental build.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml', 'next.config.ts', 'tsconfig.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml', 'next.config.ts', 'tsconfig.json') }}-
+            ${{ runner.os }}-nextjs-
+
       - name: Build
         env:
           # Placeholder values so zod env validation passes during static build.
@@ -80,8 +96,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright browsers
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browsers (with system deps)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm dlx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps only (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm dlx playwright install-deps chromium
 
       - name: Run E2E tests
         env:
