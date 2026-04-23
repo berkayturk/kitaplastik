@@ -6,71 +6,44 @@
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Plan 5d (rescoped) — **next-intl v3.26 → v4 migration** (~1-1.5 saat). GHSA-8f24 middleware locale-bypass security vuln kapanır + v4 yeni API'leri.
+**Oturumun hedefi:** Plan 5c Part 1 — `/admin/sectors` CRUD (4-dil tab, görsel upload) (~3-4 saat). Kullanıcıdan 3 yüksek kaliteli sektör görseli gerekli (cam yıkama, kapak, tekstil).
 
-**Neden sadece bu:** Upstash Redis rate limit (orijinal Plan 5d'nin Faz 2'si) **defer edildi 2026-04-23** — mevcut in-memory limiter B2B trafiğimizde (günlük 100-200 visitor, haftada 2-3 form submit) yeterli. CF proxy + Turnstile + in-memory = 3-katman defense; Redis 4. kat YAGNI. İleride multi-instance veya trafik 10x artınca değerlendirilecek. Detay: `feedback_redis_defer_decision.md` memory.
+**Neden şimdi bu:** Plan 5d (next-intl v4 migration) 2026-04-23 ✅ merge'lendi (`41d778a`). GHSA-8f24 advisory kapandı, site v4.9.1 canlıda. Redis defer edildi (YAGNI). Pipeline Tier 2 (Dockerfile) hâlâ deferred — isterse ayrı session'da deep-dive. Plan 5c, admin paneli içerik tarafının eksik parçası.
 
-**Pipeline Tier 2 (Dockerfile):** 2026-04-23 denendi 2 fail → reverted; memory'de lesson-learned var. Plan 5d sonrası ayrı deep-dive session'a bırakıldı.
+### Önceki oturum durumu (2026-04-23 devam 5 — Plan 5d tamamlandı)
+- **next-intl v3.26.5 → v4.9.1** ✅ canlıda (`41d778a`): `pnpm audit --prod --audit-level=high` temiz, 202 unit + 66 E2E hepsi yeşil
+- Değişiklikler: `hasLocale` helper v4'ten import (inline guard'lar silindi), `NextIntlClientProvider` artık `messages` inherit eder (prop kaldırıldı, `locale` hâlâ explicit), Vitest config `test.server.deps.inline: ['next-intl']` — ESM-only + `next/navigation` extensionless deopt için
+- **LocaleSwitcher workaround korundu:** v4 Link + `locale` prop root-path davranışı re-probe edilmedi; plain `<a>` sağlam, E2E yeşil, SSR-görünür, no-JS fallback'i korur → dokunulmadı
+- Git HEAD: `41d778a` origin/main sync, working tree clean
 
-### Önceki oturum durumu (2026-04-23 devam 4)
-- Plan 5a Faz 4 ✅ canlıda (`ea59438`): CF proxy turuncu, Traefik DNS-01 (CF provider), SSL Full (strict), SSL Labs **A+ on 4/4 edge IPs** (Min TLS 1.2 + HSTS 12mo preload)
-- Pipeline Tier 2 ❌ **reverted** (`785a5f1`): Dockerfile deneme 2 deploy fail → Nixpacks restored, site stable, lesson memory'de
-- Redis defer kararı (`feedback_redis_defer_decision.md`): in-memory sticks, YAGNI
-- Git HEAD: `8ee2b60` (docs-only), origin/main sync, working tree clean
-
-### İlk okuman gereken dosyalar (context için)
-- `package.json` (next-intl v3.26.5 → v4 breaking changes)
-- `i18n/routing.ts` (v3 routing config — v4 shape değişmiş olabilir)
-- `middleware.ts` (next-intl createMiddleware integration)
-- `app/[locale]/layout.tsx` (`hasLocale` inline type guard — v4 native'e geç)
-- `components/layout/LocaleSwitcher.tsx` (plain `<a>` workaround — v4 Link düzelmiş olabilir)
-- Memory: `project_kitaplastik.md`, `feedback_next_intl_locale_switcher.md`, `feedback_next_intl_getpathname_prefix.md`, `feedback_redis_defer_decision.md`
+### İlk okuman gereken dosyalar (Plan 5c Part 1 için)
+- `app/admin/products/` (mevcut admin CRUD pattern — tab + image upload + draft/publish)
+- `components/admin/products/{LocaleTabs,ProductForm}.tsx` (4-dil tab reusable mi?)
+- `lib/supabase/types.ts` (Supabase `sectors` tablosunu ara — Plan 3'te schema oluşturuldu ama CRUD yok)
+- `supabase/migrations/*` (sectors tablo schema)
+- Memory: `project_kitaplastik.md`, `feedback_supabase_storage_delete.md`, `feedback_subagent_mode.md`, `feedback_next_intl_v4_migration.md`
 
 ### Prereq (user)
 
-**Yok.** Direkt başlayabiliriz. Upstash hesabı açmaya gerek yok.
+- **3 yüksek kaliteli sektör görseli** (cam yıkama, kapak, tekstil) — min 1600px width, landscape, production floor veya ürün close-up; admin panelden upload edilecek
+- Görseller yoksa placeholder ile devam edilebilir, gerçek görselleri sonra yükleme flow'u çalışır
 
 ---
 
-### 🟢 next-intl v3.26 → v4 migration (~1-1.5 saat)
+### 🟢 Plan 5c Part 1 — /admin/sectors CRUD (~3-4 saat)
 
 **Hedef:**
-- GHSA-8f24 middleware locale-bypass security vuln kapanır (`pnpm audit` temiz)
-- v4 native `hasLocale` type guard (v3 inline workaround silinir)
-- Link API v4'te iyileştirildi — LocaleSwitcher plain `<a>` workaround'u tekrar `<Link>` ile denenir
-- E2E 4 locale (TR/EN/RU/AR RTL) yeşil kalır
+- `/admin/sectors` list + create + edit + delete + reorder (sort_order)
+- 4-dil tab (TR/EN/RU/AR) — ad, kısa açıklama, uzun açıklama, meta alanları
+- 1 hero image + opsiyonel gallery (Supabase Storage, UUID rename, preview)
+- Publish/draft toggle
+- Public `/[locale]/sektorler/*` sayfaları şu an hardcoded content — Plan 5c Part 2'ye entry point: sectors tablosundan fetch edildiğinde hardcoded kaldırılacak
 
-**Execution order:**
-1. v4 breaking changes oku — https://next-intl.dev/docs/upgrade (import path'ler + Link API + `defineRouting`)
-2. `pnpm add next-intl@^4`
-3. `i18n/routing.ts` — v4 `defineRouting` sentaksı (büyük ihtimal mevcut kodla uyumlu, minor adjustments)
-4. `middleware.ts` — `createMiddleware` import path + config shape check
-5. `app/[locale]/layout.tsx` — `hasLocale` v3 inline type guard → v4 native'den import
-6. `next-intl/link` vs `next-intl/navigation` — v4'te namespace birleşmiş olabilir, import'ları düzelt
-7. LocaleSwitcher root-path bug tekrar test — v4'te düzelmişse plain `<a>` → `<Link locale="..." href="/" />` geri döndür (memory feedback v3'teki bug'ı açıklıyor)
-8. `lib/seo/routes.ts` sitemap `getPathname` kullanımı — v4 prefix davranışı değişmiş olabilir (mevcut feedback double-prefix bug riski)
-9. `pnpm verify` full — typecheck + lint + unit + build + E2E hepsi yeşil
-10. Commit + push
-
-**Rollback triggers:**
-- E2E locale redirects kırılırsa (4 locale homepage bypass, AR RTL)
-- LocaleSwitcher root path'te nav etmiyor (memo'daki bug v4'te devam ediyorsa plain `<a>` dokunma)
-- sitemap hreflang `getPathname` double-prefix bug regression
-
-**Rollback:** `git revert` commit + `pnpm install` v3.26.5'e döner. 60 sn.
+**Önce oku:** Bu Plan 4 gibi bir plan dosyası oluşturmakla başlar mı yoksa spec + discuss phase ister mi — kullanıcıya sor. GSD workflow kullanıyorsak `/gsd:plan-phase`; subagent-driven mode ise batch breakdown.
 
 ---
 
-### Session sonu checklist
-- [ ] next-intl v4 canlıda
-- [ ] `pnpm audit --audit-level=high --prod` temiz (GHSA-8f24 kapanmış)
-- [ ] E2E 4 locale yeşil
-- [ ] Memory: next-intl v4 migration gotchas (varsa v3 feedback memory'leri güncelle)
-- [ ] Git HEAD push + origin sync
-
 ### Session +1 preview (heads-up)
-- **Plan 5c Part 1** (~3-4 sa): `/admin/sectors` CRUD (4-dil tab, görsel upload, placeholder boş)
-  - User prereq: sektör görselleri (3 yüksek kaliteli foto — cam yıkama, kapak, tekstil)
 - **Plan 5c Part 2** (~3-4 sa): `/admin/settings/company` (`lib/company.ts` editöre) + catalog request analytics dashboard (Plausible + Supabase)
 - **Pipeline Tier 2 retry** (~1-2 sa): Dockerfile deep-dive — Coolify log full + failed container exec (memory `feedback_coolify_dockerfile_deferred.md` retry protokolü)
 - **Pipeline Tier 3** (~45-60 dk): CI parallel jobs + Playwright browsers cache → CI 9dk → 4-5dk
@@ -78,8 +51,9 @@
 - **Redis rate limit** (yalnızca trigger'lı): multi-instance'a geçiş + trafik 10x artış sonrası yeniden değerlendir
 - **Plan 5b** (hukuk onayı sonrası): KVKK + cookie consent
 - **Plan 5a Faz 3** (maddi hazır sonrası): GWS email
+- **uuid moderate advisory** (opsiyonel): resend@6 → svix → uuid@10 transitive; resend major upgrade gerekebilir
 
-**İlk sorusu:** "Plan 5d (rescoped) — next-intl v3.26 → v4 migration'a başlayalım mı? Prereq yok, direkt gidebiliriz. `pnpm outdated next-intl` çıktısını paylaşırsan v4 hedef versiyonuyla başlarım."
+**İlk sorusu:** "Plan 5c Part 1 — /admin/sectors CRUD'a başlayalım mı? 3 yüksek kaliteli sektör görseli hazırsa flash drop + upload akışını test edebiliriz; yoksa placeholder akışla başlayıp görselleri sonradan koyabiliriz. GSD workflow mı subagent-driven mi ilerleyelim?"
 
 ---
 
