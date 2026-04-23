@@ -1,8 +1,12 @@
 // components/PlausibleScript.tsx
 //
-// Env-guarded Plausible tracker. If either env is empty (dev, CI, test),
-// renders null so no script is injected and no external call happens.
-// Uses next/script with afterInteractive strategy for non-blocking load.
+// Env-guarded Plausible tracker served via SAME-ORIGIN PROXY. Script and
+// event endpoint both resolve to /pa/* on kitaplastik.com; next.config.ts
+// beforeFiles rewrites forward /pa/script.js and /pa/event to the
+// NEXT_PUBLIC_PLAUSIBLE_HOST upstream. Same-origin path bypasses common
+// adblock filter lists that target external /js/script.js + /api/event.
+// host env is still used as a "is Plausible configured?" presence gate;
+// the actual value is read by next.config.ts for the rewrite destination.
 
 import Script from "next/script";
 
@@ -12,7 +16,13 @@ export function PlausibleScript() {
 
   if (!domain || !host) return null;
 
-  const src = `${host.replace(/\/$/, "")}/js/script.js`;
-
-  return <Script defer data-domain={domain} src={src} strategy="afterInteractive" />;
+  return (
+    <Script
+      defer
+      data-domain={domain}
+      data-api="/pa/event"
+      src="/pa/script.js"
+      strategy="afterInteractive"
+    />
+  );
 }

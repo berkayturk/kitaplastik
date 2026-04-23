@@ -38,6 +38,10 @@ export default async function middleware(request: NextRequest) {
 // Matcher excludes /catalog-template/* so next-intl does not apply a locale
 // prefix to the internal PDF render target. Access to those routes is
 // guarded by app/catalog-template/layout.tsx (shared-secret header check).
+// /pa/* is the Plausible same-origin proxy path — next.config.ts
+// beforeFiles rewrites forward it upstream before middleware would run,
+// but excluding it here makes the intent explicit and avoids any
+// middleware-level handling if the rewrite order ever shifts.
 export const config = {
-  matcher: ["/((?!_next|_vercel|api|catalog-template|.*\\..*).*)"],
+  matcher: ["/((?!_next|_vercel|api|catalog-template|pa|.*\\..*).*)"],
 };

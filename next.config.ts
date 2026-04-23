@@ -44,6 +44,21 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  async rewrites() {
+    // Same-origin proxy for Plausible script + event endpoint. Defeats
+    // adblock filter lists targeting plausible.* domains and /js/script.js
+    // + /api/event paths. Empty array when _HOST unset (dev, CI) so the
+    // PlausibleScript component's env guard is the single source of truth
+    // for "is Plausible enabled".
+    const plausibleHost = process.env.NEXT_PUBLIC_PLAUSIBLE_HOST?.replace(/\/$/, "");
+    if (!plausibleHost) return [];
+    return {
+      beforeFiles: [
+        { source: "/pa/script.js", destination: `${plausibleHost}/js/script.js` },
+        { source: "/pa/event", destination: `${plausibleHost}/api/event` },
+      ],
+    };
+  },
   async redirects() {
     return [
       // Plan 3 legacy TR deep links → new TR canonical (catalog) 1-hop
