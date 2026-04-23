@@ -11,9 +11,17 @@
     "backToHome": "Back to Home"
   },
   "notFound": {
+    "eyebrow": "ERROR · 404",
     "title": "Page not found",
-    "description": "The page you are looking for does not exist or may have been moved.",
-    "home": "Back to home"
+    "description": "The page you are looking for has moved, been removed, or never existed.",
+    "urlEchoLabel": "You requested:",
+    "recoveryTitle": "MAYBE THESE?",
+    "cards": {
+      "products": { "title": "Products", "desc": "Browse the full product family" },
+      "sectors": { "title": "Sectors", "desc": "Bottle washing · caps · textile" },
+      "catalog": { "title": "Request catalog", "desc": "PDF catalog request form" },
+      "contact": { "title": "Contact", "desc": "Get in touch" }
+    }
   },
   "form": {
     "required": "Required field",

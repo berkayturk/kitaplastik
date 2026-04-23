@@ -11,9 +11,17 @@
     "backToHome": "Anasayfaya Dön"
   },
   "notFound": {
+    "eyebrow": "HATA · 404",
     "title": "Sayfa bulunamadı",
-    "description": "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
-    "home": "Anasayfaya dön"
+    "description": "Aradığınız sayfa taşınmış, silinmiş ya da hiç var olmamış olabilir.",
+    "urlEchoLabel": "Aradığınız:",
+    "recoveryTitle": "BELKİ BUNLAR?",
+    "cards": {
+      "products": { "title": "Ürünler", "desc": "Tüm ürün ailesini inceleyin" },
+      "sectors": { "title": "Sektörler", "desc": "Cam yıkama · kapak · tekstil" },
+      "catalog": { "title": "Katalog iste", "desc": "PDF katalog talep formu" },
+      "contact": { "title": "İletişim", "desc": "Bize ulaşın" }
+    }
   },
   "form": {
     "required": "Zorunlu alan",
