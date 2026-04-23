@@ -1,25 +1,29 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
+
+export const metadata: Metadata = {
+  title: "404 — Kıta Plastik",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (
     <Container>
-      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <div className="eyebrow text-accent-blue">Error · 404</div>
-        <h1 className="mt-4 text-5xl font-bold tracking-tight">
-          Sayfa bulunamadı <span className="opacity-50">·</span> Page not found
+      <section className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 py-24 text-center">
+        <p className="eyebrow text-[var(--color-accent-cobalt)]">ERROR · 404</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-[var(--color-text-primary)] md:text-5xl">
+          Sayfa bulunamadı <span className="text-[var(--color-text-tertiary)]">·</span> Page not
+          found <span className="text-[var(--color-text-tertiary)]">·</span> Страница не найдена{" "}
+          <span className="text-[var(--color-text-tertiary)]">·</span> الصفحة غير موجودة
         </h1>
-        <p className="text-text-secondary mt-4 max-w-md">
-          Aradığınız sayfa taşınmış, silinmiş ya da hiç var olmamış olabilir. / The page you are
-          looking for may have been moved, deleted or never existed.
-        </p>
         <Link
           href="/"
-          className="mt-8 rounded-sm bg-[var(--color-accent-red)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          className="mt-4 inline-flex items-center justify-center rounded-sm bg-[var(--color-accent-cobalt)] px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
-          Anasayfaya dön / Back to home
+          Anasayfa · Home · Главная · الرئيسية
         </Link>
-      </div>
+      </section>
     </Container>
   );
 }
