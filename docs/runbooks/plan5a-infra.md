@@ -9,7 +9,7 @@
 - [x] Coolify admin access
 - [x] CF dashboard + API token yetkisi
 - [ ] GWS trial için kredi kartı (Faz 3 için)
-- [ ] VPS SSH erişimi (Faz 4 için)
+- [x] VPS SSH erişimi (Faz 4 için)
 
 ## Snapshot (rollback reference)
 
@@ -93,41 +93,50 @@ Tek seferlik hard refresh semptomu geçirir; kalıcı fix = stable key.
 - [ ] mail-tester score ≥ 9/10 (birleşik SPF Faz 1.3 + GWS sender = pass)
 - [ ] Done: _____
 
-## Faz 4 — CF proxy + DNS-01 ⏸️ PENDING (RISKY, next session)
+## Faz 4 — CF proxy + DNS-01 ✅ DONE (2026-04-23)
 
 ### 4.1 CF API token
 
-- [ ] CF dashboard → My Profile → API Tokens → Create Token
-- [ ] Template: Custom / Permissions: `Zone:Zone:Read` + `Zone:DNS:Edit`
-- [ ] Zone Resources: Include → Specific zone → `kitaplastik.com` (least privilege)
-- [ ] Token → Coolify Traefik service env `CF_DNS_API_TOKEN`
-- [ ] Done: _____
+- [x] CF dashboard → My Profile → API Tokens → Create Token `kitaplastik-traefik-dns01`
+- [x] Permissions: `Zone:Zone:Read` + `Zone:DNS:Edit`
+- [x] Zone Resources: Include → Specific zone → `kitaplastik.com` (least privilege)
+- [x] Token → VPS `/data/coolify/proxy/.env` `CF_DNS_API_TOKEN` (chmod 600, UI'a değil dosyaya)
+- [x] Done: 2026-04-23
 
-### 4.2 Traefik DNS-01 config (VPS SSH)
+### 4.2 Traefik DNS-01 config (VPS SSH + Coolify UI)
 
-- [ ] Backup `traefik.yml` / dynamic config
-- [ ] Add `certificatesResolvers.letsencrypt.acme.dnsChallenge.provider: cloudflare`
-- [ ] Coolify proxy env `CF_DNS_API_TOKEN` visible to Traefik container
-- [ ] Smoke: `traefik` log `acme: use dns-01 challenge`
-- [ ] Trigger cert renewal (delete acme.json or set short validity) → verify new cert issued via DNS-01
-- [ ] Rollback plan: revert YAML + delete TXT records → HTTP-01 resumes (90 günlük existing cert hala geçerli, 0 downtime)
-- [ ] Done: _____
+**Observation:** Coolify Traefik v3.6 config = `docker-compose.yml` CLI flags (file-based YAML değil). RESUME'daki `traefik.yml` snippet CLI format'ına çevrildi.
+
+- [x] Backup `/data/coolify/proxy/docker-compose.yml` + `acme.json`
+- [x] Compose edit (Coolify Proxy → Configuration UI editor):
+  - `environment: - 'CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}'` eklendi (docker compose otomatik `.env` okur)
+  - `--certificatesresolvers.letsencrypt.acme.httpchallenge*` 2 satır silindi
+  - `--...acme.email=berkaytrk6@gmail.com` + `.dnschallenge=true` + `.dnschallenge.provider=cloudflare` + `.dnschallenge.resolvers=1.1.1.1:53,1.0.0.1:53` eklendi
+  - `.storage=/traefik/acme.json` korundu
+- [x] Save → Stop Proxy → Start Proxy (Coolify UI)
+- [x] Verify `docker exec coolify-proxy env | grep CF_DNS_API_TOKEN` → token injected
+- [x] Verify `docker inspect coolify-proxy --format '{{range .Config.Cmd}}...'` → DNS-01 flags runtime'da mevcut (logs boş olsa da definitive proof)
+- [x] Trigger cert renewal test: `jq del` plausible.kitaplastik.com entry → restart proxy → **t=30s: SUCCESS** — new cert issued via DNS-01 (farklı serial, farklı notBefore)
+- [x] Done: 2026-04-23
 
 ### 4.3 CF A Proxied + SSL Full (strict)
 
-- [ ] CF DNS → A `@` + `www` → turuncu (Proxied) OPEN
-- [ ] CF SSL/TLS → mode **Full (strict)**
-- [ ] 5dk observation window: http://kitaplastik.com 301→HTTPS, HSTS preloaded
-- [ ] Rollback: orange cloud OFF + SSL mode `Full` (strict değil) → HTTP-01 resumes
-- [ ] Done: _____
+- [x] CF DNS → A `@` + `www` → turuncu (Proxied) — plausible kasıtlı gri (admin-only, low-priority)
+- [x] CF SSL/TLS → mode **Full (strict)**
+- [x] CF SSL/TLS Edge Certificates → Minimum TLS **1.2**
+- [x] CF SSL/TLS Edge Certificates → HSTS: 12mo, includeSubDomains, preload, no-sniff → Enable
+- [x] Verify: `dig +short @1.1.1.1 kitaplastik.com` → CF edge IPs (`172.67.x`, `104.21.x`) ✅
+- [x] Verify: `curl -sI https://kitaplastik.com` → `server: cloudflare`, `cf-ray: 9f0eaf387a5bdcc8-FRA` ✅
+- [x] Done: 2026-04-23
 
-### 4.4 E2E smoke across 4 locales
+### 4.4 E2E smoke + SSL Labs A+
 
-- [ ] `curl -sI https://kitaplastik.com | grep -i cf-ray` → cf-ray header present (Proxied ✅)
-- [ ] `pnpm test:e2e -- prod` 4 locale homepage + contact + catalog smoke
-- [ ] Sentry test error (throw in admin page) → dashboard'da görünür
-- [ ] Plausible realtime dashboard → live event akışı
-- [ ] Done: _____
+- [x] Browser smoke 4 locale (TR/EN/RU/AR RTL) — user confirmed
+- [x] www → apex canonical — user confirmed
+- [x] Admin login page erişilebilir — user confirmed
+- [x] Catalog PDF — user confirmed
+- [x] SSL Labs A+ on all 4 edge IPs (2 IPv4 + 2 IPv6)
+- [x] Done: 2026-04-23
 
 ## Post-deploy verification (Plan 5a final gate)
 
