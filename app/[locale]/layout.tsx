@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { NextIntlClientProvider } from "next-intl";
-import { setRequestLocale, getMessages, getTranslations } from "next-intl/server";
-import { routing, type Locale } from "@/i18n/routing";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { setRequestLocale, getTranslations } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { AtmosphereScene } from "@/components/three/AtmosphereScene";
@@ -21,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  if (!isValidLocale(locale)) return {};
+  if (!hasLocale(routing.locales, locale)) return {};
   const tBrand = await getTranslations({ locale, namespace: "common.brand" });
   const tHero = await getTranslations({ locale, namespace: "home.hero" });
   return {
@@ -35,25 +35,19 @@ export function generateStaticParams() {
 }
 
 // Next.js 15 LayoutConfig validator constrains `params.locale` to `string` (no `& any` bivariance
-// escape hatch that page.tsx gets from AppPageConfig). We narrow back to Locale via isValidLocale.
+// escape hatch that page.tsx gets from AppPageConfig). We narrow back to Locale via hasLocale.
 interface LocaleLayoutProps {
   children: ReactNode;
   params: Promise<{ locale: string }>;
 }
 
-// v3-compatible locale guard (hasLocale is v4-only; Task 1 established this pattern in i18n/request.ts).
-function isValidLocale(value: string): value is Locale {
-  return (routing.locales as readonly string[]).includes(value);
-}
-
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
-  if (!isValidLocale(locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
   const dir = getDir(locale);
 
   return (
@@ -67,7 +61,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       </head>
       <body className={cn("text-text-primary antialiased", locale === "ar" && "font-arabic")}>
         <AtmosphereScene />
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale}>
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />
