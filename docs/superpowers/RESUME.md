@@ -4,9 +4,25 @@
 
 ---
 
+## 🛡️ GLOBAL PROTOCOL — Cross-AI Review Gates (ZORUNLU)
+
+Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm yeni açılan PR'lar için uygulanır. Detay: `memory/feedback_codex_dual_review_gate.md`.
+
+- **Gate 1 — Spec-level:** Brainstorm → spec yaz → self-review → **`/codex-review-spec <path>`** → critical/high inline fix → user review → writing-plans.
+- **Gate 2 — PR-level:** Execution complete → CI yeşil → **`/codex-review-pr`** → critical/high fix + tekrar CI → medium/low PR body'de "Known differences" → merge.
+- **Failure mode:** Codex offline → Review Log/PR body'e "SKIPPED" notu, tech-debt flag, **hard block yok**.
+- **Convergence:** Tek round. User = ikinci insan arbiter.
+- **Retroactive:** Mevcut merge edilmiş specler backfill edilmez.
+- **Slash commands:** `.claude/commands/codex-review-spec.md` + `codex-review-pr.md` (project-level)
+- **PR attribution:** `🔍 Reviewed by: Claude + Codex (GPT-5.4)`
+
+---
+
 ## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Plan 5c Part 1 — `/admin/sectors` CRUD (4-dil tab, görsel upload) (~3-4 saat). Kullanıcıdan 3 yüksek kaliteli sektör görseli gerekli (cam yıkama, kapak, tekstil).
+**Oturumun hedefi:** Plan 5c Part 1 — `/admin/sectors` + `/admin/references` CRUD (tek PR, ~5-6 saat). Scope **genişletildi** (2026-04-23 brainstorm): orijinal sadece sectors'tı, user references CRUD'u da aynı oturuma ekledi. Kullanıcıdan 3 yüksek kaliteli sektör görseli gerekli.
+
+**Durum:** Spec ✅ yazıldı (`docs/superpowers/specs/2026-04-23-plan5c-part1-sectors-references-crud-design.md`). Brainstorm tamamlandı (5 soru → 5 karar). Codex Gate 1 review beklemede. Sonraki adım: writing-plans skill ile PLAN.md oluşturmak.
 
 **Neden şimdi bu:** Plan 5d (next-intl v4 migration) 2026-04-23 ✅ merge'lendi (`41d778a`). GHSA-8f24 advisory kapandı, site v4.9.1 canlıda. Redis defer edildi (YAGNI). Pipeline Tier 2 (Dockerfile) hâlâ deferred — isterse ayrı session'da deep-dive. Plan 5c, admin paneli içerik tarafının eksik parçası.
 
@@ -30,16 +46,24 @@
 
 ---
 
-### 🟢 Plan 5c Part 1 — /admin/sectors CRUD (~3-4 saat)
+### 🟢 Plan 5c Part 1 — /admin/sectors + /admin/references CRUD (~5-6 saat)
 
-**Hedef:**
-- `/admin/sectors` list + create + edit + delete + reorder (sort_order)
-- 4-dil tab (TR/EN/RU/AR) — ad, kısa açıklama, uzun açıklama, meta alanları
-- 1 hero image + opsiyonel gallery (Supabase Storage, UUID rename, preview)
-- Publish/draft toggle
-- Public `/[locale]/sektorler/*` sayfaları şu an hardcoded content — Plan 5c Part 2'ye entry point: sectors tablosundan fetch edildiğinde hardcoded kaldırılacak
+**Hedef (spec Section 1, brainstorm kararları):**
+- `/admin/sectors` — **edit-only** (3 sabit sektör, create/delete YOK). 4-dil tab ad + kısa açıklama + uzun açıklama + meta_title + meta_description + hero image + display_order + active.
+- `/admin/references` — **full CRUD**. 4-dil display_name + logo upload (yeni `client-logos` bucket) + sector dropdown (yeni `sector_id` FK) + arrow reorder + soft-delete + restore.
+- Schema: sectors 4 yeni kolon, clients 2 yeni kolon (`display_name` + `sector_id`), `sector_key` DROP değil (dual-write).
+- Statik `/public/references/*.svg` logoları bir defaya mahsus storage migration script ile `client-logos` bucket'a taşınır.
+- Public `/[locale]/sectors/*` + `/references` sayfaları hardcoded kalır — Plan 5c Part 2'nin işi.
 
-**Önce oku:** Bu Plan 4 gibi bir plan dosyası oluşturmakla başlar mı yoksa spec + discuss phase ister mi — kullanıcıya sor. GSD workflow kullanıyorsak `/gsd:plan-phase`; subagent-driven mode ise batch breakdown.
+**Durum (2026-04-23 brainstorm sonu):** Spec yazıldı, self-review temiz. Codex Gate 1 review bekliyor. Kullanıcı onayından sonra writing-plans skill.
+
+**Sonraki adımlar:**
+1. Codex Gate 1 review (`/codex-review-spec docs/superpowers/specs/2026-04-23-plan5c-part1-sectors-references-crud-design.md`)
+2. Findings apply (critical/high inline)
+3. User spec review + onay
+4. writing-plans skill ile PLAN.md
+5. Execution (subagent-driven-development; `feedback_subagent_mode.md` pattern)
+6. Codex Gate 2 review (`/codex-review-pr` merge öncesi)
 
 ---
 
@@ -53,7 +77,7 @@
 - **Plan 5a Faz 3** (maddi hazır sonrası): GWS email
 - **uuid moderate advisory** (opsiyonel): resend@6 → svix → uuid@10 transitive; resend major upgrade gerekebilir
 
-**İlk sorusu:** "Plan 5c Part 1 — /admin/sectors CRUD'a başlayalım mı? 3 yüksek kaliteli sektör görseli hazırsa flash drop + upload akışını test edebiliriz; yoksa placeholder akışla başlayıp görselleri sonradan koyabiliriz. GSD workflow mı subagent-driven mi ilerleyelim?"
+**İlk sorusu:** "Plan 5c Part 1 spec'i 2026-04-23'te yazıldı (+ Codex Gate 1). PLAN.md yazalım mı? Execution subagent-driven-development pattern'ıyla ilerleyebiliriz. 3 yüksek kaliteli sektör görseli hazırsa flash drop akışını gerçek medyayla, yoksa placeholder'la test edebiliriz."
 
 ---
 
