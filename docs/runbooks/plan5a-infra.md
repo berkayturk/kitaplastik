@@ -40,23 +40,24 @@
 
 Tek seferlik hard refresh semptomu geçirir; kalıcı fix = stable key.
 
-- [ ] Generate: `openssl rand -base64 32`
-- [ ] Coolify env (kitaplastik app): `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=<generated>` (Available at Runtime ✅ — Nixpacks build-time'da da geçirir)
-- [x] `.env.example` placeholder + doc comment (bu commit)
-- [ ] Redeploy — bu deploy sırasında açık session'lar son kez invalidate olur, sonrasında stable
-- [ ] Verify: deploy sonrası admin tek sekmede önce fresh load, sonra `pnpm build` tekrar tetikle (dummy commit) → açık sekmede POST hâlâ çalışıyor mu (eski ID'ler artık geçerli olmalı)
-- [ ] Done: _____
+- [x] Generate: `openssl rand -base64 32` (done 2026-04-23)
+- [x] Coolify env (kitaplastik app): `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` — **Is Literal ON kritik** (base64 `$`-expansion bug: key runtime ≠ stored → admin session invalidate)
+- [x] `.env.example` placeholder + doc comment (commit `4d71ce7`)
+- [x] Redeploy — Literal ON'dan sonra açık session'lar son kez invalidate, sonrasında stable
+- [x] Verify: admin `/admin/products/new` Save çalışıyor ✅
+- [x] Done: 2026-04-23
 
 ## Faz 2 — Plausible
 
-### 2.1–2.3 Runtime (Coolify deploy + DNS + SSL) — ⏸️ PENDING (next session)
+### 2.1–2.3 Runtime (Coolify deploy + DNS + SSL) — ✅ COMPLETE (2026-04-23)
 
-- [ ] Coolify template → Plausible Community Edition deploy (Postgres + ClickHouse + app)
-- [ ] CF DNS A `plausible.kitaplastik.com` → `188.245.42.178` (DNS only, grey cloud)
-- [ ] Let's Encrypt HTTP-01 SSL (Coolify auto) + Plausible admin wizard (user: berkaytrk6@gmail.com + site `kitaplastik.com`)
-- [ ] Coolify env (kitaplastik app): `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=kitaplastik.com` + `NEXT_PUBLIC_PLAUSIBLE_HOST=https://plausible.kitaplastik.com` (Available at Runtime ✅)
-- [ ] Redeploy to pick up env → canlıda script tag'i ve realtime event akışı doğrula
-- [ ] Done: _____
+- [x] Coolify Docker Compose Empty (trademark sebebiyle one-click template yok) — `docs/runbooks/plausible-docker-compose.yml` YAML paste (commit `e192b04`). Postgres + ClickHouse + app, `SERVICE_*` magic env'leri auto-generated (SECRET_KEY_BASE + TOTP_VAULT_KEY + creds).
+- [x] CF DNS A `plausible.kitaplastik.com` → `188.245.42.178` (DNS only, grey cloud)
+- [x] Let's Encrypt HTTP-01 SSL (Coolify auto) + Plausible admin wizard (`berkaytrk6@gmail.com` + site `kitaplastik.com` + timezone Europe/Istanbul + optional measurements: outbound links, file downloads, 404 pages, **custom events + custom properties** kritik)
+- [x] Coolify env (kitaplastik app): `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=kitaplastik.com` + `NEXT_PUBLIC_PLAUSIBLE_HOST=https://plausible.kitaplastik.com` (**Buildtime ON + Runtime ON + Literal ON**)
+- [x] Redeploy + **same-origin adblock-bypass proxy** (commit `0752bb4`): `next.config.ts` beforeFiles rewrites `/pa/script.js` + `/pa/event` → Plausible backend + `data-api` attribute same-origin. Mevcut CSP (`script-src 'self'`) zaten yeterli — bonus fix: previous external URL CSP ihlal ediyordu.
+- [x] Canlı smoke: adblocker ON ile 4 pageview + sources Plausible dashboard realtime ✅
+- [x] Done: 2026-04-23
 
 ### 2.4 Code (Task 15–22) — ✅ commit `ce37fc4`, push 2026-04-22
 
