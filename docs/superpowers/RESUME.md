@@ -4,125 +4,121 @@
 
 ---
 
-## 👉 NEXT SESSION KICKOFF (2026-04-24+)
+## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** İki bağımsız infra batch sırayla —
-1. **Plan 5a Faz 4** — CF proxy ON + Traefik DNS-01 migration + SSL Full (strict) (~30-45 dk)
-2. **Pipeline perf Tier 2** — Coolify Nixpacks → Dockerfile + BuildKit cache mount (~60-90 dk)
+**Oturumun hedefi:** Plan 5d — 2 bağımsız batch tek planda (~3-4 saat):
+1. **next-intl v3.26 → v4 migration** — GHSA-8f24 middleware bypass vuln'u kapat (security)
+2. **In-memory rate limit → Upstash Redis** — multi-instance ready + deploy-dayanıklı counter (scale)
 
-**Neden bu sıra:** Faz 4 küçük + bağımsız; Plan 5a tam kapanır (psikolojik milestone). Dockerfile'da sorun çıkarsa Faz 4 etkilenmez.
+**Neden bu sıra:** Plan 5a Faz 4 ✅ 2026-04-23 canlıda (CF proxy + DNS-01 + SSL A+). Plan 5d orthogonal iki iş ama aynı middleware/lib/env stack'ına dokunuyor, tek planda verimli. Pipeline Tier 2 (Dockerfile) 2026-04-23 denendi 2 fail → reverted; memory'de lesson-learned var, **Plan 5d'den sonra** ayrı deep-dive session'a bırakıldı.
 
-### Önceki oturum durumu (2026-04-23 devam 3)
-- 404 redesign ✅ canlıda (`d0acfaa`)
-- Plan 5a Faz 1 + Faz 2 ✅ canlıda (`0752bb4`): Plausible self-host + same-origin adblock-bypass proxy (`/pa/script.js` + `/pa/event`) + Server Action encryption key (Literal ON fix)
-- Pipeline perf Tier 1 ✅ canlıda (`7bf4a35`, kanıtlandı `03cabff`): docs-only commit paths-ignore (20 dk → 0 dk), Playwright CI workers 2, workflow_dispatch escape hatch
-- Runbook güncel: `docs/runbooks/plan5a-infra.md` — Faz 1+2 [x], Faz 4 pending
-- Git HEAD: `03cabff`, origin/main sync, working tree clean
+### Önceki oturum durumu (2026-04-23 devam 4)
+- Plan 5a Faz 4 ✅ canlıda (`ea59438`): CF proxy turuncu, Traefik DNS-01 (CF provider), SSL Full (strict), SSL Labs **A+ on 4/4 edge IPs** (Min TLS 1.2 + HSTS 12mo preload)
+- Pipeline Tier 2 ❌ **reverted** (`785a5f1`): Dockerfile deneme 2 deploy fail → Nixpacks restored, site stable, lesson memory'de
+- Git HEAD: `785a5f1`, origin/main sync, working tree clean
+- Runbook `plan5a-infra.md` Faz 4 all [x]
 
 ### İlk okuman gereken dosyalar (context için)
-- `docs/runbooks/plan5a-infra.md` (§ Faz 4 detayı)
-- `next.config.ts` (mevcut `/pa/*` rewrites, `withSentryConfig` tunnel `/monitoring`)
-- `nixpacks.toml` (mevcut chromium kurulumu — Dockerfile'a taşınacak)
-- `.github/workflows/ci.yml` + `deploy.yml` (Tier 1 sonrası state)
-- Memory: `project_kitaplastik.md`, `feedback_cf_registrar_same_account.md`, `feedback_coolify_nixpacks_env.md`, `feedback_verify_before_push.md`
+- `lib/rate-limit.ts` (in-memory → Redis'e migrate edilecek)
+- `lib/validation/contact.ts` + `lib/validation/rfq.ts` (rate limit call sites)
+- `middleware.ts` + `i18n/routing.ts` (next-intl v3 config)
+- `package.json` (next-intl v3.26 → v4 breaking changes)
+- Memory: `project_kitaplastik.md`, `feedback_coolify_dockerfile_deferred.md`, `feedback_next_intl_locale_switcher.md`, `feedback_next_intl_getpathname_prefix.md`
 
 ---
 
-### 🟢 FAZ 1 — Plan 5a Faz 4: CF proxy + DNS-01 (30-45 dk)
+### Prereq (user yapacak ve session başında bana söyleyecek)
 
-**Prereq (user yapacak ve session başında bana söyleyecek):**
-- [ ] **CF API Token oluştur** — CF dashboard → My Profile → API Tokens → Create:
-  - Template: Custom
-  - Permissions: `Zone:Zone:Read` + `Zone:DNS:Edit`
-  - Zone Resources: Include → Specific zone → `kitaplastik.com`
-  - Token → 1Password ("CF API DNS-01")
-- [ ] VPS SSH hazır (Hetzner `188.245.42.178`)
-- [ ] Coolify Proxy (Traefik) erişimi hazır
+**Upstash Redis DB:**
+- [ ] https://upstash.com/ → **Sign up** (Google/GitHub OAuth, ~30 sn, kredi kartı yok)
+- [ ] Console → **Create Database**:
+  - Name: `kitaplastik-prod`
+  - Type: **Regional** (free tier — 10K command/gün, bizim için fazlasıyla yeterli)
+  - Region: **eu-central-1** (Frankfurt, Hetzner VPS'e yakın → ~5-10ms latency)
+  - Eviction: `allkeys-lru` (rate limit key'leri kendiliğinden eskir)
+- [ ] Database Details → **REST API** tab → credential'ları kopyala:
+  - `UPSTASH_REDIS_REST_URL` (https://xxx-yyy.upstash.io)
+  - `UPSTASH_REDIS_REST_TOKEN` (Aaaaa...)
+  - **1Password**'e kaydet ("Upstash Kıta Plastik prod" başlığıyla)
+
+---
+
+### 🟢 FAZ 1 — next-intl v3.26 → v4 (~1-1.5 saat)
+
+**Hedef:** GHSA-8f24-... middleware locale-bypass security vuln kapanır + v4 yeni API'leri (getPathname, Link locale prop stabilite, `hasLocale` type guard).
 
 **Execution order:**
-1. **Snapshot mevcut cert** — `echo | openssl s_client -servername kitaplastik.com -connect kitaplastik.com:443 2>/dev/null | openssl x509 -noout -dates` → bitiş tarihi not (rollback buffer)
-2. **CF token → Coolify proxy env** — Traefik service env `CF_DNS_API_TOKEN=<token>` (Runtime ON, Literal ON)
-3. **Traefik config DNS-01 challenge** — Coolify Proxy → Configuration Files → `traefik.yml`:
-   ```yaml
-   certificatesResolvers:
-     letsencrypt:
-       acme:
-         email: berkaytrk6@gmail.com
-         dnsChallenge:
-           provider: cloudflare
-           resolvers: ["1.1.1.1:53", "1.0.0.1:53"]
+1. `pnpm add next-intl@^4` (breaking changes için CHANGELOG okuma — import path'ler + Link API)
+2. `i18n/routing.ts` — v4 `defineRouting` sentaksı (muhtemelen mevcut kodla uyumlu)
+3. `middleware.ts` — `createMiddleware` import path aynı, ama config objesi shape değişmiş olabilir
+4. `app/[locale]/layout.tsx` — `hasLocale` type guard'ı v3 inline'dan v4 native'e geç (Plan 2 memory feedback var)
+5. `next-intl/link` vs `next-intl/navigation` — v4'te namespace değişmiş olabilir
+6. LocaleSwitcher + tüm Link kullanımları smoke (feedback memo: root-path locale switch bug plain `<a>` ile çözülmüştü — v4'te Link API düzelmiş olabilir, tekrar test)
+7. Typecheck + unit + E2E hepsi yeşil → commit
+
+**Rollback triggers:**
+- E2E locale redirects kırılırsa (TR/EN/RU/AR homepage bypass)
+- LocaleSwitcher root path'te nav etmiyor (memo'daki bug v4'te de varsa Link API'yi mevcut plain `<a>` ile dokunmadan bırak)
+- RU/AR messages inline + RTL direction
+
+**Rollback:** `git revert` commit + `pnpm install` v3'e döner.
+
+---
+
+### 🟡 FAZ 2 — Upstash Redis rate limit migration (~1-2 saat)
+
+**Hedef:** `lib/rate-limit.ts` in-memory sliding-window → `@upstash/ratelimit` sliding-window (Redis-backed). Rate limit counter deploy'a + multi-instance'a dayanır.
+
+**Execution order:**
+1. `pnpm add @upstash/redis @upstash/ratelimit`
+2. `.env.example` — `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` placeholder'ları (+ yorum)
+3. `lib/env.ts` — 2 yeni key zod schema'ya ekle (required production, optional dev `.optional()`)
+4. `lib/rate-limit.ts` rewrite — aynı `contactLimiter` + `rfqLimiter` interface'i kalsın, internal Redis wrapper değişsin:
+   ```ts
+   import { Ratelimit } from "@upstash/ratelimit";
+   import { Redis } from "@upstash/redis";
+   const redis = Redis.fromEnv();  // reads UPSTASH_REDIS_REST_*
+   export const contactLimiter = new Ratelimit({
+     redis,
+     limiter: Ratelimit.slidingWindow(3, "1 m"),
+     prefix: "rl:contact",
+   });
    ```
-   (mevcut `httpChallenge` satırları comment veya sil)
-4. **Traefik restart + log tail** — Coolify UI log viewer → yeni cert issue başlıyor mu
-5. **Manuel cert renew test** — acme.json'daki `kitaplastik.com` entry'sini sil → Traefik DNS-01 ile yeni cert alır
-6. **CF proxy ON** — CF DNS → A `@` + `www` gri → turuncu (proxied)
-7. **SSL mode Full (strict)** — CF SSL/TLS → Mode → Full (strict)
-8. **5 dk observation** — `curl -Iv https://kitaplastik.com` + SSL Labs A+ check (`ssllabs.com/ssltest/`)
-9. **plausible.kitaplastik.com** — DNS-01 zaten otomatik işler; CF proxy ON optional (admin-only traffic, low priority)
+5. `app/api/contact/route.ts` + `app/api/rfq/route.ts` call sites — `.limit(ip)` → response shape aynı mı check (success + remaining)
+6. Coolify env — `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` ekle (Available at Runtime ON, Literal ON)
+7. CI env placeholder — `.github/workflows/ci.yml` build+E2E job'larına dummy URL+token ekle (zod schema zorunlu)
+8. Unit test — mock Upstash fetch, rate limit 3 req/min boundary test
+9. E2E — contact form 4 submit (3 allow + 1 reject) happy path
 
 **Rollback triggers:**
-- Traefik log'da DNS-01 "timeout waiting for DNS propagation"
-- CF proxy ON sonrası `curl` 522/523/525/526
-- SSL Labs test C'den düşük
+- Upstash rate limit ops 429 dönüyorsa (commands/day quota aşımı — logs'ta kontrol)
+- Coolify env missing → server 500 on contact/rfq
+- Redis down → fail-open policy mi fail-closed mu karar (şu an fail-closed = 500; fail-open ideal B2B, Plan 5d içinde karar ver)
 
-**Rollback:** CF proxy OFF (turuncu → gri) + SSL mode Full (strict değil) → HTTP-01 otomatik resume. Mevcut cert 60+ gün geçerli, 0 downtime.
-
----
-
-### 🟡 FAZ 2 — Pipeline perf Tier 2: Coolify Dockerfile + BuildKit (60-90 dk)
-
-**Hedef metrik:** Coolify deploy 10 dk → 3-5 dk.
-- `pnpm install` 60s → 5s (pnpm store cache mount)
-- `next build` 90s → 30s (`.next/cache` mount)
-- Code commit total pipeline: ~17 dk → ~10-12 dk
-
-**Execution order:**
-1. **Baseline ölç** — son 3 Coolify deploy süre ortalaması not
-2. **Dockerfile yaz** (repo root):
-   - Multi-stage: `deps` → `builder` → `runner`
-   - `FROM node:22.22.2-bookworm-slim` (Debian; Alpine Chromium issues)
-   - BuildKit cache:
-     ```dockerfile
-     RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm \
-         corepack enable && pnpm install --frozen-lockfile
-     RUN --mount=type=cache,target=/app/.next/cache,id=nextcache \
-         --mount=type=secret,id=sentry_auth_token \
-         SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token 2>/dev/null || echo "") \
-         pnpm build
-     ```
-   - Chromium: `apt-get install -y chromium` + `ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium`
-3. **`.dockerignore`** yaz: `node_modules`, `.next`, `.git`, `tests`, `docs`, `.planning`
-4. **`next.config.ts` `output: "standalone"`** ekle (runner stage'de image 500MB → 150MB)
-5. **Local test** — `docker build -t kitaplastik-test .` → `docker run -p 3000:3000 kitaplastik-test` smoke (homepage + admin + catalog PDF; Chromium path doğru mu)
-6. **Coolify source switch** — kitaplastik app → Settings → Build → Nixpacks → Dockerfile. `nixpacks.toml` **silme** (rollback için sakla).
-7. **İlk Dockerfile deploy** — timing + manuel smoke (catalog PDF + admin + homepage i18n)
-8. **2. deploy (cache-hit timing)** — dummy docs commit force-triggered → cache hit baseline 3-5 dk
-9. **Rollback hazır:** Coolify → source type → Nixpacks. 1 tık.
-
-**Rollback triggers:**
-- Dockerfile build 15+ dk (cache effective değil) → mount config check
-- Deploy yeşil ama catalog PDF render 500 (Chromium path) → `PUPPETEER_EXECUTABLE_PATH` env doğrula
-- Production homepage broken/asset missing → standalone output `.next/static` mount fix
-- `SENTRY_AUTH_TOKEN` secret reach etmiyor → Coolify BuildKit secrets feature yoksa `--build-arg` fallback (build-time leak riski düşük çünkü layer'a girmez)
+**Rollback:** `git revert` commit → in-memory limiter geri, Upstash env opsiyonel. 60 sn.
 
 ---
 
 ### Session sonu checklist
-- [ ] Plan 5a Faz 4 done → runbook [x] mark, SSL Labs A+
-- [ ] Coolify Dockerfile done → timing evidence (2 cache-hit deploy)
-- [ ] Memory yeni feedback: CF DNS-01 gotchas, Coolify BuildKit cache pattern
-- [ ] Runbook `plan5a-infra.md` full complete
+- [ ] next-intl v4 canlıda, E2E 4 locale yeşil
+- [ ] Upstash Redis rate limit canlıda, contact form gerçek rate-limited (4. submit 429)
+- [ ] GHSA-8f24 kapanmış, `pnpm audit --audit-level=high --prod` temiz
+- [ ] Memory yeni feedback: next-intl v4 migration gotchas (varsa), Upstash Redis REST latency observation
+- [ ] Runbook yeni — `docs/runbooks/plan5d-security-scale.md`
 - [ ] Git HEAD push + origin sync
-- [ ] Session +1 (Plan 5d) resume prompt yaz
+- [ ] Session +1 resume prompt yaz (Plan 5c Part 1 veya Tier 2 retry seçimi)
 
 ### Session +1 preview (heads-up)
-- **Plan 5d** (~3-4 sa): next-intl v3.26→v4 (GHSA-8f24 fix) + Upstash Redis rate limit (multi-instance ready)
-  - User prereq: Upstash Redis DB create + URL + token
-- **Plan 5c** (~5-7 sa, büyük ihtimalle 2 oturum): `/admin/sectors` CRUD + `/admin/settings/company` + catalog request analytics dashboard
-  - User prereq: sektör görselleri + şirket bilgileri
-- **Plan 5b + 5a Faz 3 (GWS)**: KVKK + hukuk onayı + GWS (maddi hazır) — en son
+- **Plan 5c Part 1** (~3-4 sa): `/admin/sectors` CRUD (4-dil tab, görsel upload, placeholder boş)
+  - User prereq: sektör görselleri (3 yüksek kaliteli foto — cam yıkama, kapak, tekstil)
+- **Plan 5c Part 2** (~3-4 sa): `/admin/settings/company` (`lib/company.ts` editöre) + catalog request analytics dashboard (Plausible + Supabase)
+- **Pipeline Tier 2 retry** (~1-2 sa): Dockerfile deep-dive — Coolify log full + failed container exec + Coolify build-args mekaniği (memory `feedback_coolify_dockerfile_deferred.md` retry protokolü)
+- **Pipeline Tier 3** (~45-60 dk): CI parallel jobs + Playwright browsers cache → CI 9dk → 4-5dk
+- **Secret rotate** (~30 dk): Coolify API token rotate (önceki oturum leak borcu)
+- **Plan 5b** (hukuk onayı sonrası): KVKK + cookie consent
+- **Plan 5a Faz 3** (maddi hazır sonrası): GWS email
 
-**İlk sorusu:** "Faz 4 için CF API Token hazır mı? Hazır değilse önce onu oluştur, sonra başlayalım."
+**İlk sorusu:** "Plan 5d için Upstash Redis DB hazır mı? (URL + TOKEN 1Password'de?) Hazır değilse önce onu oluştur, sonra başlayalım. Hazırsa: next-intl v4'le mi başlayalım (FAZ 1) yoksa Upstash ile mi (FAZ 2)? İkisi bağımsız."
 
 ---
 
