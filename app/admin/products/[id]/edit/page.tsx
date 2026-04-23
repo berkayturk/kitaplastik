@@ -55,6 +55,7 @@ export default async function EditProductPage({ params }: PageProps) {
           id: product.id,
           slug: product.slug,
           sector_id: product.sector_id ?? "",
+          code: product.code ?? "",
           name: { tr: "", en: "", ru: "", ar: "", ...product.name },
           description: { tr: "", en: "", ru: "", ar: "", ...product.description },
           specs: (product.specs ?? []) as SpecRow[],

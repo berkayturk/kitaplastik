@@ -57,12 +57,14 @@ export function BackCover({ chrome, locale, qrTarget }: BackCoverProps) {
   const qrCells = buildQrCells(qrTarget);
 
   type ContactRow = { label: string; value: string; ltr?: boolean };
-  const contactRows: ContactRow[] = [
-    { label: chrome.backCover.addressLabel, value: chrome.backCover.address },
-    { label: chrome.backCover.phoneLabel, value: chrome.backCover.phone, ltr: true },
-    { label: chrome.backCover.emailLabel, value: chrome.backCover.email, ltr: true },
-    { label: chrome.backCover.webLabel, value: chrome.backCover.web, ltr: true },
-  ];
+  const contactRows: ContactRow[] = (
+    [
+      { label: chrome.backCover.addressLabel, value: chrome.backCover.address },
+      { label: chrome.backCover.phoneLabel, value: chrome.backCover.phone, ltr: true },
+      { label: chrome.backCover.emailLabel, value: chrome.backCover.email, ltr: true },
+      { label: chrome.backCover.webLabel, value: chrome.backCover.web, ltr: true },
+    ] as ContactRow[]
+  ).filter((r) => r.value.trim().length > 0);
 
   return (
     <section

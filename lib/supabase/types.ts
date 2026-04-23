@@ -144,6 +144,7 @@ export type Database = {
       products: {
         Row: {
           active: boolean;
+          code: string | null;
           created_at: string;
           description: Json | null;
           display_order: number;
@@ -158,6 +159,7 @@ export type Database = {
         };
         Insert: {
           active?: boolean;
+          code?: string | null;
           created_at?: string;
           description?: Json | null;
           display_order?: number;
@@ -172,6 +174,7 @@ export type Database = {
         };
         Update: {
           active?: boolean;
+          code?: string | null;
           created_at?: string;
           description?: Json | null;
           display_order?: number;

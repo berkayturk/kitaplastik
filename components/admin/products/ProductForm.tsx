@@ -17,6 +17,7 @@ interface InitialData {
   id?: string;
   slug?: string;
   sector_id: string;
+  code: string;
   name: Record<Locale, string>;
   description: Record<Locale, string>;
   specs: SpecRow[];
@@ -40,6 +41,7 @@ export function ProductForm({ mode, sectors, initial, action }: Props) {
     ...initial.description,
   });
   const [sectorId, setSectorId] = useState(initial.sector_id);
+  const [code, setCode] = useState<string>(initial.code);
   const [specs, setSpecs] = useState<SpecRow[]>(initial.specs);
   const [images, setImages] = useState<UploadedImage[]>(initial.images);
   const [pending, startTransition] = useTransition();
@@ -57,6 +59,7 @@ export function ProductForm({ mode, sectors, initial, action }: Props) {
     e.preventDefault();
     const fd = new FormData();
     fd.set("sector_id", sectorId);
+    fd.set("code", code.trim());
     fd.set("name", JSON.stringify(name));
     fd.set("description", JSON.stringify(description));
     fd.set("specs", JSON.stringify(specs));
@@ -74,24 +77,45 @@ export function ProductForm({ mode, sectors, initial, action }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div>
-        <label htmlFor="sector" className="block text-sm font-medium">
-          Sektör *
-        </label>
-        <select
-          id="sector"
-          value={sectorId}
-          onChange={(e) => setSectorId(e.target.value)}
-          required
-          className="bg-bg-primary/60 mt-1 rounded-sm border border-[var(--color-border-subtle-dark)] px-3 py-2 text-sm"
-        >
-          <option value="">Seçiniz…</option>
-          {sectors.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="sector" className="block text-sm font-medium">
+            Sektör *
+          </label>
+          <select
+            id="sector"
+            value={sectorId}
+            onChange={(e) => setSectorId(e.target.value)}
+            required
+            className="bg-bg-primary/60 mt-1 w-full rounded-sm border border-[var(--color-border-subtle-dark)] px-3 py-2 text-sm"
+          >
+            <option value="">Seçiniz…</option>
+            {sectors.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="code" className="block text-sm font-medium">
+            Ürün Kodu{" "}
+            <span className="text-text-secondary font-normal">(opsiyonel, kataloğa basılır)</span>
+          </label>
+          <input
+            id="code"
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="örn. KP-0214"
+            maxLength={50}
+            pattern="[A-Za-z0-9][A-Za-z0-9 \-_/.]*"
+            className="bg-bg-primary/60 mt-1 w-full rounded-sm border border-[var(--color-border-subtle-dark)] px-3 py-2 font-mono text-sm"
+          />
+          <p className="text-text-secondary mt-1 text-xs">
+            Boş bırakılırsa kataloğa slug'ın büyük harfli hâli basılır.
+          </p>
+        </div>
       </div>
 
       <LocaleTabs active={activeLocale} filled={filled} onSelect={setActiveLocale} />

@@ -42,8 +42,21 @@ const uniquePresets = (specs: { preset_id: string }[], ctx: z.RefinementCtx): vo
   }
 };
 
+// Catalog product code — nullable editorial identifier (e.g. "KP-0214").
+// Empty string is coerced to null so the DB column stores NULL and the
+// catalog renderer falls back to slug.toUpperCase().
+const CodeField = z
+  .string()
+  .trim()
+  .max(50, "code en fazla 50 karakter")
+  .regex(/^[A-Za-z0-9][A-Za-z0-9 \-_/.]*$/, "code yalnız harf, rakam ve - _ / . içerebilir")
+  .optional()
+  .or(z.literal(""))
+  .transform((v) => (v && v.trim().length > 0 ? v.trim() : null));
+
 const Base = z.object({
   sector_id: z.string().regex(UUID_RE, "invalid UUID format"),
+  code: CodeField,
   name: LocalizedText.transform((n) => ({ ...n, tr: n.tr.trim() })).refine((n) => n.tr.length > 0, {
     message: "name.tr zorunlu",
     path: ["tr"],

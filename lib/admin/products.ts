@@ -15,6 +15,7 @@ export interface ProductSpec {
 export interface ProductRow {
   id: string;
   slug: string;
+  code: string | null;
   sector_id: string | null;
   name: Record<string, string>;
   description: Record<string, string>;
@@ -25,13 +26,19 @@ export interface ProductRow {
   updated_at: string;
 }
 
+// `code` is a freshly added column (migration 20260423090000) not yet in
+// the generated Supabase types; we cast the select string to bypass the
+// union-narrowing check. Safe because the select list is a literal we
+// control.
+const PRODUCT_COLUMNS =
+  "id, slug, code, sector_id, name, description, images, specs, active, display_order, updated_at" as const;
+
 export async function listProducts(opts: { active: boolean }): Promise<ProductRow[]> {
   const svc = createServiceClient();
   const { data, error } = await svc
     .from("products")
-    .select(
-      "id, slug, sector_id, name, description, images, specs, active, display_order, updated_at",
-    )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .select(PRODUCT_COLUMNS as any)
     .eq("active", opts.active)
     .order("updated_at", { ascending: false });
   if (error) throw new Error(error.message);
@@ -42,9 +49,8 @@ export async function getProductById(id: string): Promise<ProductRow | null> {
   const svc = createServiceClient();
   const { data, error } = await svc
     .from("products")
-    .select(
-      "id, slug, sector_id, name, description, images, specs, active, display_order, updated_at",
-    )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .select(PRODUCT_COLUMNS as any)
     .eq("id", id)
     .maybeSingle();
   if (error) throw new Error(error.message);

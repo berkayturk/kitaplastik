@@ -36,6 +36,7 @@ export default async function NewProductPage() {
         sectors={sectors}
         initial={{
           sector_id: "",
+          code: "",
           name: { tr: "", en: "", ru: "", ar: "" },
           description: { tr: "", en: "", ru: "", ar: "" },
           specs: [],

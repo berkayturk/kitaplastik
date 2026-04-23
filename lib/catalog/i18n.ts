@@ -65,7 +65,9 @@ export interface CatalogChrome {
 const YEAR = "2026";
 const copyrightLine = `© ${YEAR} Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.`;
 const address = "Bursa · Türkiye";
-const phone = "+90 224 000 00 00";
+// Empty until the real number lands; BackCover filters empty rows so
+// the row is hidden instead of displaying a dummy "+90 224 000 00 00".
+const phone = "";
 const email = "info@kitaplastik.com";
 const web = "kitaplastik.com";
 

@@ -31,6 +31,7 @@ export async function createProduct(formData: FormData): Promise<void> {
 
   const input = CreateProductSchema.parse({
     sector_id: String(formData.get("sector_id") ?? ""),
+    code: String(formData.get("code") ?? ""),
     name: parseJson(formData.get("name"), { tr: "", en: "", ru: "", ar: "" }),
     description: parseJson(formData.get("description"), { tr: "", en: "", ru: "", ar: "" }),
     specs: parseJson(formData.get("specs"), []),
@@ -47,6 +48,7 @@ export async function createProduct(formData: FormData): Promise<void> {
     .insert({
       slug,
       sector_id: input.sector_id,
+      code: input.code,
       name: input.name,
       description: input.description,
       specs: input.specs,
@@ -63,7 +65,7 @@ export async function createProduct(formData: FormData): Promise<void> {
     entity_id: data.id,
     user_id: user.id,
     ip: null,
-    diff: { slug, sector_id: input.sector_id },
+    diff: { slug, sector_id: input.sector_id, code: input.code },
   });
 
   revalidatePublicProducts();
@@ -78,6 +80,7 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
 
   const input = UpdateProductSchema.parse({
     sector_id: String(formData.get("sector_id") ?? ""),
+    code: String(formData.get("code") ?? ""),
     name: parseJson(formData.get("name"), { tr: "", en: "", ru: "", ar: "" }),
     description: parseJson(formData.get("description"), { tr: "", en: "", ru: "", ar: "" }),
     specs: parseJson(formData.get("specs"), []),
@@ -102,6 +105,7 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
     .update({
       slug: nextSlug,
       sector_id: input.sector_id,
+      code: input.code,
       name: input.name,
       description: input.description,
       specs: input.specs,
@@ -118,6 +122,7 @@ export async function updateProduct(id: string, formData: FormData): Promise<voi
     ip: null,
     diff: {
       slug: nextSlug !== existing.slug ? { from: existing.slug, to: nextSlug } : undefined,
+      code: input.code !== existing.code ? { from: existing.code, to: input.code } : undefined,
       name: input.name,
     },
   });
@@ -211,6 +216,9 @@ export async function cloneProduct(sourceId: string): Promise<void> {
       .insert({
         slug: newSlug,
         sector_id: source.sector_id,
+        // Do not carry the code forward — codes are unique identifiers
+        // editors assign manually to the new copy.
+        code: null,
         name: source.name,
         description: source.description,
         specs: source.specs.map((s) => ({ preset_id: s.preset_id, value: s.value })),

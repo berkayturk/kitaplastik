@@ -75,3 +75,41 @@ describe("UpdateProductSchema", () => {
     expect(UpdateProductSchema.safeParse(badSlug).success).toBe(false);
   });
 });
+
+describe("CreateProductSchema — code field", () => {
+  const base = {
+    sector_id: "00000000-0000-0000-0000-000000000001",
+    name: { tr: "PET Kapak", en: "", ru: "", ar: "" },
+    description: { tr: "", en: "", ru: "", ar: "" },
+    specs: [],
+    images: [],
+  };
+
+  it("code alanı opsiyonel — eksik input null'a çevrilir", () => {
+    const result = CreateProductSchema.safeParse(base);
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.code).toBeNull();
+  });
+
+  it("boş string null'a normalize edilir", () => {
+    const result = CreateProductSchema.safeParse({ ...base, code: "" });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.code).toBeNull();
+  });
+
+  it("geçerli kod trim edilerek korunur", () => {
+    const result = CreateProductSchema.safeParse({ ...base, code: "  KP-0214  " });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.code).toBe("KP-0214");
+  });
+
+  it("50 karakterden uzun kod reddedilir", () => {
+    const longCode = "A".repeat(51);
+    expect(CreateProductSchema.safeParse({ ...base, code: longCode }).success).toBe(false);
+  });
+
+  it("izinsiz karakter içeren kod reddedilir", () => {
+    expect(CreateProductSchema.safeParse({ ...base, code: "KP@214" }).success).toBe(false);
+    expect(CreateProductSchema.safeParse({ ...base, code: "-KP214" }).success).toBe(false);
+  });
+});

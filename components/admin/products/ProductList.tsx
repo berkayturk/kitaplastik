@@ -28,11 +28,15 @@ export function ProductList({
 
   const source = tab === "active" ? activeProducts : deletedProducts;
   const filtered = search.trim()
-    ? source.filter(
-        (p) =>
-          (p.name.tr ?? "").toLowerCase().includes(search.trim().toLowerCase()) ||
-          p.slug.includes(search.trim().toLowerCase()),
-      )
+    ? (() => {
+        const q = search.trim().toLowerCase();
+        return source.filter(
+          (p) =>
+            (p.name.tr ?? "").toLowerCase().includes(q) ||
+            p.slug.includes(q) ||
+            (p.code ?? "").toLowerCase().includes(q),
+        );
+      })()
     : source;
 
   return (
@@ -66,7 +70,7 @@ export function ProductList({
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="🔍 Ürün adı veya slug"
+          placeholder="🔍 Ürün adı, slug veya kod"
           className="bg-bg-primary/60 ml-auto w-64 rounded-sm border border-[var(--color-border-subtle-dark)] px-2 py-1 text-sm"
         />
       </div>

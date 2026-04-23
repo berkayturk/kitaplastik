@@ -30,7 +30,12 @@ export function ProductRow({ product, sectorName, onDelete, onRestore }: Props) 
         ) : null}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="truncate font-medium">{product.name.tr || "(isimsiz)"}</div>
+        <div className="flex items-baseline gap-2 truncate">
+          <span className="font-medium">{product.name.tr || "(isimsiz)"}</span>
+          {product.code ? (
+            <span className="text-text-tertiary shrink-0 font-mono text-xs">{product.code}</span>
+          ) : null}
+        </div>
         <div className="text-text-tertiary text-xs">
           {sectorName ?? "—"} · <span className="font-mono">{filledBadges}</span>
         </div>
