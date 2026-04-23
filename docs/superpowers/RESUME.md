@@ -2,6 +2,130 @@
 
 > Bu dosya context-clear sonrası yeni Claude session'ın hızlıca devam etmesi için. **Read this first.**
 
+---
+
+## 👉 NEXT SESSION KICKOFF (2026-04-24+)
+
+**Oturumun hedefi:** İki bağımsız infra batch sırayla —
+1. **Plan 5a Faz 4** — CF proxy ON + Traefik DNS-01 migration + SSL Full (strict) (~30-45 dk)
+2. **Pipeline perf Tier 2** — Coolify Nixpacks → Dockerfile + BuildKit cache mount (~60-90 dk)
+
+**Neden bu sıra:** Faz 4 küçük + bağımsız; Plan 5a tam kapanır (psikolojik milestone). Dockerfile'da sorun çıkarsa Faz 4 etkilenmez.
+
+### Önceki oturum durumu (2026-04-23 devam 3)
+- 404 redesign ✅ canlıda (`d0acfaa`)
+- Plan 5a Faz 1 + Faz 2 ✅ canlıda (`0752bb4`): Plausible self-host + same-origin adblock-bypass proxy (`/pa/script.js` + `/pa/event`) + Server Action encryption key (Literal ON fix)
+- Pipeline perf Tier 1 ✅ canlıda (`7bf4a35`, kanıtlandı `03cabff`): docs-only commit paths-ignore (20 dk → 0 dk), Playwright CI workers 2, workflow_dispatch escape hatch
+- Runbook güncel: `docs/runbooks/plan5a-infra.md` — Faz 1+2 [x], Faz 4 pending
+- Git HEAD: `03cabff`, origin/main sync, working tree clean
+
+### İlk okuman gereken dosyalar (context için)
+- `docs/runbooks/plan5a-infra.md` (§ Faz 4 detayı)
+- `next.config.ts` (mevcut `/pa/*` rewrites, `withSentryConfig` tunnel `/monitoring`)
+- `nixpacks.toml` (mevcut chromium kurulumu — Dockerfile'a taşınacak)
+- `.github/workflows/ci.yml` + `deploy.yml` (Tier 1 sonrası state)
+- Memory: `project_kitaplastik.md`, `feedback_cf_registrar_same_account.md`, `feedback_coolify_nixpacks_env.md`, `feedback_verify_before_push.md`
+
+---
+
+### 🟢 FAZ 1 — Plan 5a Faz 4: CF proxy + DNS-01 (30-45 dk)
+
+**Prereq (user yapacak ve session başında bana söyleyecek):**
+- [ ] **CF API Token oluştur** — CF dashboard → My Profile → API Tokens → Create:
+  - Template: Custom
+  - Permissions: `Zone:Zone:Read` + `Zone:DNS:Edit`
+  - Zone Resources: Include → Specific zone → `kitaplastik.com`
+  - Token → 1Password ("CF API DNS-01")
+- [ ] VPS SSH hazır (Hetzner `188.245.42.178`)
+- [ ] Coolify Proxy (Traefik) erişimi hazır
+
+**Execution order:**
+1. **Snapshot mevcut cert** — `echo | openssl s_client -servername kitaplastik.com -connect kitaplastik.com:443 2>/dev/null | openssl x509 -noout -dates` → bitiş tarihi not (rollback buffer)
+2. **CF token → Coolify proxy env** — Traefik service env `CF_DNS_API_TOKEN=<token>` (Runtime ON, Literal ON)
+3. **Traefik config DNS-01 challenge** — Coolify Proxy → Configuration Files → `traefik.yml`:
+   ```yaml
+   certificatesResolvers:
+     letsencrypt:
+       acme:
+         email: berkaytrk6@gmail.com
+         dnsChallenge:
+           provider: cloudflare
+           resolvers: ["1.1.1.1:53", "1.0.0.1:53"]
+   ```
+   (mevcut `httpChallenge` satırları comment veya sil)
+4. **Traefik restart + log tail** — Coolify UI log viewer → yeni cert issue başlıyor mu
+5. **Manuel cert renew test** — acme.json'daki `kitaplastik.com` entry'sini sil → Traefik DNS-01 ile yeni cert alır
+6. **CF proxy ON** — CF DNS → A `@` + `www` gri → turuncu (proxied)
+7. **SSL mode Full (strict)** — CF SSL/TLS → Mode → Full (strict)
+8. **5 dk observation** — `curl -Iv https://kitaplastik.com` + SSL Labs A+ check (`ssllabs.com/ssltest/`)
+9. **plausible.kitaplastik.com** — DNS-01 zaten otomatik işler; CF proxy ON optional (admin-only traffic, low priority)
+
+**Rollback triggers:**
+- Traefik log'da DNS-01 "timeout waiting for DNS propagation"
+- CF proxy ON sonrası `curl` 522/523/525/526
+- SSL Labs test C'den düşük
+
+**Rollback:** CF proxy OFF (turuncu → gri) + SSL mode Full (strict değil) → HTTP-01 otomatik resume. Mevcut cert 60+ gün geçerli, 0 downtime.
+
+---
+
+### 🟡 FAZ 2 — Pipeline perf Tier 2: Coolify Dockerfile + BuildKit (60-90 dk)
+
+**Hedef metrik:** Coolify deploy 10 dk → 3-5 dk.
+- `pnpm install` 60s → 5s (pnpm store cache mount)
+- `next build` 90s → 30s (`.next/cache` mount)
+- Code commit total pipeline: ~17 dk → ~10-12 dk
+
+**Execution order:**
+1. **Baseline ölç** — son 3 Coolify deploy süre ortalaması not
+2. **Dockerfile yaz** (repo root):
+   - Multi-stage: `deps` → `builder` → `runner`
+   - `FROM node:22.22.2-bookworm-slim` (Debian; Alpine Chromium issues)
+   - BuildKit cache:
+     ```dockerfile
+     RUN --mount=type=cache,target=/root/.local/share/pnpm/store,id=pnpm \
+         corepack enable && pnpm install --frozen-lockfile
+     RUN --mount=type=cache,target=/app/.next/cache,id=nextcache \
+         --mount=type=secret,id=sentry_auth_token \
+         SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token 2>/dev/null || echo "") \
+         pnpm build
+     ```
+   - Chromium: `apt-get install -y chromium` + `ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium`
+3. **`.dockerignore`** yaz: `node_modules`, `.next`, `.git`, `tests`, `docs`, `.planning`
+4. **`next.config.ts` `output: "standalone"`** ekle (runner stage'de image 500MB → 150MB)
+5. **Local test** — `docker build -t kitaplastik-test .` → `docker run -p 3000:3000 kitaplastik-test` smoke (homepage + admin + catalog PDF; Chromium path doğru mu)
+6. **Coolify source switch** — kitaplastik app → Settings → Build → Nixpacks → Dockerfile. `nixpacks.toml` **silme** (rollback için sakla).
+7. **İlk Dockerfile deploy** — timing + manuel smoke (catalog PDF + admin + homepage i18n)
+8. **2. deploy (cache-hit timing)** — dummy docs commit force-triggered → cache hit baseline 3-5 dk
+9. **Rollback hazır:** Coolify → source type → Nixpacks. 1 tık.
+
+**Rollback triggers:**
+- Dockerfile build 15+ dk (cache effective değil) → mount config check
+- Deploy yeşil ama catalog PDF render 500 (Chromium path) → `PUPPETEER_EXECUTABLE_PATH` env doğrula
+- Production homepage broken/asset missing → standalone output `.next/static` mount fix
+- `SENTRY_AUTH_TOKEN` secret reach etmiyor → Coolify BuildKit secrets feature yoksa `--build-arg` fallback (build-time leak riski düşük çünkü layer'a girmez)
+
+---
+
+### Session sonu checklist
+- [ ] Plan 5a Faz 4 done → runbook [x] mark, SSL Labs A+
+- [ ] Coolify Dockerfile done → timing evidence (2 cache-hit deploy)
+- [ ] Memory yeni feedback: CF DNS-01 gotchas, Coolify BuildKit cache pattern
+- [ ] Runbook `plan5a-infra.md` full complete
+- [ ] Git HEAD push + origin sync
+- [ ] Session +1 (Plan 5d) resume prompt yaz
+
+### Session +1 preview (heads-up)
+- **Plan 5d** (~3-4 sa): next-intl v3.26→v4 (GHSA-8f24 fix) + Upstash Redis rate limit (multi-instance ready)
+  - User prereq: Upstash Redis DB create + URL + token
+- **Plan 5c** (~5-7 sa, büyük ihtimalle 2 oturum): `/admin/sectors` CRUD + `/admin/settings/company` + catalog request analytics dashboard
+  - User prereq: sektör görselleri + şirket bilgileri
+- **Plan 5b + 5a Faz 3 (GWS)**: KVKK + hukuk onayı + GWS (maddi hazır) — en son
+
+**İlk sorusu:** "Faz 4 için CF API Token hazır mı? Hazır değilse önce onu oluştur, sonra başlayalım."
+
+---
+
 ## Proje Özeti
 
 - **Şirket:** Kıta Plastik ve Tekstil San. Tic. Ltd. Şti. (Bursa, 1989'dan beri)
