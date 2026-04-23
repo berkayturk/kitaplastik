@@ -30,6 +30,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Standalone output: builds `.next/standalone/server.js` with a pruned
+  // node_modules, shrinking the runtime image from ~500MB to ~150MB. Pairs
+  // with Dockerfile multi-stage COPY of standalone + public + static.
+  output: "standalone",
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },

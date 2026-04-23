@@ -1,0 +1,66 @@
+# .dockerignore — keeps build context small and prevents secret leaks
+# (mirrors .gitignore where sensible, plus dev-only trees).
+
+# Dependencies (installed inside the image, never copied from host)
+node_modules
+.pnpm-store
+
+# Next.js build output (generated inside the image)
+.next
+out
+build
+dist
+.turbo
+.swc
+
+# Environment files (secrets; Coolify passes via --build-arg / runtime env)
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.github
+.gitignore
+.gitattributes
+
+# Tests, fixtures, CI artifacts — not needed at runtime
+tests
+playwright-report
+test-results
+.playwright
+coverage
+
+# Docs / planning — not needed in image
+docs
+.planning
+.superpowers
+*.md
+!README.md
+
+# Editors / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+*.swp
+
+# Husky / lint-staged — dev-only hooks
+.husky
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Supabase CLI local state
+supabase/.branches
+supabase/.temp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+.pnpm-debug.log*
+
+# Misc
+*.pem
+.vercel
