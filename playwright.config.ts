@@ -32,7 +32,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // CI: 2 worker processes (true parallelism on top of fullyParallel:true
+  // within-process scheduling). ubuntu-latest runner has 2 vCPU / 7GB RAM —
+  // Chromium ~400MB per worker is comfortable. 4 would risk OOM.
+  workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI ? "github" : "list",
   use: {
     baseURL: TEST_ORIGIN,

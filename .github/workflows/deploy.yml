@@ -11,12 +11,22 @@ on:
     workflows: ["CI"]
     types: [completed]
     branches: [main]
+  # Manual trigger for rare forced-deploy cases (infra-only env change,
+  # recovery after a failed deploy, etc.) — run from GH Actions UI.
+  workflow_dispatch:
 
 jobs:
   deploy:
     name: Trigger Coolify deploy
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Run when: (a) CI succeeded via workflow_run, OR (b) manual dispatch.
+    # The workflow_run conclusion check is skipped for manual runs because
+    # workflow_run context is absent then.
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        github.event.workflow_run.conclusion == 'success'
+      }}
     timeout-minutes: 5
 
     steps:

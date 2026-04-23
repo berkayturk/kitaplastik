@@ -2,8 +2,16 @@ name: CI
 
 on:
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
   push:
     branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+  # Manual escape hatch for forced pipeline runs (rare).
+  workflow_dispatch:
 
 # Cancel in-flight runs for the same ref when a new push/PR arrives.
 concurrency:
@@ -23,10 +31,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node 22
+      - name: Setup Node 22 (pinned via .nvmrc)
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: ".nvmrc"
           cache: pnpm
 
       - name: Install dependencies
@@ -90,10 +98,10 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node 22
+      - name: Setup Node 22 (pinned via .nvmrc)
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: ".nvmrc"
           cache: pnpm
 
       - name: Install dependencies
