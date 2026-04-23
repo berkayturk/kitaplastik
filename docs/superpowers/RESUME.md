@@ -6,119 +6,80 @@
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Plan 5d — 2 bağımsız batch tek planda (~3-4 saat):
-1. **next-intl v3.26 → v4 migration** — GHSA-8f24 middleware bypass vuln'u kapat (security)
-2. **In-memory rate limit → Upstash Redis** — multi-instance ready + deploy-dayanıklı counter (scale)
+**Oturumun hedefi:** Plan 5d (rescoped) — **next-intl v3.26 → v4 migration** (~1-1.5 saat). GHSA-8f24 middleware locale-bypass security vuln kapanır + v4 yeni API'leri.
 
-**Neden bu sıra:** Plan 5a Faz 4 ✅ 2026-04-23 canlıda (CF proxy + DNS-01 + SSL A+). Plan 5d orthogonal iki iş ama aynı middleware/lib/env stack'ına dokunuyor, tek planda verimli. Pipeline Tier 2 (Dockerfile) 2026-04-23 denendi 2 fail → reverted; memory'de lesson-learned var, **Plan 5d'den sonra** ayrı deep-dive session'a bırakıldı.
+**Neden sadece bu:** Upstash Redis rate limit (orijinal Plan 5d'nin Faz 2'si) **defer edildi 2026-04-23** — mevcut in-memory limiter B2B trafiğimizde (günlük 100-200 visitor, haftada 2-3 form submit) yeterli. CF proxy + Turnstile + in-memory = 3-katman defense; Redis 4. kat YAGNI. İleride multi-instance veya trafik 10x artınca değerlendirilecek. Detay: `feedback_redis_defer_decision.md` memory.
+
+**Pipeline Tier 2 (Dockerfile):** 2026-04-23 denendi 2 fail → reverted; memory'de lesson-learned var. Plan 5d sonrası ayrı deep-dive session'a bırakıldı.
 
 ### Önceki oturum durumu (2026-04-23 devam 4)
 - Plan 5a Faz 4 ✅ canlıda (`ea59438`): CF proxy turuncu, Traefik DNS-01 (CF provider), SSL Full (strict), SSL Labs **A+ on 4/4 edge IPs** (Min TLS 1.2 + HSTS 12mo preload)
 - Pipeline Tier 2 ❌ **reverted** (`785a5f1`): Dockerfile deneme 2 deploy fail → Nixpacks restored, site stable, lesson memory'de
-- Git HEAD: `785a5f1`, origin/main sync, working tree clean
-- Runbook `plan5a-infra.md` Faz 4 all [x]
+- Redis defer kararı (`feedback_redis_defer_decision.md`): in-memory sticks, YAGNI
+- Git HEAD: `8ee2b60` (docs-only), origin/main sync, working tree clean
 
 ### İlk okuman gereken dosyalar (context için)
-- `lib/rate-limit.ts` (in-memory → Redis'e migrate edilecek)
-- `lib/validation/contact.ts` + `lib/validation/rfq.ts` (rate limit call sites)
-- `middleware.ts` + `i18n/routing.ts` (next-intl v3 config)
-- `package.json` (next-intl v3.26 → v4 breaking changes)
-- Memory: `project_kitaplastik.md`, `feedback_coolify_dockerfile_deferred.md`, `feedback_next_intl_locale_switcher.md`, `feedback_next_intl_getpathname_prefix.md`
+- `package.json` (next-intl v3.26.5 → v4 breaking changes)
+- `i18n/routing.ts` (v3 routing config — v4 shape değişmiş olabilir)
+- `middleware.ts` (next-intl createMiddleware integration)
+- `app/[locale]/layout.tsx` (`hasLocale` inline type guard — v4 native'e geç)
+- `components/layout/LocaleSwitcher.tsx` (plain `<a>` workaround — v4 Link düzelmiş olabilir)
+- Memory: `project_kitaplastik.md`, `feedback_next_intl_locale_switcher.md`, `feedback_next_intl_getpathname_prefix.md`, `feedback_redis_defer_decision.md`
+
+### Prereq (user)
+
+**Yok.** Direkt başlayabiliriz. Upstash hesabı açmaya gerek yok.
 
 ---
 
-### Prereq (user yapacak ve session başında bana söyleyecek)
+### 🟢 next-intl v3.26 → v4 migration (~1-1.5 saat)
 
-**Upstash Redis DB:**
-- [ ] https://upstash.com/ → **Sign up** (Google/GitHub OAuth, ~30 sn, kredi kartı yok)
-- [ ] Console → **Create Database**:
-  - Name: `kitaplastik-prod`
-  - Type: **Regional** (free tier — 10K command/gün, bizim için fazlasıyla yeterli)
-  - Region: **eu-central-1** (Frankfurt, Hetzner VPS'e yakın → ~5-10ms latency)
-  - Eviction: `allkeys-lru` (rate limit key'leri kendiliğinden eskir)
-- [ ] Database Details → **REST API** tab → credential'ları kopyala:
-  - `UPSTASH_REDIS_REST_URL` (https://xxx-yyy.upstash.io)
-  - `UPSTASH_REDIS_REST_TOKEN` (Aaaaa...)
-  - **1Password**'e kaydet ("Upstash Kıta Plastik prod" başlığıyla)
-
----
-
-### 🟢 FAZ 1 — next-intl v3.26 → v4 (~1-1.5 saat)
-
-**Hedef:** GHSA-8f24-... middleware locale-bypass security vuln kapanır + v4 yeni API'leri (getPathname, Link locale prop stabilite, `hasLocale` type guard).
+**Hedef:**
+- GHSA-8f24 middleware locale-bypass security vuln kapanır (`pnpm audit` temiz)
+- v4 native `hasLocale` type guard (v3 inline workaround silinir)
+- Link API v4'te iyileştirildi — LocaleSwitcher plain `<a>` workaround'u tekrar `<Link>` ile denenir
+- E2E 4 locale (TR/EN/RU/AR RTL) yeşil kalır
 
 **Execution order:**
-1. `pnpm add next-intl@^4` (breaking changes için CHANGELOG okuma — import path'ler + Link API)
-2. `i18n/routing.ts` — v4 `defineRouting` sentaksı (muhtemelen mevcut kodla uyumlu)
-3. `middleware.ts` — `createMiddleware` import path aynı, ama config objesi shape değişmiş olabilir
-4. `app/[locale]/layout.tsx` — `hasLocale` type guard'ı v3 inline'dan v4 native'e geç (Plan 2 memory feedback var)
-5. `next-intl/link` vs `next-intl/navigation` — v4'te namespace değişmiş olabilir
-6. LocaleSwitcher + tüm Link kullanımları smoke (feedback memo: root-path locale switch bug plain `<a>` ile çözülmüştü — v4'te Link API düzelmiş olabilir, tekrar test)
-7. Typecheck + unit + E2E hepsi yeşil → commit
+1. v4 breaking changes oku — https://next-intl.dev/docs/upgrade (import path'ler + Link API + `defineRouting`)
+2. `pnpm add next-intl@^4`
+3. `i18n/routing.ts` — v4 `defineRouting` sentaksı (büyük ihtimal mevcut kodla uyumlu, minor adjustments)
+4. `middleware.ts` — `createMiddleware` import path + config shape check
+5. `app/[locale]/layout.tsx` — `hasLocale` v3 inline type guard → v4 native'den import
+6. `next-intl/link` vs `next-intl/navigation` — v4'te namespace birleşmiş olabilir, import'ları düzelt
+7. LocaleSwitcher root-path bug tekrar test — v4'te düzelmişse plain `<a>` → `<Link locale="..." href="/" />` geri döndür (memory feedback v3'teki bug'ı açıklıyor)
+8. `lib/seo/routes.ts` sitemap `getPathname` kullanımı — v4 prefix davranışı değişmiş olabilir (mevcut feedback double-prefix bug riski)
+9. `pnpm verify` full — typecheck + lint + unit + build + E2E hepsi yeşil
+10. Commit + push
 
 **Rollback triggers:**
-- E2E locale redirects kırılırsa (TR/EN/RU/AR homepage bypass)
-- LocaleSwitcher root path'te nav etmiyor (memo'daki bug v4'te de varsa Link API'yi mevcut plain `<a>` ile dokunmadan bırak)
-- RU/AR messages inline + RTL direction
+- E2E locale redirects kırılırsa (4 locale homepage bypass, AR RTL)
+- LocaleSwitcher root path'te nav etmiyor (memo'daki bug v4'te devam ediyorsa plain `<a>` dokunma)
+- sitemap hreflang `getPathname` double-prefix bug regression
 
-**Rollback:** `git revert` commit + `pnpm install` v3'e döner.
-
----
-
-### 🟡 FAZ 2 — Upstash Redis rate limit migration (~1-2 saat)
-
-**Hedef:** `lib/rate-limit.ts` in-memory sliding-window → `@upstash/ratelimit` sliding-window (Redis-backed). Rate limit counter deploy'a + multi-instance'a dayanır.
-
-**Execution order:**
-1. `pnpm add @upstash/redis @upstash/ratelimit`
-2. `.env.example` — `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` placeholder'ları (+ yorum)
-3. `lib/env.ts` — 2 yeni key zod schema'ya ekle (required production, optional dev `.optional()`)
-4. `lib/rate-limit.ts` rewrite — aynı `contactLimiter` + `rfqLimiter` interface'i kalsın, internal Redis wrapper değişsin:
-   ```ts
-   import { Ratelimit } from "@upstash/ratelimit";
-   import { Redis } from "@upstash/redis";
-   const redis = Redis.fromEnv();  // reads UPSTASH_REDIS_REST_*
-   export const contactLimiter = new Ratelimit({
-     redis,
-     limiter: Ratelimit.slidingWindow(3, "1 m"),
-     prefix: "rl:contact",
-   });
-   ```
-5. `app/api/contact/route.ts` + `app/api/rfq/route.ts` call sites — `.limit(ip)` → response shape aynı mı check (success + remaining)
-6. Coolify env — `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` ekle (Available at Runtime ON, Literal ON)
-7. CI env placeholder — `.github/workflows/ci.yml` build+E2E job'larına dummy URL+token ekle (zod schema zorunlu)
-8. Unit test — mock Upstash fetch, rate limit 3 req/min boundary test
-9. E2E — contact form 4 submit (3 allow + 1 reject) happy path
-
-**Rollback triggers:**
-- Upstash rate limit ops 429 dönüyorsa (commands/day quota aşımı — logs'ta kontrol)
-- Coolify env missing → server 500 on contact/rfq
-- Redis down → fail-open policy mi fail-closed mu karar (şu an fail-closed = 500; fail-open ideal B2B, Plan 5d içinde karar ver)
-
-**Rollback:** `git revert` commit → in-memory limiter geri, Upstash env opsiyonel. 60 sn.
+**Rollback:** `git revert` commit + `pnpm install` v3.26.5'e döner. 60 sn.
 
 ---
 
 ### Session sonu checklist
-- [ ] next-intl v4 canlıda, E2E 4 locale yeşil
-- [ ] Upstash Redis rate limit canlıda, contact form gerçek rate-limited (4. submit 429)
-- [ ] GHSA-8f24 kapanmış, `pnpm audit --audit-level=high --prod` temiz
-- [ ] Memory yeni feedback: next-intl v4 migration gotchas (varsa), Upstash Redis REST latency observation
-- [ ] Runbook yeni — `docs/runbooks/plan5d-security-scale.md`
+- [ ] next-intl v4 canlıda
+- [ ] `pnpm audit --audit-level=high --prod` temiz (GHSA-8f24 kapanmış)
+- [ ] E2E 4 locale yeşil
+- [ ] Memory: next-intl v4 migration gotchas (varsa v3 feedback memory'leri güncelle)
 - [ ] Git HEAD push + origin sync
-- [ ] Session +1 resume prompt yaz (Plan 5c Part 1 veya Tier 2 retry seçimi)
 
 ### Session +1 preview (heads-up)
 - **Plan 5c Part 1** (~3-4 sa): `/admin/sectors` CRUD (4-dil tab, görsel upload, placeholder boş)
   - User prereq: sektör görselleri (3 yüksek kaliteli foto — cam yıkama, kapak, tekstil)
 - **Plan 5c Part 2** (~3-4 sa): `/admin/settings/company` (`lib/company.ts` editöre) + catalog request analytics dashboard (Plausible + Supabase)
-- **Pipeline Tier 2 retry** (~1-2 sa): Dockerfile deep-dive — Coolify log full + failed container exec + Coolify build-args mekaniği (memory `feedback_coolify_dockerfile_deferred.md` retry protokolü)
+- **Pipeline Tier 2 retry** (~1-2 sa): Dockerfile deep-dive — Coolify log full + failed container exec (memory `feedback_coolify_dockerfile_deferred.md` retry protokolü)
 - **Pipeline Tier 3** (~45-60 dk): CI parallel jobs + Playwright browsers cache → CI 9dk → 4-5dk
 - **Secret rotate** (~30 dk): Coolify API token rotate (önceki oturum leak borcu)
+- **Redis rate limit** (yalnızca trigger'lı): multi-instance'a geçiş + trafik 10x artış sonrası yeniden değerlendir
 - **Plan 5b** (hukuk onayı sonrası): KVKK + cookie consent
 - **Plan 5a Faz 3** (maddi hazır sonrası): GWS email
 
-**İlk sorusu:** "Plan 5d için Upstash Redis DB hazır mı? (URL + TOKEN 1Password'de?) Hazır değilse önce onu oluştur, sonra başlayalım. Hazırsa: next-intl v4'le mi başlayalım (FAZ 1) yoksa Upstash ile mi (FAZ 2)? İkisi bağımsız."
+**İlk sorusu:** "Plan 5d (rescoped) — next-intl v3.26 → v4 migration'a başlayalım mı? Prereq yok, direkt gidebiliriz. `pnpm outdated next-intl` çıktısını paylaşırsan v4 hedef versiyonuyla başlarım."
 
 ---
 
