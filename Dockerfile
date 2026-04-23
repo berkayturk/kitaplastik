@@ -109,8 +109,11 @@ EXPOSE 3000
 
 # Traefik honors HEALTHCHECK for "wait for ready before routing" during
 # deploys; start-period=30s gives Next.js cold start breathing room to
-# prevent false-negative flapping.
+# prevent false-negative flapping. PORT is read from env (Coolify compose
+# overrides Dockerfile ENV at runtime, e.g. sets PORT=80), falling back
+# to 3000 for local `docker run` without env. 127.0.0.1 avoids IPv6
+# resolution ambiguity on dual-stack setups.
 HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 \
-    CMD node -e "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+    CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 CMD ["node", "server.js"]
