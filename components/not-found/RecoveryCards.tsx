@@ -3,7 +3,9 @@ import { Link } from "@/i18n/navigation";
 
 type CardSlug = "products" | "sectors" | "catalog" | "contact";
 
-const CARD_HREFS: Record<CardSlug, string> = {
+type RouteHref = "/products" | "/sectors" | "/request-quote" | "/contact";
+
+const CARD_HREFS: Record<CardSlug, RouteHref> = {
   products: "/products",
   sectors: "/sectors",
   catalog: "/request-quote",
