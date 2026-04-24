@@ -19,7 +19,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css}\"",
     "verify": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm audit --audit-level=high --prod && pnpm build && pnpm test:e2e",
-    "prepare": "husky"
+    "prepare": "husky",
+    "migrate:logos": "tsx scripts/migrate-client-logos-to-storage.ts"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-arabic": "^5",
@@ -72,6 +73,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "supabase": "^2.92.1",
     "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.58.2",
     "vitest": "^4.1.4"
