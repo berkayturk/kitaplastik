@@ -12,7 +12,7 @@
 
 Mevcut `lib/company.ts` şirketin tüm iletişim + marka bilgisini barındıran static TypeScript sabiti; 5 public/server dosya import ediyor. Şirket bilgisi değiştiğinde kod değiştirip deploy etmek gerek — **bu phase bunu admin panel üzerinden yönetilebilir hale getirir.**
 
-Yaklaşım: tek satırlı `settings_company` tablosu (JSONB blob + updated_at + updated_by) + zod doğrulama + `public.update_company(data jsonb)` atomic RPC + `unstable_cache(tags=["company"])` + admin form (Plan 5c Part 1 SectorForm `<form action={serverAction}>` pattern + RHF client-side validation). Consumer'lar async fetch'e geçer; 2 client component parent RSC'den prop alır.
+Yaklaşım: tek satırlı `settings_company` tablosu (JSONB blob + updated_at + updated_by) + zod doğrulama + `public.update_company(data jsonb)` atomic RPC + plain async `getCompany()` + Next.js page cache (`revalidatePath` invalidate) + admin form (Plan 5c Part 1 SectorForm `<form action={serverAction}>` pattern + RHF client-side validation). Consumer'lar async fetch'e geçer; 2 client component parent RSC'den prop alır.
 
 **Analytics dashboard** (Plan 5c Part 2 roadmap'teki ikinci yarım) scope'tan çıkarıldı — iki farklı domain, bağımsız test/review (Gate 2 kısalığı), YAGNI (Plausible dashboard şu an yeterli).
 
@@ -40,12 +40,13 @@ Yaklaşım: tek satırlı `settings_company` tablosu (JSONB blob + updated_at + 
          → requireAdminRole() → CompanySchema.parse
          → supabase.rpc("update_company", { data })  [atomic, SECURITY DEFINER]
          → recordAudit({action:"company_updated", diff: changedKeys})
-         → revalidateTag("company") + revalidatePath("/admin/settings/company")
+         → revalidatePath("/", "layout") + revalidatePath("/admin/settings/company", "page")
          → redirect("/admin/settings/company?success=updated")
 
-[Public/RSC/API] → await getCompany()
-         → unstable_cache(tags=["company"]) miss → server-client SELECT data FROM settings_company
-                                                hit  → cached Company object
+[Public/RSC/API] → await getCompany() (plain async, React.cache request-dedupe)
+         → server client SELECT data FROM settings_company
+         → Next.js page cache absorbs result for static routes; dynamic routes query per request
+         → React.cache dedupes multiple getCompany() calls within single request (e.g. Footer + WhatsAppFab in same layout)
 
 [Client — WhatsAppFab in LocaleLayout]     → prop drill from RSC
 [Client — WhatsAppButton in contact page]  → prop drill from RSC
@@ -55,7 +56,7 @@ Yaklaşım: tek satırlı `settings_company` tablosu (JSONB blob + updated_at + 
 - Read: RLS `SELECT TO anon, authenticated USING (true)` — `settings_company` public-facing data (telefon, adres, email zaten Footer'da görünür); service-role gereksiz privilege overkill. `getCompany()` normal server client kullanır.
 - Write: RLS `UPDATE/INSERT WITH CHECK (public.is_admin_role())` — yalnızca `role='admin'`, sales/viewer block. Server action `requireAdminRole()` ile de redirect guard.
 
-**Cache:** `unstable_cache` tag `["company"]`, revalidate `Infinity` (yalnızca manuel tag invalidate). Edit frequency düşük — full cache ideal.
+**Cache:** Natural Next.js page cache layer absorbs `getCompany()` calls for static routes; `React.cache()` wrapper provides request-scoped dedupe (Footer + WhatsAppFab within same layout → tek DB hit). Admin edit → `revalidatePath("/", "layout")` invalidates public tree + `revalidatePath("/admin/settings/company", "page")` admin view. `unstable_cache` kullanılmaz — `createClient()` (server client, cookies dependent) içinde çağrılacağı için dynamic-API yasak çakışması engellenir. Plan 5c Part 1 sectors pattern precedent.
 
 **Concurrency model:** **Single-editor workflow** (sistemde tek admin var, prod kullanım senaryosu). İki admin aynı anda edit ederse **son yazan kazanır**; `updated_by` + `updated_at` kim/ne zaman görünür ama optimistic locking YOK. Çoklu admin gerekirse spec'e ETag/version token olarak eklenir — YAGNI şu an.
 
@@ -270,7 +271,7 @@ tests/e2e/admin-company-settings.spec.ts                  # Render + edit + pers
 ### Modifiye
 
 ```
-lib/company.ts                                # static COMPANY → async getCompany() (unstable_cache, server client, server-only)
+lib/company.ts                                # static COMPANY → async getCompany() (React.cache, server client, server-only)
 lib/supabase/types.ts                         # regen (settings_company row + update_company RPC fn)
 components/admin/Shell.tsx                    # active union += "company"; NavLink "Şirket"
 app/[locale]/layout.tsx                       # await getCompany() + prop pass Footer/WhatsAppFab
@@ -285,29 +286,25 @@ components/contact/WhatsAppFab.tsx            # interface Props { wa, display, .
 
 ```typescript
 import "server-only";
-import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Company } from "@/lib/admin/schemas/company";
 
-export const COMPANY_CACHE_TAG = "company";
-
-export const getCompany = unstable_cache(
-  async (): Promise<Company> => {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("settings_company")
-      .select("data")
-      .single();
-    if (error || !data?.data) {
-      throw new Error(
-        `Company settings missing — migration seed required. (${error?.message ?? "no row"})`
-      );
-    }
-    return data.data as Company;
-  },
-  ["company"],
-  { tags: [COMPANY_CACHE_TAG] }
-);
+// React.cache = request-scoped dedupe (Footer + WhatsAppFab aynı layout'ta tek DB hit).
+// Cross-request cache Next.js page cache layer'ında (static route generate + revalidatePath).
+export const getCompany = cache(async (): Promise<Company> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("settings_company")
+    .select("data")
+    .single();
+  if (error || !data?.data) {
+    throw new Error(
+      `Company settings missing — migration seed required. (${error?.message ?? "no row"})`
+    );
+  }
+  return data.data as Company;
+});
 
 export type { Company } from "@/lib/admin/schemas/company";
 ```
@@ -315,7 +312,8 @@ export type { Company } from "@/lib/admin/schemas/company";
 **Notlar:**
 - `server-only` import: client bundle'a leak önler.
 - `createClient()` (server client) — public SELECT policy sayesinde anon/authenticated okuma geçerli; service-role overkill değil.
-- Cache `unstable_cache` tag-based; admin write → `revalidateTag("company")` invalidate.
+- `React.cache` request-scoped; cross-request cache Next.js static page generation'da (revalidatePath ile invalidate).
+- `unstable_cache` kullanılmıyor: callback içinde `cookies()` dynamic API yasak; `createClient()` cookies() çağırıyor.
 
 ### lib/admin/company.ts
 
@@ -457,12 +455,11 @@ Cobalt section header (Plan 4c "01/02/03 section headers + cobalt accents" patte
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { requireAdminRole } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import { recordAudit } from "@/lib/audit";
 import { CompanySchema } from "@/lib/admin/schemas/company";
-import { COMPANY_CACHE_TAG } from "@/lib/company";
 import { getCompanyForAdmin } from "@/lib/admin/company";
 
 function parseJson<T>(raw: FormDataEntryValue | null, fallback: T): T {
@@ -524,7 +521,7 @@ export async function updateCompany(formData: FormData): Promise<void> {
     },
   });
 
-  revalidateTag(COMPANY_CACHE_TAG);
+  revalidatePath("/", "layout");
   revalidatePath("/admin/settings/company", "page");
   redirect("/admin/settings/company?success=updated");
 }
@@ -534,7 +531,7 @@ export async function updateCompany(formData: FormData): Promise<void> {
 - `requireAdminRole()` — sales/viewer role'ler redirect edilir
 - RPC atomic UPDATE; singleton row id eksternalde saklanmıyor, RPC içinde hedefleniyor
 - `recordAudit` diff = changed top-level keys (ör. `["phone", "email"]`) — gizlilik için değer içerik loglamıyor
-- `revalidateTag("company")` → tüm `getCompany()` caller cache invalidate
+- `revalidatePath("/", "layout")` → tüm public tree (Footer + WhatsAppFab render edilen tüm sayfalar) next render'da fresh data
 - `revalidatePath("/admin/settings/company", "page")` → admin success banner fresh
 
 ### 6.4 Shell nav
@@ -561,7 +558,7 @@ active: "catalog" | "products" | "sectors" | "references" | "bildirimler" | "com
 | RPC `update_company` `unauthorized` (sales/viewer) | Server action throw → Next error boundary. `requireAdminRole()` zaten redirect'le keser; RPC belt-and-suspenders. |
 | Admin submit zod fail (server-side) | `CompanySchema.parse` throw → Next error boundary. Client-side RHF önceden yakalar — server yalnızca bypass'a karşı. |
 | İki admin concurrent edit | **Single-editor workflow kabul.** Son yazan kazanır, audit log `updated_by`/`updated_at` log'da görünür. Optimistic locking YAGNI — ihtiyaç olursa ETag header + zod `version: z.number()` field. |
-| Public read — cache hit, seed sonra değişti | `revalidateTag("company")` bir sonraki request'te fresh. |
+| Public read — cache stale | `revalidatePath("/", "layout")` admin action'da; Next.js layout tree next render'da fresh. |
 | Invalid URL scheme (javascript:, data:) | Zod `httpsUrl` refine reject — form submit öncesi; server tarafı defense-in-depth. |
 | Unexpected `address.maps` host | Zod `mapsUrl` refine reject (Google Maps allowlist). |
 
@@ -659,12 +656,12 @@ SELECT data FROM public.settings_company \gset
 
 | Risk | Mitigation |
 |---|---|
-| `unstable_cache` Next 15 API evolution | Plan 5c Part 1'de kullanıldı, stable ✓ |
+| Cache strategy drift (unstable_cache vs React.cache) | `unstable_cache` callback içinde cookies yasak; `React.cache` + `revalidatePath` Plan 5c Part 1 precedent ✓ |
 | Client component prop drill 2 yer | Minimal, pattern temiz; refactor ihtiyacı düşük |
 | Admin tel format serbest (display vs tel) | Zod `TEL_E164` regex + placeholder hint |
 | Seed JSON syntax error | Migration test (INSERT + SELECT roundtrip) Wave 1'de |
 | DB tek satır invariant | UNIQUE INDEX `((true))` singleton enforce |
-| Cache key conflict | tag `"company"` unique |
+| Cache staleness cross-request | `revalidatePath("/", "layout")` admin action'da; next render regenerates |
 | Stored link-injection (URL scheme) | https-only + maps host allowlist (§4.2) |
 | Role bypass (sales yazabilir) | `requireAdminRole()` + RLS `public.is_admin_role()` + RPC guard (triple-layer) |
 | Concurrent admin overwrites | Single-editor workflow kabul (§7 belgeli) — YAGNI optimistic lock |
