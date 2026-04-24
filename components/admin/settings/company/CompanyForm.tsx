@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { CompanySchema, type Company } from "@/lib/admin/schemas/company";
@@ -38,8 +38,7 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(funct
 export function CompanyForm({ defaultValues, action }: CompanyFormProps) {
   const {
     register,
-    handleSubmit,
-    getValues,
+    watch,
     formState: { isDirty, isValid, isSubmitting, errors },
   } = useForm<Company>({
     resolver: zodResolver(CompanySchema),
@@ -47,29 +46,27 @@ export function CompanyForm({ defaultValues, action }: CompanyFormProps) {
     mode: "onChange",
   });
 
-  const onSubmit: SubmitHandler<Company> = async () => {
-    const v = getValues();
-    const fd = new FormData();
-    fd.set("legalName", v.legalName);
-    fd.set("brandName", v.brandName);
-    fd.set("shortName", v.shortName);
-    fd.set("founded", String(v.founded));
-    fd.set("address", JSON.stringify(v.address));
-    fd.set("phone", JSON.stringify(v.phone));
-    fd.set("cellPhone", JSON.stringify(v.cellPhone));
-    fd.set("fax", JSON.stringify(v.fax));
-    fd.set("email", JSON.stringify(v.email));
-    fd.set("whatsapp", JSON.stringify(v.whatsapp));
-    fd.set("telegram", JSON.stringify(v.telegram));
-    fd.set("web", JSON.stringify(v.web));
-    await action(fd);
-  };
+  // Watch nested objects so their JSON serialisation in the hidden inputs
+  // below stays in sync with the user's current edits. Native <form action>
+  // reads only what's in the DOM at submit time, so RHF's internal state
+  // must be mirrored back into hidden fields.
+  const address = watch("address");
+  const phone = watch("phone");
+  const cellPhone = watch("cellPhone");
+  const fax = watch("fax");
+  const email = watch("email");
+  const whatsapp = watch("whatsapp");
+  const telegram = watch("telegram");
+  const web = watch("web");
 
   const errMsg = (msg?: string) =>
     msg ? <p className="mt-1 text-xs text-[var(--color-alert-red)]">{msg}</p> : null;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form action={action} className="space-y-6">
+      {/* Scalar fields submitted as-is via their `name` attribute. Nested
+          groups mirrored into hidden JSON inputs below (native <form>
+          serialisation does not walk object shapes). */}
       <CompanySection index={1} title="Marka & Kimlik">
         <LabeledInput label="Marka adı" {...register("brandName")} />
         {errMsg(errors.brandName?.message)}
@@ -90,10 +87,20 @@ export function CompanyForm({ defaultValues, action }: CompanyFormProps) {
           Adres
         </h3>
         <LabeledInput label="Sokak / No" {...register("address.street")} />
+        {errMsg(errors.address?.street?.message)}
         <div className="grid grid-cols-3 gap-3">
-          <LabeledInput label="İlçe" {...register("address.district")} />
-          <LabeledInput label="Şehir" {...register("address.city")} />
-          <LabeledInput label="Ülke kodu (2 harf)" {...register("address.countryCode")} />
+          <div>
+            <LabeledInput label="İlçe" {...register("address.district")} />
+            {errMsg(errors.address?.district?.message)}
+          </div>
+          <div>
+            <LabeledInput label="Şehir" {...register("address.city")} />
+            {errMsg(errors.address?.city?.message)}
+          </div>
+          <div>
+            <LabeledInput label="Ülke kodu (2 harf)" {...register("address.countryCode")} />
+            {errMsg(errors.address?.countryCode?.message)}
+          </div>
         </div>
         <LabeledInput label="Google Maps URL" {...register("address.maps")} />
         {errMsg(errors.address?.maps?.message)}
@@ -102,46 +109,89 @@ export function CompanyForm({ defaultValues, action }: CompanyFormProps) {
           Telefonlar
         </h3>
         <div className="grid grid-cols-2 gap-3">
-          <LabeledInput label="Sabit hat (görünen)" {...register("phone.display")} />
-          <LabeledInput label="Sabit hat (E.164)" {...register("phone.tel")} />
+          <div>
+            <LabeledInput label="Sabit hat (görünen)" {...register("phone.display")} />
+            {errMsg(errors.phone?.display?.message)}
+          </div>
+          <div>
+            <LabeledInput label="Sabit hat (E.164)" {...register("phone.tel")} />
+            {errMsg(errors.phone?.tel?.message)}
+          </div>
         </div>
-        {errMsg(errors.phone?.tel?.message)}
         <div className="grid grid-cols-2 gap-3">
-          <LabeledInput label="Cep (görünen)" {...register("cellPhone.display")} />
-          <LabeledInput label="Cep (E.164)" {...register("cellPhone.tel")} />
+          <div>
+            <LabeledInput label="Cep (görünen)" {...register("cellPhone.display")} />
+            {errMsg(errors.cellPhone?.display?.message)}
+          </div>
+          <div>
+            <LabeledInput label="Cep (E.164)" {...register("cellPhone.tel")} />
+            {errMsg(errors.cellPhone?.tel?.message)}
+          </div>
         </div>
-        {errMsg(errors.cellPhone?.tel?.message)}
         <LabeledInput label="Faks (görünen)" {...register("fax.display")} />
+        {errMsg(errors.fax?.display?.message)}
 
         <h3 className="font-display mt-4 text-[14px] font-medium text-[var(--color-text-secondary)]">
           E-posta
         </h3>
         <div className="grid grid-cols-2 gap-3">
-          <LabeledInput label="Birincil" type="email" {...register("email.primary")} />
-          <LabeledInput label="İkincil" type="email" {...register("email.secondary")} />
+          <div>
+            <LabeledInput label="Birincil" type="email" {...register("email.primary")} />
+            {errMsg(errors.email?.primary?.message)}
+          </div>
+          <div>
+            <LabeledInput label="İkincil" type="email" {...register("email.secondary")} />
+            {errMsg(errors.email?.secondary?.message)}
+          </div>
         </div>
-        {errMsg(errors.email?.primary?.message)}
       </CompanySection>
 
       <CompanySection index={3} title="Mesajlaşma">
         <div className="grid grid-cols-2 gap-3">
-          <LabeledInput label="WhatsApp (görünen)" {...register("whatsapp.display")} />
-          <LabeledInput label="WhatsApp (wa.me)" {...register("whatsapp.wa")} />
+          <div>
+            <LabeledInput label="WhatsApp (görünen)" {...register("whatsapp.display")} />
+            {errMsg(errors.whatsapp?.display?.message)}
+          </div>
+          <div>
+            <LabeledInput label="WhatsApp (wa.me)" {...register("whatsapp.wa")} />
+            {errMsg(errors.whatsapp?.wa?.message)}
+          </div>
         </div>
-        {errMsg(errors.whatsapp?.wa?.message)}
         <div className="grid grid-cols-2 gap-3">
-          <LabeledInput label="Telegram handle" {...register("telegram.handle")} />
-          <LabeledInput label="Telegram görünen" {...register("telegram.display")} />
+          <div>
+            <LabeledInput label="Telegram handle" {...register("telegram.handle")} />
+            {errMsg(errors.telegram?.handle?.message)}
+          </div>
+          <div>
+            <LabeledInput label="Telegram görünen" {...register("telegram.display")} />
+            {errMsg(errors.telegram?.display?.message)}
+          </div>
         </div>
       </CompanySection>
 
       <CompanySection index={4} title="Web">
         <div className="grid grid-cols-2 gap-3">
-          <LabeledInput label="Birincil URL" type="url" {...register("web.primary")} />
-          <LabeledInput label="Alternatif URL" type="url" {...register("web.alt")} />
+          <div>
+            <LabeledInput label="Birincil URL" type="url" {...register("web.primary")} />
+            {errMsg(errors.web?.primary?.message)}
+          </div>
+          <div>
+            <LabeledInput label="Alternatif URL" type="url" {...register("web.alt")} />
+            {errMsg(errors.web?.alt?.message)}
+          </div>
         </div>
-        {errMsg(errors.web?.primary?.message)}
       </CompanySection>
+
+      {/* Hidden inputs: nested objects serialised for native <form action>
+          submission. updateCompany parseJson's each group name. */}
+      <input type="hidden" name="address" value={JSON.stringify(address)} readOnly />
+      <input type="hidden" name="phone" value={JSON.stringify(phone)} readOnly />
+      <input type="hidden" name="cellPhone" value={JSON.stringify(cellPhone)} readOnly />
+      <input type="hidden" name="fax" value={JSON.stringify(fax)} readOnly />
+      <input type="hidden" name="email" value={JSON.stringify(email)} readOnly />
+      <input type="hidden" name="whatsapp" value={JSON.stringify(whatsapp)} readOnly />
+      <input type="hidden" name="telegram" value={JSON.stringify(telegram)} readOnly />
+      <input type="hidden" name="web" value={JSON.stringify(web)} readOnly />
 
       <div className="flex items-center justify-end gap-3">
         <Link
