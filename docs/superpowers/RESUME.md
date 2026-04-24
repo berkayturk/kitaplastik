@@ -18,87 +18,62 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ---
 
-## 👉 NEXT SESSION KICKOFF (2026-04-24+)
+## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Plan 5c Part 1 EXECUTION — `/admin/sectors` + `/admin/references` CRUD (28 task, subagent-driven, ~5-6 saat). Spec + Plan hazır, Codex Gate 1 tamam. Sıfırdan kod yazılmaya başlanacak.
+**Oturumun hedefi:** Plan 5c Part 2 — `/admin/settings/company` editör + catalog request analytics dashboard (~3-4 sa). Spec + plan YOK, önce brainstorm + spec + Gate 1.
 
-**Durum özeti (2026-04-23 oturumu sonu, context cleared):**
-- ✅ Brainstorm (5 soru → 5 karar)
-- ✅ Spec yazıldı (`docs/superpowers/specs/2026-04-23-plan5c-part1-sectors-references-crud-design.md`, ~700 satır, 10 bölüm)
-- ✅ Codex Gate 1 review tamamlandı — 4 HIGH + 4 MEDIUM bulgu, hepsi inline fix (spec Review Log'da)
-- ✅ Implementation plan yazıldı (`docs/superpowers/plans/2026-04-23-faz1-plan5c-part1-sectors-references-crud.md`, 3480 satır, 28 task TDD)
-- 🟢 **CROSS-AI REVIEW GATES zorunlu protokol aktif** — memory `feedback_codex_dual_review_gate.md` + RESUME Global Protocol + `.claude/commands/codex-review-{spec,pr}.md` slash commands
-- Git HEAD: `e2f0351` (spec + plan commit'ler local, origin'e push ÖNCE PR zamanı — değiştirme)
+**Plan 5c Part 1 ✅ CANLIDA (2026-04-24):**
+- Squash commit: `e5030bb feat: Plan 5c Part 1 — sectors edit + references CRUD`
+- 31 commit (28 task + hotfix + 3 Gate 2 fix) squashed → main
+- Migration `20260424090000` + RPC migration `20260424100000_client_display_order_swap_rpc` remote'a uygulandı
+- Phase B logo migration ✅ — 8/8 client logosu `client-logos/<uuid>.svg` storage path'ine taşındı
+- Canlı smoke ✓ — homepage `client-logos/` URL'lerini serve ediyor, `/admin/sectors` + `/admin/references` auth guard çalışıyor
+- Gate 1 Codex: 4 HIGH + 4 MEDIUM inline fix (spec Review Log)
+- Gate 2 Codex: 2 HIGH + 1 MEDIUM fix (swap RPC + tsx devDep + storage.remove error capture); 1 MEDIUM (E2E coverage) + 1 LOW (edit inline soft-delete, Shell nav order) follow-up
+- 236 unit test yeşil, typecheck + lint + build + E2E CI temiz
 
-### Önceki oturum commit'leri (local, unpushed)
+### Session snapshot bileşenleri
+- `/admin/sectors` — 3 sabit sektör edit-only, 4-dil LocaleTabs + hero image + SEO meta + active toggle
+- `/admin/references` — full CRUD (create/edit/softDelete/restore/arrow reorder), 4-dil display_name + logo upload + sector dropdown
+- Migration: `sectors` 4 yeni kolon (hero_image, long_description, meta_title, meta_description), `clients` 2 yeni kolon (display_name, sector_id FK), `client-logos` bucket (1MB, SVG/PNG/JPG/WEBP), `sector-images` hardened (5MB, raster only)
+- RPC: `swap_client_display_order(a_id, b_id)` — atomic reorder, service_role grant
+- Public UI fallback chain: `displayName?.[locale] ?? safeTranslate(tClients, key+'.name') ?? ref.key`
+- `lib/admin/sector-route-mapping.ts` — DB TR → canonical EN (cam-yikama → bottle-washing)
+- `lib/admin/sector-key-mapping.ts` — DB slug → camelCase sector_key dual-write helper
+- `scripts/migrate-client-logos-to-storage.ts` — Phase B tsx script, `pnpm migrate:logos`
+- Shell nav'a "Sektörler" + "Referanslar" eklendi
+- ESLint `@next/next/no-html-link-for-pages` sebebiyle `<a>` → `<Link>` refactor (form cancel/back butonları)
 
-- `6085cb8` docs(spec): Plan 5c Part 1 — sectors + references CRUD + codex review gates
-- `2d6f8e5` docs(spec): Plan 5c Part 1 — codex gate 1 findings applied (HIGH×4 + MEDIUM×4)
-- `e2f0351` docs(plan): Plan 5c Part 1 — sectors + references CRUD (28 tasks, TDD)
+### Deviations from Gate 1 plan (belgeli, onaylı)
+- **T10 no-op**: `ReferenceCard` prop API korundu (logo + h3 başlık + sektör eyebrow); fallback chain T11 caller'da uygulandı (UX preservation — plan card'ı logo-only yapıyordu)
+- **T11**: Sektör etiketleri + `SECTOR_NS_KEY` korundu (plan siliyordu)
+- **T5 UUID regex**: zod v4 `z.string().uuid()` Postgres UUID'leri RFC 4122 sebebiyle reddediyor; custom `UUID_RE` (product.ts pattern'ı) kullanıldı
+- **Shell.tsx nav pattern**: Horizontal `<NavLink>` (plan sidebar varsayıyordu)
+- **Test fixtures**: `hero_color`, `created_at`, `updated_at` eklendi (strict Sector/Client Row type için)
 
-### Plan 5c Part 1 kapsam özeti
+### Known differences (Gate 2 follow-up)
+- **MEDIUM — E2E coverage**: Mevcut specs smoke niteliğinde; gerçek form submit + upload + reorder swap assertion + revalidation freshness Plan 5c Part 2'de veya ayrı bir hygiene PR'da kapatılacak
+- **LOW — Edit sayfası inline soft-delete**: Spec Section 4.4 inline soft-delete önermişti; şu an sadece liste sayfasında mevcut. User UX tercihi — follow-up
 
-**`/admin/sectors`** — edit-only (3 sabit sektör, create/delete YOK). 4-dil tab ad + kısa açıklama + uzun açıklama + meta_title + meta_description + hero image + display_order + active.
-
-**`/admin/references`** — full CRUD. 4-dil `display_name` + logo upload (yeni `client-logos` bucket) + sector dropdown (yeni `sector_id` FK) + arrow reorder + soft-delete + restore.
-
-**Schema:** sectors 4 yeni kolon, clients 2 yeni kolon (`display_name` + `sector_id`), `sector_key` DROP değil (dual-write).
-
-**Public UI (H1 fix):** `ReferencesStrip` + `ReferenceCard` + `/[locale]/references/page.tsx` — `display_name[locale] ?? safeTranslate(key+'.name') ?? key` fallback chain. Admin-created ref'ler public'te görünsün.
-
-**Migration safety (H3):** Dual-read pattern — legacy `/references/*.svg` + storage path birlikte destekli kod önce deploy, sonra logo migration script.
-
-**Route mapping (H2):** DB slug (TR) `cam-yikama` → canonical EN `bottle-washing` (`lib/admin/sector-route-mapping.ts`). revalidatePath + E2E canonical EN kullanır.
-
-**Bucket hardening (H4):** `client-logos` + `sector-images` — `file_size_limit` + `allowed_mime_types` Plan 4b pattern'ı.
-
-### Execution planı (subagent-driven-development)
-
-Plan file: `docs/superpowers/plans/2026-04-23-faz1-plan5c-part1-sectors-references-crud.md` (28 task, dependency map plan sonunda)
-
-Dispatch order:
-- **Wave 1 (paralel):** T1-T5 foundation (safeTranslate, sector-route-mapping, sector-key-mapping, zod schemas × 2)
-- **Wave 2 (blocker):** T6 migration — sectors 4 cols + clients 2 cols + bucket hardening + data migration + TypeScript types regen
-- **Wave 3 (paralel):** T7 logo script + T8 lib/references dual-read + T12-T13 admin lib helpers
-- **Wave 4 (paralel):** T9-T11 public components (ReferencesStrip/ReferenceCard/references page fallback chain)
-- **Wave 5 (paralel):** T14-T15 server actions (sectors + references full CRUD + reorder)
-- **Wave 6 (paralel batch):** T16-T25 admin components + pages (SectorHeroField, SectorForm, SectorList, LogoField, SectorSelect, ReferenceForm, ReferenceList, + 5 page.tsx)
-- **Wave 7:** T26 Shell nav update
-- **Wave 8:** T27 E2E specs
-- **Wave 9 (user-in-the-loop):** T28 deploy — PR + Gate 2 Codex review + merge + Phase B logo migration + canlı smoke + RESUME/memory update
-
-Pragmatic tiering (`feedback_subagent_mode.md`):
-- Mekanik (T1-T5, T16, T20, T26): combined review (implementer + controller self-review)
-- Medium (T8, T9-T11, T12-T13, T17-T25): combined review (implementer + one reviewer subagent)
-- Logic-heavy (T6 migration, T14-T15 actions, T20 LogoField M4 validation, T27 E2E): full 3-stage review
-
-### Prereq (user)
-
-- **3 yüksek kaliteli sektör görseli** (cam yıkama, kapak, tekstil) — min 1600px width, landscape; admin panelden upload edilecek
-- Görseller yoksa placeholder ile devam edilebilir — gerçek görselleri sonradan yükleme flow'u çalışır, migration değil
-
-### İlk okuman gereken dosyalar
-
-Sıra önemli:
-1. `docs/superpowers/specs/2026-04-23-plan5c-part1-sectors-references-crud-design.md` — spec (Review Log dahil)
-2. `docs/superpowers/plans/2026-04-23-faz1-plan5c-part1-sectors-references-crud.md` — plan (dependency map sonunda)
-3. `app/admin/products/` — referans pattern (aynı pattern'ın genişletilmiş hali)
-4. `components/admin/products/{LocaleTabs,ProductForm,ImageUploader}.tsx` — neyi reuse, neyi yeni wrapper'la yazacağını gör
-5. Memory: `feedback_subagent_mode.md`, `feedback_codex_dual_review_gate.md`, `feedback_supabase_storage_delete.md`, `feedback_verify_before_push.md`, `feedback_turkish_regex.md`, `feedback_local_ci_e2e_parity.md`
+### Git state
+- Main HEAD: `e5030bb` (pushed to origin)
+- Local feature branch deleted (remote pruned)
+- `SUPABASE_ACCESS_TOKEN` `~/.zshenv`'de persistent (bu session'da eklendi — ileride rotate etmek istersen `supabase login` veya dashboard)
 
 ---
 
 ### Session +1 preview (heads-up)
 - **Plan 5c Part 2** (~3-4 sa): `/admin/settings/company` (`lib/company.ts` editöre) + catalog request analytics dashboard (Plausible + Supabase)
+- **Gate 2 Medium follow-up** (~1-2 sa): E2E coverage genişletmesi — gerçek submit + upload + reorder swap assertion
 - **Pipeline Tier 2 retry** (~1-2 sa): Dockerfile deep-dive — Coolify log full + failed container exec (memory `feedback_coolify_dockerfile_deferred.md` retry protokolü)
 - **Pipeline Tier 3** (~45-60 dk): CI parallel jobs + Playwright browsers cache → CI 9dk → 4-5dk
-- **Secret rotate** (~30 dk): Coolify API token rotate (önceki oturum leak borcu)
+- **Secret rotate** (~30 dk): Coolify API token rotate + session'da transcriptte geçen `SUPABASE_ACCESS_TOKEN` rotate
 - **Redis rate limit** (yalnızca trigger'lı): multi-instance'a geçiş + trafik 10x artış sonrası yeniden değerlendir
 - **Plan 5b** (hukuk onayı sonrası): KVKK + cookie consent
 - **Plan 5a Faz 3** (maddi hazır sonrası): GWS email
 - **uuid moderate advisory** (opsiyonel): resend@6 → svix → uuid@10 transitive; resend major upgrade gerekebilir
 
-**İlk sorusu:** "Plan 5c Part 1 spec + plan 2026-04-23'te hazırlandı, Codex Gate 1 tamam. 28 task, subagent-driven execution'a başlıyorum. İlk wave T1-T5 foundation paralel dispatch'liyor. 3 sektör görseli hazır mı yoksa placeholder'la mı başlayalım?"
+**İlk sorusu:** "Plan 5c Part 1 canlıda (2026-04-24, squash e5030bb). Sıradaki: Plan 5c Part 2 — `/admin/settings/company` editör + catalog request analytics dashboard. Brainstorm'a başlayalım mı yoksa başka bir önceliğe mi dalalım (pipeline Tier 2, secret rotate, E2E hygiene)?"
 
 ---
 
