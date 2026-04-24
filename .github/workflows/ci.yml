@@ -19,58 +19,129 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  install-and-check:
-    name: install + lint + typecheck + test + build
+  lint:
+    name: lint
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-
       - name: Setup Node 22 (pinned via .nvmrc)
         uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
           cache: pnpm
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
       - name: Lint
         run: pnpm lint
 
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node 22 (pinned via .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Type check
         run: pnpm typecheck
 
+  format:
+    name: format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node 22 (pinned via .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Format check
         run: pnpm format:check
 
+  unit-tests:
+    name: unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node 22 (pinned via .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Unit tests
         run: pnpm test
 
+  audit:
+    name: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node 22 (pinned via .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Security audit
         run: pnpm audit --audit-level=high --prod
-        continue-on-error: false
 
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node 22 (pinned via .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Cache Next.js build
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.next/cache
-          # Exact hit when deps + Next/TS config unchanged AND no source files changed;
-          # otherwise fall through to restore-keys and Next handles incremental build.
           key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml', 'next.config.ts', 'tsconfig.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml', 'next.config.ts', 'tsconfig.json') }}-
             ${{ runner.os }}-nextjs-
-
       - name: Build
         env:
           # Placeholder values so zod env validation passes during static build.
-          # Real credentials are injected on Vercel at deploy time.
+          # Real credentials are injected on Coolify at runtime.
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
           SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
@@ -85,45 +156,49 @@ jobs:
           NEXT_PUBLIC_PLAUSIBLE_HOST: ""
         run: pnpm build
 
+  # Playwright E2E sharded across 3 parallel runners (shard is an integer,
+  # safe from command-injection). Uses pnpm dev webServer (no build dep).
   e2e:
-    name: Playwright E2E
+    name: e2e-shard-${{ matrix.shard }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: install-and-check
-
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-
       - name: Setup Node 22 (pinned via .nvmrc)
         uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
           cache: pnpm
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
+      # Cache Playwright browsers by @playwright/test version (resolved from
+      # installed package) so unrelated dep changes don't invalidate.
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: |
+          version=$(node -p "require('./node_modules/@playwright/test/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
           restore-keys: |
             ${{ runner.os }}-playwright-
-
       - name: Install Playwright browsers (with system deps)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm dlx playwright install --with-deps chromium
-
+        run: pnpm exec playwright install --with-deps chromium
       - name: Install Playwright system deps only (cache hit)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm dlx playwright install-deps chromium
-
+        run: pnpm exec playwright install-deps chromium
       - name: Run E2E tests
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
@@ -138,12 +213,24 @@ jobs:
           NEXT_PUBLIC_SENTRY_DSN: ""
           NEXT_PUBLIC_PLAUSIBLE_DOMAIN: ""
           NEXT_PUBLIC_PLAUSIBLE_HOST: ""
-        run: pnpm test:e2e
-
+          SHARD: ${{ matrix.shard }}
+        run: pnpm test:e2e --shard="$SHARD/3"
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 7
+
+  # Meta-gate for deploy workflow: succeeds only when all jobs above pass.
+  # Deploy workflow waits on the CI workflow_run conclusion (any failed
+  # job = workflow failure), so this job is just a human-readable marker.
+  ci-success:
+    name: ci-success
+    needs: [lint, typecheck, format, unit-tests, audit, build, e2e]
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Mark CI success
+        run: echo "All CI jobs passed."
