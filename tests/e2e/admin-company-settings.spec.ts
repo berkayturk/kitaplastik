@@ -35,22 +35,24 @@ test.describe("Admin company settings", () => {
   test("client-side zod validation blocks submit on invalid email", async ({ page, context }) => {
     await loginAsAdmin({ page, context });
     await page.goto("/admin/settings/company");
-    // Mark a change so isDirty=true
-    const originalBrand = await page.getByLabel(/marka adı/i).inputValue();
-    await page.getByLabel(/marka adı/i).fill(originalBrand + " ");
-    // Now break email format
-    await page
-      .getByLabel(/Birincil/i)
-      .first()
-      .fill("not-an-email");
-    // Submit button should be disabled (RHF resolver catches it client-side)
-    const submit = page.getByRole("button", { name: /kaydet/i });
-    await expect(submit).toBeDisabled();
-    // Reset (revert both edits)
-    await page
-      .getByLabel(/Birincil/i)
-      .first()
-      .fill("info@kitaplastik.com");
-    await page.getByLabel(/marka adı/i).fill(originalBrand);
+
+    const brandInput = page.getByLabel(/marka adı/i);
+    // Exact match "Birincil" (email) — avoids collision with "Birincil URL" (web)
+    const emailPrimaryInput = page.getByLabel(/^Birincil$/i).first();
+    const originalBrand = await brandInput.inputValue();
+    const originalEmail = await emailPrimaryInput.inputValue();
+
+    try {
+      // Mark form dirty then invalidate email so RHF/zod disables submit
+      await brandInput.fill(originalBrand + " ");
+      await emailPrimaryInput.fill("not-an-email");
+      const submit = page.getByRole("button", { name: /kaydet/i });
+      await expect(submit).toBeDisabled();
+    } finally {
+      // Reset both fields back to captured originals — no server submit
+      // occurs (we never saved), so resetting in-memory state is enough.
+      await brandInput.fill(originalBrand);
+      await emailPrimaryInput.fill(originalEmail);
+    }
   });
 });

@@ -57,77 +57,104 @@ test.describe("Admin references CRUD", () => {
     const uniqueKey = `e2e-upload-${Date.now().toString(36).slice(-6)}`;
     await page.getByLabel("Anahtar").fill(uniqueKey);
     await page.getByLabel(/Ad \(TR\)/).fill("E2E Upload Test");
-    await page.locator('input[type="file"]').setInputFiles("./tests/fixtures/test-logo.svg");
-    await page.getByRole("button", { name: "Kaydet" }).click();
-    await expect(page).toHaveURL(/\/admin\/references\?success=created/);
-    // Verify appears in active list
-    await expect(page.getByText(uniqueKey)).toBeVisible();
 
-    // Cleanup — soft-delete the test row
-    const row = page.getByRole("row", { name: new RegExp(uniqueKey) }).first();
-    await row.getByRole("button", { name: "Sil" }).click();
+    // Select a sector — required (SectorSelect renders "— Seçin —" placeholder
+    // at index 0; first real seed sector is at index 1).
+    await page.getByLabel(/Sektör/i).selectOption({ index: 1 });
+
+    // Upload SVG — LogoField swaps the <input type=file> for a preview
+    // <Image alt="Logo preview"> once upload to Supabase storage succeeds.
+    await page.locator('input[type="file"]').setInputFiles("./tests/fixtures/test-logo.svg");
+    await expect(page.getByAltText("Logo preview")).toBeVisible({ timeout: 10_000 });
+
+    try {
+      await page.getByRole("button", { name: "Kaydet" }).click();
+      await expect(page).toHaveURL(/\/admin\/references\?success=created/);
+      // Verify appears in active list
+      await expect(page.getByText(uniqueKey)).toBeVisible();
+    } finally {
+      // Cleanup — soft-delete via UI (leaves soft-deleted row + uploaded
+      // storage object; full storage cleanup requires service-role script —
+      // deliberate trade-off, documented in PR body).
+      const row = page.getByRole("row", { name: new RegExp(uniqueKey) }).first();
+      if (await row.isVisible().catch(() => false)) {
+        await row.getByRole("button", { name: "Sil" }).click();
+      }
+    }
   });
 
   test("reorder swap adjacent references (arrow up)", async ({ page }) => {
-    // Snapshot current top-2 keys
+    // Snapshot current top-2 row identities via their "Düzenle" link href,
+    // which encodes the row id — stable across reorders (unlike td text).
     const firstRow = page.locator("tbody tr").first();
     const secondRow = page.locator("tbody tr").nth(1);
-    const firstKeyBefore = await firstRow.locator("td").first().textContent();
-    const secondKeyBefore = await secondRow.locator("td").first().textContent();
-    // Click "↑" on the second row
-    await secondRow.getByRole("button", { name: "↑" }).click();
-    // Wait for server action + revalidate
-    await page.waitForTimeout(500);
-    await page.reload();
-    const firstKeyAfter = await page
-      .locator("tbody tr")
-      .first()
-      .locator("td")
-      .first()
-      .textContent();
-    const secondKeyAfter = await page
-      .locator("tbody tr")
-      .nth(1)
-      .locator("td")
-      .first()
-      .textContent();
-    // Expected: keys swapped
-    expect(firstKeyAfter?.trim()).toBe(secondKeyBefore?.trim());
-    expect(secondKeyAfter?.trim()).toBe(firstKeyBefore?.trim());
-    // Revert — click ↑ on the new second row
-    const newSecondRow = page.locator("tbody tr").nth(1);
-    await newSecondRow.getByRole("button", { name: "↑" }).click();
+    const firstHrefBefore = await firstRow
+      .getByRole("link", { name: "Düzenle" })
+      .getAttribute("href");
+    const secondHrefBefore = await secondRow
+      .getByRole("link", { name: "Düzenle" })
+      .getAttribute("href");
+    expect(firstHrefBefore).toBeTruthy();
+    expect(secondHrefBefore).toBeTruthy();
+
+    try {
+      // Swap: click ↑ on the second row
+      await secondRow.getByRole("button", { name: /sıralamayı yukarı taşı/i }).click();
+
+      // Deterministic wait: rows re-render with swapped order (no waitForTimeout)
+      await expect(
+        page.locator("tbody tr").first().getByRole("link", { name: "Düzenle" }),
+      ).toHaveAttribute("href", secondHrefBefore!);
+      await expect(
+        page.locator("tbody tr").nth(1).getByRole("link", { name: "Düzenle" }),
+      ).toHaveAttribute("href", firstHrefBefore!);
+    } finally {
+      // Revert — click ↑ on the now-second row (which is the original first)
+      const newSecondRow = page.locator("tbody tr").nth(1);
+      await newSecondRow.getByRole("button", { name: /sıralamayı yukarı taşı/i }).click();
+      // Verify back to original order
+      await expect(
+        page.locator("tbody tr").first().getByRole("link", { name: "Düzenle" }),
+      ).toHaveAttribute("href", firstHrefBefore!, { timeout: 5_000 });
+    }
   });
 
   test("public homepage ReferencesStrip shows freshly-edited display_name", async ({
     page,
     request,
   }) => {
-    // Edit c1 display_name tr
     const uniqueDisplay = `Acme rev-${Date.now().toString(36).slice(-6)}`;
+
+    // Snapshot current c1 display_name TR (whatever it is — may be empty in seed)
     await page
       .getByRole("row", { name: /c1/ })
       .first()
       .getByRole("link", { name: "Düzenle" })
       .click();
-    await page.getByLabel(/Ad \(TR\)/).fill(uniqueDisplay);
-    await page.getByRole("button", { name: "Kaydet" }).click();
-    await expect(page).toHaveURL(/\/admin\/references\?success=updated/);
+    const trInput = page.getByLabel(/Ad \(TR\)/);
+    const originalDisplay = await trInput.inputValue();
 
-    // Public homepage TR check
-    const r = await request.get("/tr", { headers: { "cache-control": "no-cache" } });
-    expect(r.status()).toBe(200);
-    const html = await r.text();
-    expect(html).toContain(uniqueDisplay);
+    try {
+      await trInput.fill(uniqueDisplay);
+      await page.getByRole("button", { name: "Kaydet" }).click();
+      await expect(page).toHaveURL(/\/admin\/references\?success=updated/);
 
-    // Revert — restore original name (assume it was "Acme Corp" or similar; use generic)
-    await page.goto("/admin/references");
-    await page
-      .getByRole("row", { name: /c1/ })
-      .first()
-      .getByRole("link", { name: "Düzenle" })
-      .click();
-    await page.getByLabel(/Ad \(TR\)/).fill("Acme Corp");
-    await page.getByRole("button", { name: "Kaydet" }).click();
+      // Public homepage TR check — revalidatePath propagation
+      const r = await request.get("/tr", { headers: { "cache-control": "no-cache" } });
+      expect(r.status()).toBe(200);
+      const html = await r.text();
+      expect(html).toContain(uniqueDisplay);
+    } finally {
+      // Always restore — capture-then-restore, not hard-code
+      await page.goto("/admin/references");
+      await page
+        .getByRole("row", { name: /c1/ })
+        .first()
+        .getByRole("link", { name: "Düzenle" })
+        .click();
+      await page.getByLabel(/Ad \(TR\)/).fill(originalDisplay);
+      await page.getByRole("button", { name: "Kaydet" }).click();
+      await expect(page).toHaveURL(/\/admin\/references\?success=updated/);
+    }
   });
 });

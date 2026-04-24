@@ -45,31 +45,38 @@ test.describe("Admin sectors CRUD", () => {
     request,
   }) => {
     const uniqueLabel = `Cam Yıkama — rev-${Date.now()}`;
-    // Edit
+    // Snapshot current TR name (whatever it is — not hard-coded)
     await page.goto("/admin/sectors");
     await page
       .getByRole("row", { name: /cam-yikama/ })
       .getByRole("link", { name: "Düzenle" })
       .click();
-    await page.getByLabel(/Ad \(TR\)/).fill(uniqueLabel);
-    await page.getByRole("button", { name: "Kaydet" }).click();
-    await expect(page).toHaveURL(/\/admin\/sectors\?success=updated/);
+    const trInput = page.getByLabel(/Ad \(TR\)/);
+    const originalTr = await trInput.inputValue();
 
-    // Public fresh render — revalidatePath propagation
-    const r = await request.get("/tr/sektorler/cam-yikama", {
-      headers: { "cache-control": "no-cache" },
-    });
-    expect(r.status()).toBe(200);
-    const html = await r.text();
-    expect(html).toContain(uniqueLabel);
+    try {
+      // Edit to unique label
+      await trInput.fill(uniqueLabel);
+      await page.getByRole("button", { name: "Kaydet" }).click();
+      await expect(page).toHaveURL(/\/admin\/sectors\?success=updated/);
 
-    // Revert for next test idempotency
-    await page.goto("/admin/sectors");
-    await page
-      .getByRole("row", { name: /cam-yikama/ })
-      .getByRole("link", { name: "Düzenle" })
-      .click();
-    await page.getByLabel(/Ad \(TR\)/).fill("Cam Yıkama");
-    await page.getByRole("button", { name: "Kaydet" }).click();
+      // Public fresh render — revalidatePath propagation
+      const r = await request.get("/tr/sektorler/cam-yikama", {
+        headers: { "cache-control": "no-cache" },
+      });
+      expect(r.status()).toBe(200);
+      const html = await r.text();
+      expect(html).toContain(uniqueLabel);
+    } finally {
+      // Always restore — capture-then-restore, not hard-code
+      await page.goto("/admin/sectors");
+      await page
+        .getByRole("row", { name: /cam-yikama/ })
+        .getByRole("link", { name: "Düzenle" })
+        .click();
+      await page.getByLabel(/Ad \(TR\)/).fill(originalTr);
+      await page.getByRole("button", { name: "Kaydet" }).click();
+      await expect(page).toHaveURL(/\/admin\/sectors\?success=updated/);
+    }
   });
 });
