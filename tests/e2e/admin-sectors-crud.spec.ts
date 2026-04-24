@@ -39,4 +39,37 @@ test.describe("Admin sectors CRUD", () => {
     const r = await request.get("/tr/sektorler/cam-yikama");
     expect(r.status()).toBe(200);
   });
+
+  test("public TR pathname shows freshly-edited TR name (revalidation)", async ({
+    page,
+    request,
+  }) => {
+    const uniqueLabel = `Cam Yıkama — rev-${Date.now()}`;
+    // Edit
+    await page.goto("/admin/sectors");
+    await page
+      .getByRole("row", { name: /cam-yikama/ })
+      .getByRole("link", { name: "Düzenle" })
+      .click();
+    await page.getByLabel(/Ad \(TR\)/).fill(uniqueLabel);
+    await page.getByRole("button", { name: "Kaydet" }).click();
+    await expect(page).toHaveURL(/\/admin\/sectors\?success=updated/);
+
+    // Public fresh render — revalidatePath propagation
+    const r = await request.get("/tr/sektorler/cam-yikama", {
+      headers: { "cache-control": "no-cache" },
+    });
+    expect(r.status()).toBe(200);
+    const html = await r.text();
+    expect(html).toContain(uniqueLabel);
+
+    // Revert for next test idempotency
+    await page.goto("/admin/sectors");
+    await page
+      .getByRole("row", { name: /cam-yikama/ })
+      .getByRole("link", { name: "Düzenle" })
+      .click();
+    await page.getByLabel(/Ad \(TR\)/).fill("Cam Yıkama");
+    await page.getByRole("button", { name: "Kaydet" }).click();
+  });
 });

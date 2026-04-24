@@ -31,4 +31,26 @@ test.describe("Admin company settings", () => {
     await page.getByRole("button", { name: /kaydet/i }).click();
     await page.waitForURL(/success=updated/);
   });
+
+  test("client-side zod validation blocks submit on invalid email", async ({ page, context }) => {
+    await loginAsAdmin({ page, context });
+    await page.goto("/admin/settings/company");
+    // Mark a change so isDirty=true
+    const originalBrand = await page.getByLabel(/marka adı/i).inputValue();
+    await page.getByLabel(/marka adı/i).fill(originalBrand + " ");
+    // Now break email format
+    await page
+      .getByLabel(/Birincil/i)
+      .first()
+      .fill("not-an-email");
+    // Submit button should be disabled (RHF resolver catches it client-side)
+    const submit = page.getByRole("button", { name: /kaydet/i });
+    await expect(submit).toBeDisabled();
+    // Reset (revert both edits)
+    await page
+      .getByLabel(/Birincil/i)
+      .first()
+      .fill("info@kitaplastik.com");
+    await page.getByLabel(/marka adı/i).fill(originalBrand);
+  });
 });
