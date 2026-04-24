@@ -295,6 +295,10 @@ export type Database = {
       is_admin_role:
         | { Args: never; Returns: boolean }
         | { Args: { uid: string }; Returns: boolean };
+      swap_client_display_order: {
+        Args: { a_id: string; b_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       admin_role: "admin" | "sales" | "viewer";
