@@ -1,0 +1,8 @@
+export const env = {
+  NEXT_PUBLIC_SUPABASE_URL: "https://test.supabase.co",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "test-anon-key",
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
+  NEXT_PUBLIC_SITE_URL: undefined,
+  NEXT_PUBLIC_PLAUSIBLE_DOMAIN: undefined,
+  NEXT_PUBLIC_SENTRY_DSN: undefined,
+};
