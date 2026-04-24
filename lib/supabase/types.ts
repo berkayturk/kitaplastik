@@ -286,6 +286,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      settings_company: {
+        Row: {
+          data: Json;
+          id: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          data: Json;
+          id?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          data?: Json;
+          id?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -298,6 +319,15 @@ export type Database = {
       swap_client_display_order: {
         Args: { a_id: string; b_id: string };
         Returns: undefined;
+      };
+      update_company: {
+        Args: { new_data: Json };
+        Returns: {
+          data: Json;
+          id: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
       };
     };
     Enums: {
