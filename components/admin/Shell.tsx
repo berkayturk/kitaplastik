@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   user: AdminUser;
-  active: "catalog" | "products" | "sectors" | "references" | "bildirimler";
+  active: "catalog" | "products" | "sectors" | "references" | "bildirimler" | "company";
   children: ReactNode;
 }
 
@@ -41,6 +41,9 @@ export function Shell({ user, active, children }: Props) {
             </NavLink>
             <NavLink href="/admin/references" active={active === "references"}>
               Referanslar
+            </NavLink>
+            <NavLink href="/admin/settings/company" active={active === "company"}>
+              Şirket
             </NavLink>
             <NavLink href="/admin/settings/notifications" active={active === "bildirimler"}>
               Bildirim Alıcıları
