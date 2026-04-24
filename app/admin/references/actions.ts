@@ -116,16 +116,23 @@ export async function updateReference(id: string, formData: FormData): Promise<v
   // Eski logoyu sil (storage orphan önleme, non-fatal)
   if (logoChanged && existing.logo_path.startsWith("client-logos/")) {
     const oldKey = existing.logo_path.substring("client-logos/".length);
-    await svc.storage
-      .from("client-logos")
-      .remove([oldKey])
-      .catch(async (err) => {
+    try {
+      const { error: removeErr } = await svc.storage.from("client-logos").remove([oldKey]);
+      if (removeErr) {
         const Sentry = await import("@sentry/nextjs");
-        Sentry.captureException(err, {
+        Sentry.captureMessage(`[admin_references] old logo remove failed: ${removeErr.message}`, {
+          level: "warning",
           tags: { module: "admin_references", phase: "update_old_logo" },
           extra: { oldKey },
         });
+      }
+    } catch (err) {
+      const Sentry = await import("@sentry/nextjs");
+      Sentry.captureException(err, {
+        tags: { module: "admin_references", phase: "update_old_logo" },
+        extra: { oldKey },
       });
+    }
   }
 
   await recordAudit({
@@ -191,32 +198,46 @@ async function swapDisplayOrder(id: string, direction: "up" | "down"): Promise<v
   if (!current) throw new Error("Referans bulunamadı");
 
   const svc = createServiceClient();
-  const op =
-    direction === "up" ? { op: "lt" as const, asc: false } : { op: "gt" as const, asc: true };
 
-  const { data: neighbors } = await svc
+  // Find neighbor with (display_order, id) compound key.
+  // Step 1: strict neighbor by display_order.
+  const strictOp = direction === "up" ? "lt" : "gt";
+  const asc = direction === "down";
+  const { data: strictNeighbors, error: strictErr } = await svc
     .from("clients")
     .select("id, display_order")
     .eq("active", current.active)
-    [op.op]("display_order", current.display_order)
-    .order("display_order", { ascending: op.asc })
-    .order("id", { ascending: op.asc })
+    [strictOp]("display_order", current.display_order)
+    .order("display_order", { ascending: asc })
+    .order("id", { ascending: asc })
     .limit(1);
+  if (strictErr) throw new Error(strictErr.message);
 
-  const neighbor = neighbors?.[0];
+  let neighbor = strictNeighbors?.[0] ?? null;
+
+  // Step 2: if no strict neighbor, fall back to same display_order with id tiebreak.
+  if (!neighbor) {
+    const idOp = direction === "up" ? "lt" : "gt";
+    const { data: tiedNeighbors, error: tiedErr } = await svc
+      .from("clients")
+      .select("id, display_order")
+      .eq("active", current.active)
+      .eq("display_order", current.display_order)
+      [idOp]("id", current.id)
+      .order("id", { ascending: asc })
+      .limit(1);
+    if (tiedErr) throw new Error(tiedErr.message);
+    neighbor = tiedNeighbors?.[0] ?? null;
+  }
+
   if (!neighbor) return; // no-op (top or bottom)
 
-  // Swap: two updates (transaction guaranteed by postgrest request atomicity? No — use RPC or 2 calls)
-  const { error: e1 } = await svc
-    .from("clients")
-    .update({ display_order: neighbor.display_order })
-    .eq("id", current.id);
-  if (e1) throw new Error(e1.message);
-  const { error: e2 } = await svc
-    .from("clients")
-    .update({ display_order: current.display_order })
-    .eq("id", neighbor.id);
-  if (e2) throw new Error(e2.message);
+  // Atomic swap via Postgres RPC (replaces prior 2-UPDATE pattern — Gate 2 fix).
+  const { error: rpcErr } = await svc.rpc("swap_client_display_order", {
+    a_id: current.id,
+    b_id: neighbor.id,
+  });
+  if (rpcErr) throw new Error(rpcErr.message);
 
   await recordAudit({
     action: "reference_reordered",
