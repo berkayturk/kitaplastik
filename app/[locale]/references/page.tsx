@@ -4,6 +4,7 @@ import type { Locale } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo/routes";
 import { ReferenceCard } from "@/components/references/ReferenceCard";
 import { getReferences } from "@/lib/references/data";
+import { safeTranslate } from "@/lib/utils/safe-translate";
 import { env } from "@/lib/env";
 
 interface PageProps {
@@ -55,14 +56,20 @@ export default async function ReferencesPage({ params }: PageProps) {
         <p className="text-text-secondary mt-6">{tPage("empty")}</p>
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {references.map((ref) => (
-            <ReferenceCard
-              key={ref.id}
-              reference={ref}
-              clientName={tClients(`${ref.key}.name`)}
-              sectorLabel={tSectors(SECTOR_NS_KEY[ref.sectorKey])}
-            />
-          ))}
+          {references.map((ref) => {
+            const clientName =
+              ref.displayName?.[locale]?.trim() ||
+              safeTranslate((k) => tClients(k), `${ref.key}.name`) ||
+              ref.key;
+            return (
+              <ReferenceCard
+                key={ref.id}
+                reference={ref}
+                clientName={clientName}
+                sectorLabel={tSectors(SECTOR_NS_KEY[ref.sectorKey])}
+              />
+            );
+          })}
         </div>
       )}
     </section>
