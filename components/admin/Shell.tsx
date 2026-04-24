@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   user: AdminUser;
-  active: "catalog" | "products" | "bildirimler";
+  active: "catalog" | "products" | "sectors" | "references" | "bildirimler";
   children: ReactNode;
 }
 
