@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 
@@ -28,6 +28,7 @@ vi.mock("next-intl/server", () => ({
     const map = store[ns] ?? {};
     return (key: string) => map[key] ?? key;
   }),
+  getLocale: vi.fn(async () => "tr"),
 }));
 
 // i18n navigation mock pattern established in Task 4
@@ -40,19 +41,50 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 vi.mock("@/lib/references/data", () => ({
-  getReferences: async () => [
-    { id: "c1", key: "c1", logoPath: "/references/c1.svg", sectorKey: "camYikama" },
-    { id: "c2", key: "c2", logoPath: "/references/c2.svg", sectorKey: "kapak" },
-    { id: "c3", key: "c3", logoPath: "/references/c3.svg", sectorKey: "tekstil" },
-    { id: "c4", key: "c4", logoPath: "/references/c4.svg", sectorKey: "camYikama" },
-    { id: "c5", key: "c5", logoPath: "/references/c5.svg", sectorKey: "kapak" },
-    { id: "c6", key: "c6", logoPath: "/references/c6.svg", sectorKey: "tekstil" },
-    { id: "c7", key: "c7", logoPath: "/references/c7.svg", sectorKey: "camYikama" },
-    { id: "c8", key: "c8", logoPath: "/references/c8.svg", sectorKey: "kapak" },
-  ],
+  getReferences: vi.fn(async () => [
+    {
+      id: "c1",
+      key: "c1",
+      logoPath: "/references/c1.svg",
+      sectorKey: "camYikama",
+      displayName: null,
+    },
+    { id: "c2", key: "c2", logoPath: "/references/c2.svg", sectorKey: "kapak", displayName: null },
+    {
+      id: "c3",
+      key: "c3",
+      logoPath: "/references/c3.svg",
+      sectorKey: "tekstil",
+      displayName: null,
+    },
+    {
+      id: "c4",
+      key: "c4",
+      logoPath: "/references/c4.svg",
+      sectorKey: "camYikama",
+      displayName: null,
+    },
+    { id: "c5", key: "c5", logoPath: "/references/c5.svg", sectorKey: "kapak", displayName: null },
+    {
+      id: "c6",
+      key: "c6",
+      logoPath: "/references/c6.svg",
+      sectorKey: "tekstil",
+      displayName: null,
+    },
+    {
+      id: "c7",
+      key: "c7",
+      logoPath: "/references/c7.svg",
+      sectorKey: "camYikama",
+      displayName: null,
+    },
+    { id: "c8", key: "c8", logoPath: "/references/c8.svg", sectorKey: "kapak", displayName: null },
+  ]),
 }));
 
 import { ReferencesStrip } from "@/components/home/ReferencesStrip";
+import { getReferences } from "@/lib/references/data";
 
 const messages = {
   home: {
@@ -104,5 +136,80 @@ describe("ReferencesStrip", () => {
     await renderStrip();
     const link = screen.getByRole("link", { name: /Tümü/i });
     expect(link).toHaveAttribute("href", expect.stringContaining("/references"));
+  });
+});
+
+describe("ReferencesStrip — displayName fallback chain", () => {
+  beforeEach(() => {
+    vi.mocked(getReferences).mockResolvedValue([
+      {
+        id: "c1",
+        key: "c1",
+        logoPath: "/references/c1.svg",
+        sectorKey: "camYikama",
+        displayName: { tr: "CUSTOM-Anadolu", en: "CUSTOM-Anadolu" },
+      },
+      {
+        id: "c2",
+        key: "c2",
+        logoPath: "/references/c2.svg",
+        sectorKey: "kapak",
+        displayName: { tr: "CUSTOM-Marmara", en: "CUSTOM-Marmara" },
+      },
+      {
+        id: "c3",
+        key: "c3",
+        logoPath: "/references/c3.svg",
+        sectorKey: "tekstil",
+        displayName: { tr: "CUSTOM-Ege", en: "CUSTOM-Ege" },
+      },
+      {
+        id: "c4",
+        key: "c4",
+        logoPath: "/references/c4.svg",
+        sectorKey: "camYikama",
+        displayName: { tr: "CUSTOM-Bosphorus", en: "CUSTOM-Bosphorus" },
+      },
+      {
+        id: "c5",
+        key: "c5",
+        logoPath: "/references/c5.svg",
+        sectorKey: "kapak",
+        displayName: null,
+      },
+      {
+        id: "c6",
+        key: "c6",
+        logoPath: "/references/c6.svg",
+        sectorKey: "tekstil",
+        displayName: null,
+      },
+      {
+        id: "c7",
+        key: "c7",
+        logoPath: "/references/c7.svg",
+        sectorKey: "camYikama",
+        displayName: null,
+      },
+      {
+        id: "c8",
+        key: "c8",
+        logoPath: "/references/c8.svg",
+        sectorKey: "kapak",
+        displayName: null,
+      },
+    ]);
+  });
+
+  afterEach(() => {
+    vi.mocked(getReferences).mockReset();
+  });
+
+  it("uses displayName when available, falls back to translation otherwise", async () => {
+    await renderStrip();
+    // displayName wins for c1
+    expect(screen.getByRole("img", { name: /CUSTOM-Anadolu/i })).toBeInTheDocument();
+    // translation fallback wins for c5 (displayName is null)
+    expect(screen.getByRole("img", { name: /Nord/i })).toBeInTheDocument();
   });
 });

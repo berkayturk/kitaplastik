@@ -1,12 +1,15 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Container } from "../layout/Container";
 import { getReferences } from "@/lib/references/data";
+import { safeTranslate } from "@/lib/utils/safe-translate";
+import type { Locale } from "@/i18n/routing";
 
 export async function ReferencesStrip() {
   const tHome = await getTranslations("home.references");
   const tClients = await getTranslations("references.clients");
+  const locale = (await getLocale()) as Locale;
   const references = await getReferences();
 
   return (
@@ -39,7 +42,10 @@ export async function ReferencesStrip() {
           className="grid grid-cols-2 items-center gap-x-10 gap-y-8 sm:grid-cols-4 lg:grid-cols-8"
         >
           {references.map((ref) => {
-            const name = tClients(`${ref.key}.name`);
+            const name =
+              ref.displayName?.[locale]?.trim() ||
+              safeTranslate((k) => tClients(k), `${ref.key}.name`) ||
+              ref.key;
             return (
               <li key={ref.id} className="flex items-center justify-center">
                 <Image
