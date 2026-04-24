@@ -20,7 +20,34 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Plan 5c Part 2 — `/admin/settings/company` editör + catalog request analytics dashboard (~3-4 sa). Spec + plan YOK, önce brainstorm + spec + Gate 1.
+**Oturumun hedefi:** Plan 5c Part 3 brainstorm (catalog analytics dashboard — Plausible API + Supabase aggregation) VEYA Plan 5a Faz 4 (CF proxy + DNS-01 + SSL Full strict). CF API token hazırlanmalı Faz 4 için.
+
+---
+
+**Plan 5c Part 2 ✅ CANLIDA (2026-04-24 bu session):**
+- Squash commit: `d7c5f1c feat: Plan 5c Part 2 — DB-backed /admin/settings/company editor (#4)`
+- Main HEAD: `d7c5f1c` (pushed + Coolify deploy ✓ via workflow_dispatch sonrası)
+- Migration `20260424170000_settings_company` — tablo + singleton + RLS (public SELECT + admin INSERT/UPDATE `is_admin_role()`) + RPC `update_company(jsonb)` SECURITY DEFINER + seed
+- `lib/company.ts` static COMPANY → `getCompany()` async + React.cache + test-env fallback
+- Admin editör `/admin/settings/company`: RHF + zod + 4 Card section (native `<form action={serverAction}>` + hidden JSON inputs) + `recordAudit` + `revalidatePath("/", "layout")`
+- 5 consumer async migrate: layout + contact page/API + Footer + WhatsAppButton + WhatsAppFab (client prop drill)
+- Gate 1 Codex: 1 critical + 3 high + 4 medium + 1 low — inline fix
+- Gate 2 Codex: 1 high + 3 medium + 1 low — HIGH (native form) + 2 MEDIUM (field errors, contact API side-effect) inline fix; MEDIUM (unauthorized/invalid FormData E2E) + LOW (TEST_FALLBACK_COMPANY DRY) follow-up
+- 244 unit test yeşil, Tier 3 paralel CI ~3m25s (hedefi tutar)
+- Canlı smoke: /admin/settings/company 307 ✓, /admin/login form ✓, homepage 200 0.7s ✓, footer render ✓
+
+**Tier 3 ✅ CANLIDA (aynı session, squash `1f86229`):**
+- 10 paralel job (lint, typecheck, format, unit-tests, audit, build, e2e-shard-1..3, ci-success)
+- CI wall time ~8dk → **~3m25s** (62% kısalma)
+- Codex Gate 2: approve, no critical/high; LOW DRY/redundant noted
+- Playwright cache key @playwright/test version'a bağlı (pnpm-lock değil)
+
+**Secret rotate durumu:**
+- COOLIFY_TOKEN ✅ rotate (2026-04-24 bu session, `6|InJvZg...` yeni scope=deploy)
+- SUPABASE_ACCESS_TOKEN ⏸ PENDING — user dashboard'dan rotate + `~/.zshenv` update gerek
+- Supabase plugin MCP hâlâ 401 — post-rotate `supabase login` veya env update
+
+---
 
 **Plan 5c Part 1 ✅ CANLIDA (2026-04-24):**
 - Squash commit: `e5030bb feat: Plan 5c Part 1 — sectors edit + references CRUD`
