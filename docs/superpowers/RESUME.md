@@ -4,42 +4,87 @@
 
 ---
 
-## 👉 NEXT SESSION KICKOFF (2026-04-25+)
+## 🛡️ GLOBAL PROTOCOL — Cross-AI Review Gates (ZORUNLU)
 
-**Oturumun hedefi:** Plan 5c Part 1 — `/admin/sectors` CRUD (4-dil tab, görsel upload) (~3-4 saat). Kullanıcıdan 3 yüksek kaliteli sektör görseli gerekli (cam yıkama, kapak, tekstil).
+Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm yeni açılan PR'lar için uygulanır. Detay: `memory/feedback_codex_dual_review_gate.md`.
 
-**Neden şimdi bu:** Plan 5d (next-intl v4 migration) 2026-04-23 ✅ merge'lendi (`41d778a`). GHSA-8f24 advisory kapandı, site v4.9.1 canlıda. Redis defer edildi (YAGNI). Pipeline Tier 2 (Dockerfile) hâlâ deferred — isterse ayrı session'da deep-dive. Plan 5c, admin paneli içerik tarafının eksik parçası.
-
-### Önceki oturum durumu (2026-04-23 devam 5 — Plan 5d tamamlandı)
-- **next-intl v3.26.5 → v4.9.1** ✅ canlıda (`41d778a`): `pnpm audit --prod --audit-level=high` temiz, 202 unit + 66 E2E hepsi yeşil
-- Değişiklikler: `hasLocale` helper v4'ten import (inline guard'lar silindi), `NextIntlClientProvider` artık `messages` inherit eder (prop kaldırıldı, `locale` hâlâ explicit), Vitest config `test.server.deps.inline: ['next-intl']` — ESM-only + `next/navigation` extensionless deopt için
-- **LocaleSwitcher workaround korundu:** v4 Link + `locale` prop root-path davranışı re-probe edilmedi; plain `<a>` sağlam, E2E yeşil, SSR-görünür, no-JS fallback'i korur → dokunulmadı
-- Git HEAD: `41d778a` origin/main sync, working tree clean
-
-### İlk okuman gereken dosyalar (Plan 5c Part 1 için)
-- `app/admin/products/` (mevcut admin CRUD pattern — tab + image upload + draft/publish)
-- `components/admin/products/{LocaleTabs,ProductForm}.tsx` (4-dil tab reusable mi?)
-- `lib/supabase/types.ts` (Supabase `sectors` tablosunu ara — Plan 3'te schema oluşturuldu ama CRUD yok)
-- `supabase/migrations/*` (sectors tablo schema)
-- Memory: `project_kitaplastik.md`, `feedback_supabase_storage_delete.md`, `feedback_subagent_mode.md`, `feedback_next_intl_v4_migration.md`
-
-### Prereq (user)
-
-- **3 yüksek kaliteli sektör görseli** (cam yıkama, kapak, tekstil) — min 1600px width, landscape, production floor veya ürün close-up; admin panelden upload edilecek
-- Görseller yoksa placeholder ile devam edilebilir, gerçek görselleri sonra yükleme flow'u çalışır
+- **Gate 1 — Spec-level:** Brainstorm → spec yaz → self-review → **`/codex-review-spec <path>`** → critical/high inline fix → user review → writing-plans.
+- **Gate 2 — PR-level:** Execution complete → CI yeşil → **`/codex-review-pr`** → critical/high fix + tekrar CI → medium/low PR body'de "Known differences" → merge.
+- **Failure mode:** Codex offline → Review Log/PR body'e "SKIPPED" notu, tech-debt flag, **hard block yok**.
+- **Convergence:** Tek round. User = ikinci insan arbiter.
+- **Retroactive:** Mevcut merge edilmiş specler backfill edilmez.
+- **Slash commands:** `.claude/commands/codex-review-spec.md` + `codex-review-pr.md` (project-level)
+- **PR attribution:** `🔍 Reviewed by: Claude + Codex (GPT-5.4)`
 
 ---
 
-### 🟢 Plan 5c Part 1 — /admin/sectors CRUD (~3-4 saat)
+## 👉 NEXT SESSION KICKOFF (2026-04-24+)
 
-**Hedef:**
-- `/admin/sectors` list + create + edit + delete + reorder (sort_order)
-- 4-dil tab (TR/EN/RU/AR) — ad, kısa açıklama, uzun açıklama, meta alanları
-- 1 hero image + opsiyonel gallery (Supabase Storage, UUID rename, preview)
-- Publish/draft toggle
-- Public `/[locale]/sektorler/*` sayfaları şu an hardcoded content — Plan 5c Part 2'ye entry point: sectors tablosundan fetch edildiğinde hardcoded kaldırılacak
+**Oturumun hedefi:** Plan 5c Part 1 EXECUTION — `/admin/sectors` + `/admin/references` CRUD (28 task, subagent-driven, ~5-6 saat). Spec + Plan hazır, Codex Gate 1 tamam. Sıfırdan kod yazılmaya başlanacak.
 
-**Önce oku:** Bu Plan 4 gibi bir plan dosyası oluşturmakla başlar mı yoksa spec + discuss phase ister mi — kullanıcıya sor. GSD workflow kullanıyorsak `/gsd:plan-phase`; subagent-driven mode ise batch breakdown.
+**Durum özeti (2026-04-23 oturumu sonu, context cleared):**
+- ✅ Brainstorm (5 soru → 5 karar)
+- ✅ Spec yazıldı (`docs/superpowers/specs/2026-04-23-plan5c-part1-sectors-references-crud-design.md`, ~700 satır, 10 bölüm)
+- ✅ Codex Gate 1 review tamamlandı — 4 HIGH + 4 MEDIUM bulgu, hepsi inline fix (spec Review Log'da)
+- ✅ Implementation plan yazıldı (`docs/superpowers/plans/2026-04-23-faz1-plan5c-part1-sectors-references-crud.md`, 3480 satır, 28 task TDD)
+- 🟢 **CROSS-AI REVIEW GATES zorunlu protokol aktif** — memory `feedback_codex_dual_review_gate.md` + RESUME Global Protocol + `.claude/commands/codex-review-{spec,pr}.md` slash commands
+- Git HEAD: `e2f0351` (spec + plan commit'ler local, origin'e push ÖNCE PR zamanı — değiştirme)
+
+### Önceki oturum commit'leri (local, unpushed)
+
+- `6085cb8` docs(spec): Plan 5c Part 1 — sectors + references CRUD + codex review gates
+- `2d6f8e5` docs(spec): Plan 5c Part 1 — codex gate 1 findings applied (HIGH×4 + MEDIUM×4)
+- `e2f0351` docs(plan): Plan 5c Part 1 — sectors + references CRUD (28 tasks, TDD)
+
+### Plan 5c Part 1 kapsam özeti
+
+**`/admin/sectors`** — edit-only (3 sabit sektör, create/delete YOK). 4-dil tab ad + kısa açıklama + uzun açıklama + meta_title + meta_description + hero image + display_order + active.
+
+**`/admin/references`** — full CRUD. 4-dil `display_name` + logo upload (yeni `client-logos` bucket) + sector dropdown (yeni `sector_id` FK) + arrow reorder + soft-delete + restore.
+
+**Schema:** sectors 4 yeni kolon, clients 2 yeni kolon (`display_name` + `sector_id`), `sector_key` DROP değil (dual-write).
+
+**Public UI (H1 fix):** `ReferencesStrip` + `ReferenceCard` + `/[locale]/references/page.tsx` — `display_name[locale] ?? safeTranslate(key+'.name') ?? key` fallback chain. Admin-created ref'ler public'te görünsün.
+
+**Migration safety (H3):** Dual-read pattern — legacy `/references/*.svg` + storage path birlikte destekli kod önce deploy, sonra logo migration script.
+
+**Route mapping (H2):** DB slug (TR) `cam-yikama` → canonical EN `bottle-washing` (`lib/admin/sector-route-mapping.ts`). revalidatePath + E2E canonical EN kullanır.
+
+**Bucket hardening (H4):** `client-logos` + `sector-images` — `file_size_limit` + `allowed_mime_types` Plan 4b pattern'ı.
+
+### Execution planı (subagent-driven-development)
+
+Plan file: `docs/superpowers/plans/2026-04-23-faz1-plan5c-part1-sectors-references-crud.md` (28 task, dependency map plan sonunda)
+
+Dispatch order:
+- **Wave 1 (paralel):** T1-T5 foundation (safeTranslate, sector-route-mapping, sector-key-mapping, zod schemas × 2)
+- **Wave 2 (blocker):** T6 migration — sectors 4 cols + clients 2 cols + bucket hardening + data migration + TypeScript types regen
+- **Wave 3 (paralel):** T7 logo script + T8 lib/references dual-read + T12-T13 admin lib helpers
+- **Wave 4 (paralel):** T9-T11 public components (ReferencesStrip/ReferenceCard/references page fallback chain)
+- **Wave 5 (paralel):** T14-T15 server actions (sectors + references full CRUD + reorder)
+- **Wave 6 (paralel batch):** T16-T25 admin components + pages (SectorHeroField, SectorForm, SectorList, LogoField, SectorSelect, ReferenceForm, ReferenceList, + 5 page.tsx)
+- **Wave 7:** T26 Shell nav update
+- **Wave 8:** T27 E2E specs
+- **Wave 9 (user-in-the-loop):** T28 deploy — PR + Gate 2 Codex review + merge + Phase B logo migration + canlı smoke + RESUME/memory update
+
+Pragmatic tiering (`feedback_subagent_mode.md`):
+- Mekanik (T1-T5, T16, T20, T26): combined review (implementer + controller self-review)
+- Medium (T8, T9-T11, T12-T13, T17-T25): combined review (implementer + one reviewer subagent)
+- Logic-heavy (T6 migration, T14-T15 actions, T20 LogoField M4 validation, T27 E2E): full 3-stage review
+
+### Prereq (user)
+
+- **3 yüksek kaliteli sektör görseli** (cam yıkama, kapak, tekstil) — min 1600px width, landscape; admin panelden upload edilecek
+- Görseller yoksa placeholder ile devam edilebilir — gerçek görselleri sonradan yükleme flow'u çalışır, migration değil
+
+### İlk okuman gereken dosyalar
+
+Sıra önemli:
+1. `docs/superpowers/specs/2026-04-23-plan5c-part1-sectors-references-crud-design.md` — spec (Review Log dahil)
+2. `docs/superpowers/plans/2026-04-23-faz1-plan5c-part1-sectors-references-crud.md` — plan (dependency map sonunda)
+3. `app/admin/products/` — referans pattern (aynı pattern'ın genişletilmiş hali)
+4. `components/admin/products/{LocaleTabs,ProductForm,ImageUploader}.tsx` — neyi reuse, neyi yeni wrapper'la yazacağını gör
+5. Memory: `feedback_subagent_mode.md`, `feedback_codex_dual_review_gate.md`, `feedback_supabase_storage_delete.md`, `feedback_verify_before_push.md`, `feedback_turkish_regex.md`, `feedback_local_ci_e2e_parity.md`
 
 ---
 
@@ -53,7 +98,7 @@
 - **Plan 5a Faz 3** (maddi hazır sonrası): GWS email
 - **uuid moderate advisory** (opsiyonel): resend@6 → svix → uuid@10 transitive; resend major upgrade gerekebilir
 
-**İlk sorusu:** "Plan 5c Part 1 — /admin/sectors CRUD'a başlayalım mı? 3 yüksek kaliteli sektör görseli hazırsa flash drop + upload akışını test edebiliriz; yoksa placeholder akışla başlayıp görselleri sonradan koyabiliriz. GSD workflow mı subagent-driven mi ilerleyelim?"
+**İlk sorusu:** "Plan 5c Part 1 spec + plan 2026-04-23'te hazırlandı, Codex Gate 1 tamam. 28 task, subagent-driven execution'a başlıyorum. İlk wave T1-T5 foundation paralel dispatch'liyor. 3 sektör görseli hazır mı yoksa placeholder'la mı başlayalım?"
 
 ---
 

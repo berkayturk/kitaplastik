@@ -87,35 +87,76 @@ export type Database = {
         };
         Relationships: [];
       };
+      catalog_requests: {
+        Row: {
+          created_at: string;
+          email: string;
+          id: string;
+          ip_address: unknown;
+          locale: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          email: string;
+          id?: string;
+          ip_address?: unknown;
+          locale: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          email?: string;
+          id?: string;
+          ip_address?: unknown;
+          locale?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [];
+      };
       clients: {
         Row: {
           active: boolean;
           created_at: string;
+          display_name: Json | null;
           display_order: number;
           id: string;
           key: string;
           logo_path: string;
+          sector_id: string | null;
           sector_key: string;
         };
         Insert: {
           active?: boolean;
           created_at?: string;
+          display_name?: Json | null;
           display_order?: number;
           id?: string;
           key: string;
           logo_path: string;
+          sector_id?: string | null;
           sector_key: string;
         };
         Update: {
           active?: boolean;
           created_at?: string;
+          display_name?: Json | null;
           display_order?: number;
           id?: string;
           key?: string;
           logo_path?: string;
+          sector_id?: string | null;
           sector_key?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "clients_sector_id_fkey";
+            columns: ["sector_id"];
+            isOneToOne: false;
+            referencedRelation: "sectors";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       notification_recipients: {
         Row: {
@@ -197,54 +238,6 @@ export type Database = {
           },
         ];
       };
-      rfqs: {
-        Row: {
-          assigned_to: string | null;
-          attachments: Json;
-          contact: Json;
-          created_at: string;
-          id: string;
-          internal_notes: string | null;
-          ip_address: unknown;
-          locale: string;
-          payload: Json;
-          status: Database["public"]["Enums"]["rfq_status"];
-          type: Database["public"]["Enums"]["rfq_type"];
-          updated_at: string;
-          user_agent: string | null;
-        };
-        Insert: {
-          assigned_to?: string | null;
-          attachments?: Json;
-          contact: Json;
-          created_at?: string;
-          id?: string;
-          internal_notes?: string | null;
-          ip_address?: unknown;
-          locale: string;
-          payload: Json;
-          status?: Database["public"]["Enums"]["rfq_status"];
-          type: Database["public"]["Enums"]["rfq_type"];
-          updated_at?: string;
-          user_agent?: string | null;
-        };
-        Update: {
-          assigned_to?: string | null;
-          attachments?: Json;
-          contact?: Json;
-          created_at?: string;
-          id?: string;
-          internal_notes?: string | null;
-          ip_address?: unknown;
-          locale?: string;
-          payload?: Json;
-          status?: Database["public"]["Enums"]["rfq_status"];
-          type?: Database["public"]["Enums"]["rfq_type"];
-          updated_at?: string;
-          user_agent?: string | null;
-        };
-        Relationships: [];
-      };
       sectors: {
         Row: {
           active: boolean;
@@ -252,7 +245,11 @@ export type Database = {
           description: Json | null;
           display_order: number;
           hero_color: string | null;
+          hero_image: Json | null;
           id: string;
+          long_description: Json | null;
+          meta_description: Json | null;
+          meta_title: Json | null;
           name: Json;
           slug: string;
           updated_at: string;
@@ -263,7 +260,11 @@ export type Database = {
           description?: Json | null;
           display_order?: number;
           hero_color?: string | null;
+          hero_image?: Json | null;
           id?: string;
+          long_description?: Json | null;
+          meta_description?: Json | null;
+          meta_title?: Json | null;
           name: Json;
           slug: string;
           updated_at?: string;
@@ -274,7 +275,11 @@ export type Database = {
           description?: Json | null;
           display_order?: number;
           hero_color?: string | null;
+          hero_image?: Json | null;
           id?: string;
+          long_description?: Json | null;
+          meta_description?: Json | null;
+          meta_title?: Json | null;
           name?: Json;
           slug?: string;
           updated_at?: string;
@@ -286,8 +291,14 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      is_admin: { Args: { uid: string }; Returns: boolean };
-      is_admin_role: { Args: { uid: string }; Returns: boolean };
+      is_admin: { Args: never; Returns: boolean } | { Args: { uid: string }; Returns: boolean };
+      is_admin_role:
+        | { Args: never; Returns: boolean }
+        | { Args: { uid: string }; Returns: boolean };
+      swap_client_display_order: {
+        Args: { a_id: string; b_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       admin_role: "admin" | "sales" | "viewer";

@@ -1,9 +1,11 @@
+import type { Locale } from "@/i18n/routing";
+
 export type SectorKey = "camYikama" | "kapak" | "tekstil";
 
 export interface Reference {
   id: string;
-  /** i18n key — messages/*\/references.json.clients.{key} */
   key: string;
-  logoPath: string;
+  logoPath: string; // public URL (dual-read resolved)
   sectorKey: SectorKey;
+  displayName: Partial<Record<Locale, string>> | null; // NEW — H1 fix
 }
