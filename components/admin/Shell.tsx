@@ -36,6 +36,12 @@ export function Shell({ user, active, children }: Props) {
             <NavLink href="/admin/products" active={active === "products"}>
               Ürünler
             </NavLink>
+            <NavLink href="/admin/sectors" active={active === "sectors"}>
+              Sektörler
+            </NavLink>
+            <NavLink href="/admin/references" active={active === "references"}>
+              Referanslar
+            </NavLink>
             <NavLink href="/admin/settings/notifications" active={active === "bildirimler"}>
               Bildirim Alıcıları
             </NavLink>
