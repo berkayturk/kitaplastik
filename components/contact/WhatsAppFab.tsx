@@ -1,15 +1,18 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { COMPANY } from "@/lib/company";
 import { cn } from "@/lib/utils";
 import { WhatsAppGlyph } from "./WhatsAppButton";
 
-export function WhatsAppFab() {
+interface WhatsAppFabProps {
+  wa: string;
+}
+
+export function WhatsAppFab({ wa }: WhatsAppFabProps) {
   const t = useTranslations("pages.contact.whatsapp");
   const locale = useLocale();
   const isRtl = locale === "ar";
-  const href = `https://wa.me/${COMPANY.whatsapp.wa}?text=${encodeURIComponent(t("prefill"))}`;
+  const href = `https://wa.me/${wa}?text=${encodeURIComponent(t("prefill"))}`;
 
   return (
     <a
