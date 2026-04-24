@@ -13,18 +13,21 @@ describe("references data (supabase-backed)", () => {
         from: () => ({
           select: () => ({
             eq: () => ({
-              order: () =>
-                Promise.resolve({
-                  data: [
-                    {
-                      id: "1",
-                      key: "c1",
-                      logo_path: "/references/c1.svg",
-                      sector_key: "camYikama",
-                    },
-                  ],
-                  error: null,
-                }),
+              order: () => ({
+                order: () =>
+                  Promise.resolve({
+                    data: [
+                      {
+                        id: "1",
+                        key: "c1",
+                        logo_path: "/references/c1.svg",
+                        sector_key: "camYikama",
+                        display_name: null,
+                      },
+                    ],
+                    error: null,
+                  }),
+              }),
             }),
           }),
         }),
@@ -37,6 +40,7 @@ describe("references data (supabase-backed)", () => {
       key: "c1",
       logoPath: "/references/c1.svg",
       sectorKey: "camYikama",
+      displayName: null,
     });
   });
 
@@ -46,7 +50,9 @@ describe("references data (supabase-backed)", () => {
         from: () => ({
           select: () => ({
             eq: () => ({
-              order: () => Promise.resolve({ data: null, error: { message: "x" } }),
+              order: () => ({
+                order: () => Promise.resolve({ data: null, error: { message: "x" } }),
+              }),
             }),
           }),
         }),
@@ -62,19 +68,28 @@ describe("references data (supabase-backed)", () => {
         from: () => ({
           select: () => ({
             eq: () => ({
-              order: () =>
-                Promise.resolve({
-                  data: [
-                    {
-                      id: "1",
-                      key: "c1",
-                      logo_path: "/references/c1.svg",
-                      sector_key: "camYikama",
-                    },
-                    { id: "2", key: "c2", logo_path: "/references/c2.svg", sector_key: "kapak" },
-                  ],
-                  error: null,
-                }),
+              order: () => ({
+                order: () =>
+                  Promise.resolve({
+                    data: [
+                      {
+                        id: "1",
+                        key: "c1",
+                        logo_path: "/references/c1.svg",
+                        sector_key: "camYikama",
+                        display_name: null,
+                      },
+                      {
+                        id: "2",
+                        key: "c2",
+                        logo_path: "/references/c2.svg",
+                        sector_key: "kapak",
+                        display_name: null,
+                      },
+                    ],
+                    error: null,
+                  }),
+              }),
             }),
           }),
         }),
