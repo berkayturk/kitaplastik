@@ -4,7 +4,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
-import { COMPANY } from "@/lib/company";
+import { getCompany } from "@/lib/company";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { TelegramGlyph, WhatsAppGlyph } from "@/components/contact/WhatsAppButton";
 import { ClockIcon, EnvelopeIcon, MapPinIcon, PhoneIcon } from "@/components/contact/ContactIcons";
@@ -54,9 +54,10 @@ export default async function IletisimPage({ params }: PageProps) {
   const t = await getTranslations("pages.contact");
   const tWa = await getTranslations("pages.contact.whatsapp");
   const tTg = await getTranslations("pages.contact.telegram");
+  const company = await getCompany();
 
-  const whatsappUrl = `https://wa.me/${COMPANY.whatsapp.wa}?text=${encodeURIComponent(tWa("prefill"))}`;
-  const telegramUrl = `https://t.me/${COMPANY.telegram.handle}?text=${encodeURIComponent(tTg("prefill"))}`;
+  const whatsappUrl = `https://wa.me/${company.whatsapp.wa}?text=${encodeURIComponent(tWa("prefill"))}`;
+  const telegramUrl = `https://t.me/${company.telegram.handle}?text=${encodeURIComponent(tTg("prefill"))}`;
 
   const infoRows: ReadonlyArray<InfoRowData> = [
     {
@@ -64,7 +65,7 @@ export default async function IletisimPage({ params }: PageProps) {
       value: t("details.address"),
       icon: <MapPinIcon className="h-4 w-4" />,
       tint: "red",
-      href: COMPANY.address.maps,
+      href: company.address.maps,
       external: true,
     },
     {
@@ -74,29 +75,29 @@ export default async function IletisimPage({ params }: PageProps) {
       value: (
         <>
           <a
-            href={`tel:${COMPANY.phone.tel}`}
-            aria-label={`${t("details.phoneLabel")} ${COMPANY.phone.display}`}
+            href={`tel:${company.phone.tel}`}
+            aria-label={`${t("details.phoneLabel")} ${company.phone.display}`}
             className="hover:underline"
           >
-            {COMPANY.phone.display}
+            {company.phone.display}
           </a>
           <span className="text-text-secondary/60 mx-1.5">/</span>
           <a
-            href={`tel:${COMPANY.cellPhone.tel}`}
-            aria-label={`${t("details.cellPhoneLabel")} ${COMPANY.cellPhone.display}`}
+            href={`tel:${company.cellPhone.tel}`}
+            aria-label={`${t("details.cellPhoneLabel")} ${company.cellPhone.display}`}
             className="hover:underline"
           >
-            {COMPANY.cellPhone.display}
+            {company.cellPhone.display}
           </a>
         </>
       ),
     },
     {
       label: t("details.emailLabel"),
-      value: COMPANY.email.primary,
+      value: company.email.primary,
       icon: <EnvelopeIcon className="h-4 w-4" />,
       tint: "blue",
-      href: `mailto:${COMPANY.email.primary}`,
+      href: `mailto:${company.email.primary}`,
     },
     {
       label: t("details.hoursLabel"),

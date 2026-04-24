@@ -8,7 +8,6 @@ import { serverEnv } from "@/lib/env";
 import { renderContactTeamEmail } from "@/lib/email/templates/contact-team";
 import { renderContactCustomerEmail } from "@/lib/email/templates/contact-customer";
 import { recordAudit } from "@/lib/audit";
-import { COMPANY } from "@/lib/company";
 
 export const runtime = "nodejs";
 
@@ -98,5 +97,5 @@ export async function POST(request: NextRequest) {
     diff: { subject: input.subject, locale: input.locale, company: input.company || null },
   });
 
-  return NextResponse.json({ ok: true, recipient: COMPANY.email.primary });
+  return NextResponse.json({ ok: true, recipient: serverEnv.RESEND_TEAM_EMAIL });
 }

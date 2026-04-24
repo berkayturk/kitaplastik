@@ -12,6 +12,28 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 import { Footer } from "@/components/layout/Footer";
+import type { Company } from "@/lib/admin/schemas/company";
+
+const TEST_COMPANY: Company = {
+  legalName: "Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.",
+  brandName: "Kıta Plastik",
+  shortName: "KITA",
+  founded: 1989,
+  address: {
+    street: "Eski Gemlik Yolu Kadem Sk. No: 37-40",
+    district: "Osmangazi",
+    city: "Bursa",
+    countryCode: "TR",
+    maps: "https://www.google.com/maps/search/?api=1&query=test",
+  },
+  phone: { display: "+90 224 216 16 94", tel: "+902242161694" },
+  cellPhone: { display: "+90 532 237 13 24", tel: "+905322371324" },
+  fax: { display: "+90 224 215 05 25" },
+  email: { primary: "info@kitaplastik.com", secondary: "kitaplastik@hotmail.com" },
+  whatsapp: { display: "+90 224 216 16 94", wa: "905322371324" },
+  telegram: { handle: "kitaplastik", display: "@kitaplastik" },
+  web: { primary: "https://www.kitaplastik.com", alt: "https://www.kitaplastik.com.tr" },
+};
 
 const messages = {
   common: {
@@ -46,7 +68,7 @@ const messages = {
 function renderFooter(locale: "tr" | "en" | "ru" | "ar" = "tr") {
   return render(
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <Footer />
+      <Footer company={TEST_COMPANY} />
     </NextIntlClientProvider>,
   );
 }

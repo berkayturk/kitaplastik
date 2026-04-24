@@ -1,14 +1,14 @@
 import { useTranslations } from "next-intl";
-import { COMPANY } from "@/lib/company";
 import { cn } from "@/lib/utils";
 
 interface WhatsAppButtonProps {
+  wa: string;
   className?: string;
 }
 
-export function WhatsAppButton({ className }: WhatsAppButtonProps) {
+export function WhatsAppButton({ wa, className }: WhatsAppButtonProps) {
   const t = useTranslations("pages.contact.whatsapp");
-  const href = `https://wa.me/${COMPANY.whatsapp.wa}?text=${encodeURIComponent(t("prefill"))}`;
+  const href = `https://wa.me/${wa}?text=${encodeURIComponent(t("prefill"))}`;
 
   return (
     <a

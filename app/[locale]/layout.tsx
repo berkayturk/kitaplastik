@@ -12,6 +12,7 @@ import { getDir } from "@/lib/rtl";
 import { cn } from "@/lib/utils";
 import { fraunces, hankenGrotesk, jetbrainsMono } from "@/lib/fonts";
 import { PlausibleScript } from "@/components/PlausibleScript";
+import { getCompany } from "@/lib/company";
 import "@fontsource-variable/noto-sans-arabic/wght.css";
 import "@/app/globals.css";
 
@@ -49,6 +50,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   setRequestLocale(locale);
   const dir = getDir(locale);
+  const company = await getCompany();
 
   return (
     <html
@@ -64,8 +66,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <NextIntlClientProvider locale={locale}>
           <Header />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-          <Footer />
-          <WhatsAppFab />
+          <Footer company={company} />
+          <WhatsAppFab wa={company.whatsapp.wa} />
         </NextIntlClientProvider>
       </body>
     </html>

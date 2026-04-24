@@ -3,9 +3,13 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "./Container";
 import { KitaLogo } from "./KitaLogo";
-import { COMPANY } from "@/lib/company";
+import type { Company } from "@/lib/company";
 
-export function Footer() {
+interface FooterProps {
+  company: Company;
+}
+
+export function Footer({ company }: FooterProps) {
   const tCommon = useTranslations("common");
   const tNav = useTranslations("nav");
   const tFooter = useTranslations("common.footer");
@@ -23,11 +27,11 @@ export function Footer() {
                 {tFooter("since")}
               </p>
               <p className="mt-3">{tFooter("legalName")}</p>
-              <p>{COMPANY.address.city}</p>
+              <p>{company.address.city}</p>
             </address>
             <div className="space-y-1 font-mono text-[13px] text-[rgba(250,250,247,0.75)]">
-              <p>{COMPANY.phone.display}</p>
-              <p>{COMPANY.email.primary}</p>
+              <p>{company.phone.display}</p>
+              <p>{company.email.primary}</p>
             </div>
           </div>
 

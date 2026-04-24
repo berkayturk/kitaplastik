@@ -33,6 +33,31 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
+// getCompany pulls lib/supabase/server.ts → lib/env.ts which validates env vars at import time;
+// stub it with a deterministic fixture so the locale-layout unit test remains env-independent.
+vi.mock("@/lib/company", () => ({
+  getCompany: vi.fn(async () => ({
+    legalName: "Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.",
+    brandName: "Kıta Plastik",
+    shortName: "KITA",
+    founded: 1989,
+    address: {
+      street: "Eski Gemlik Yolu Kadem Sk. No: 37-40",
+      district: "Osmangazi",
+      city: "Bursa",
+      countryCode: "TR",
+      maps: "https://www.google.com/maps/search/?api=1&query=test",
+    },
+    phone: { display: "+90 224 216 16 94", tel: "+902242161694" },
+    cellPhone: { display: "+90 532 237 13 24", tel: "+905322371324" },
+    fax: { display: "+90 224 215 05 25" },
+    email: { primary: "info@kitaplastik.com", secondary: "kitaplastik@hotmail.com" },
+    whatsapp: { display: "+90 224 216 16 94", wa: "905322371324" },
+    telegram: { handle: "kitaplastik", display: "@kitaplastik" },
+    web: { primary: "https://www.kitaplastik.com", alt: "https://www.kitaplastik.com.tr" },
+  })),
+}));
+
 // next-intl's navigation wrappers rely on a Next.js runtime; stub them so that
 // Header/Footer/LocaleSwitcher render as plain links under Vitest.
 vi.mock("@/i18n/navigation", async () => {
