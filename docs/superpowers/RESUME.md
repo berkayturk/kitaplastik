@@ -20,50 +20,50 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Plan 5b MVP — **PR A: Data minimization + 30-gün auto-delete (~90 dk).** A yolu kararı 2026-04-25 mini-session'da alındı: hukuk müşaviri olmadan KVKK pragmatik uyum (data minimization + template aydınlatma metni + cookie consent banner GEREKSİZ keşif edildi). PR B (Legal pages 4 dil ~2-3 sa) sonraki oturuma.
+**Oturumun hedefi:** Plan 5b MVP — **PR B: Legal pages 4 dil (~2-3 sa).** PR A ✅ canlıda + DB migration uygulandı 2026-04-25; KVKK aydınlatma + çerez politikası sayfaları kalan iş.
 
-### PR A scope (bu oturum)
+### PR B scope (sonraki oturum)
 
-**Hedef:** `catalog_requests` tablosunda `ip_address` + `user_agent` kolonlarını drop et, eski satırları amnesia, 30-gün otomatik silme cron'u kur, API/admin code paths'larını güncelle.
+**Hedef:** TR canonical KVKK aydınlatma + çerez politikası, EN/RU/AR çevirileri, footer + form altı inline link.
 
-**Code targets:**
-- `app/api/catalog/route.ts:73-74` — `ip_address` + `user_agent` insert payload'dan kaldır (rate-limit için ip hâlâ kullanılır, sadece DB'ye yazılmaz)
-- `app/admin/catalog-requests/page.tsx` — IP kolonu UI + interface kaldır
-- `lib/supabase/types.ts` — catalog_requests row type manual patch (SUPABASE 401 — gen-types yapamayız)
-- Migration `supabase/migrations/2026XXXX_catalog_requests_data_min.sql`:
-  - Eski rows amnesia: `update catalog_requests set ip_address = null, user_agent = null;`
-  - Drop kolon: `alter table public.catalog_requests drop column ip_address; drop column user_agent;`
-  - pg_cron deneyelim: `create extension if not exists pg_cron; select cron.schedule('catalog_requests_30day_cleanup', '0 3 * * *', $$ delete from public.catalog_requests where created_at < now() - interval '30 days' $$);`
-  - Fallback (pg_cron Free Tier'da yoksa): GHA workflow `.github/workflows/catalog-cleanup.yml` daily cron + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` GHA secrets
-- Test: `tests/unit/app/api/catalog/route.test.ts` — POST payload assertion ip/ua absent
-- Verify (`pnpm verify`) + commit feature branch → PR → **Gate 2 Codex review** (`codex-rescue` subagent ile, memory `feedback_codex_dual_review_gate.md`) → critical/high inline fix → re-CI → merge → deploy → smoke
+- Plan dosyası `docs/superpowers/plans/2026-04-25-plan5b-mvp-legal.md` (kısa, spec yazılmadı; Plan 5b A yolu session file = implicit spec)
+- TR canonical content (KVKK Resmi Rehber adapt) → EN/RU/AR çeviri (terminoloji tutarlılığı önemli)
+- Routes `/[locale]/legal/privacy` + `/[locale]/legal/cookies` + pathnames config (TR `/yasal/gizlilik` + `/yasal/cerezler`, RU/AR slugify)
+- Footer link + form altı inline link + "hukuk müşaviri review değildir" disclaimer
+- E2E smoke: 4 locale × 2 page = 8 smoke
+- "Veri minimizasyonu" iddiasını PR A canlı state'iyle eşleştir (sadece `email + locale + created_at` saklanır + 30 gün sonra silinir)
+- Verify + PR + Gate 2 Codex review + merge
 
-**Migration apply:** SUPABASE 401 nedeniyle user Studio SQL Editor'dan tek-tıkla apply edecek. Veya SUPABASE_ACCESS_TOKEN rotate (~5 dk user dashboard) + `supabase db push`.
-
-**Kalite gates:**
-- TDD: önce test yaz (RED → GREEN), sonra implementation
-- pnpm verify before push (memory `feedback_verify_before_push.md`)
-- Codex Gate 2 PR-level review zorunlu
-- Implementer: Claude tek başına (subagent dispatch yok, scope küçük)
-
-### Cookie envanteri (PR B için — bu oturum gerekmez)
-
-`NEXT_LOCALE` + Turnstile = strict-necessary; Plausible cookieless; Sentry no-cookie; CF NEL altyapı. **Cookie banner gereksiz.** Plan 5a Faz 3 (GWS) deferred ama `info@kitaplastik.com` için CF Email Routing forward'u bir alternatif (yarım saat).
-
-### Şirket bilgileri (PR B için — bu oturum gerekmez)
-
+**Şirket bilgileri (PR B'de embed):**
 - Tüzel ünvan: Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.
 - Adres: Küçükbalıklı, 2. Kadem Sk. No:40, 16250 Osmangazi/Bursa
-- VERBIS: yok / DPO: yok / Vergi-sicil: TBD placeholder
+- VERBIS: yok / DPO: yok / Vergi-sicil: TBD placeholder (user dolduracak)
 - KVKK email: info@kitaplastik.com
 
-### Plan 5c Part 3 ❌ CANCELLED
-
-YAGNI — `/admin/catalog-requests` liste yeter, `catalog_requests` tablosunda sector kolonu yok, Plausible CE kendi dashboard'ı zaten canlı.
+**Cookie envanteri (PR B referansı):**
+`NEXT_LOCALE` + Turnstile = strict-necessary; Plausible cookieless; Sentry no-cookie; CF NEL altyapı. **Cookie banner gereksiz.**
 
 ### Tier 2 Dockerfile retry — opsiyonel/defer geçerli
 
-Prod stabil Nixpacks, runtime impact yok. PR A + PR B sonrası gündeme alınabilir.
+Prod stabil Nixpacks, runtime impact yok. PR B sonrası gündeme alınabilir.
+
+---
+
+## Plan 5b PR A ✅ CANLIDA (2026-04-25 bu oturum)
+
+- Squash commit: `1958e7b feat(catalog): Plan 5b PR A — data minimization for catalog_requests (#6)` (CI ✓ + Deploy ✓)
+- DB migration **uygulandı** Supabase plugin MCP ile (Studio-manual bypass) — `enable_pg_cron_extension` + `catalog_requests_data_min`
+- Yeni `catalog_requests` schema: `(id, email, locale, created_at)` — `ip_address` + `user_agent` drop edildi, eski rows amnesia
+- pg_cron job `catalog_requests_purge_30d` active=true, schedule=`0 3 * * *` (her gün 03:00 UTC, >30 gün satırları siler)
+- API route + admin page + types.ts uyumlu (typed, `as any` cast'lerden temizlendi)
+- audit_log için `action='catalog_requested'` IP de null geçer artık (admin action audit'leri etkilenmez)
+- Yeni unit test: `tests/unit/app/api/catalog/route.test.ts` — 2 contract assertion (insert payload + audit ip:null)
+- Codex Gate 2: approve · 0 critical · 0 high · 2 low (admin UI rollout pencere notu + types.ts regen drift uyarısı, ikisi PR body'de "Known differences")
+- Hijyen: `.prettierignore` `.claude/` ignore (committed `commands/` whitelist) — local verify == CI verify
+
+**Out of scope follow-up'lar (PR A body'sinde flagged):**
+- `app/api/contact/route.ts` aynı IP-in-audit-log + IP-in-team-email pattern'ini taşıyor; ayrı PR konusu
+- `lib/supabase/types.ts` manual patch — sonraki `supabase gen types typescript --linked` regen ile remote schema doğrudan eşleşmeli (artık hizalı; regen safe)
 
 ---
 
@@ -73,7 +73,9 @@ Prod stabil Nixpacks, runtime impact yok. PR A + PR B sonrası gündeme alınabi
 - Wildcard Let's Encrypt cert (`*.kitaplastik.com` SAN) — DNS-01 ile alınmış, expiry 19 Jul 2026
 - SSL Labs A+ — 4/4 endpoint READY (2× IPv4 + 2× IPv6, cached query)
 - Coolify Traefik `/data/coolify/proxy/.env` `CF_DNS_API_TOKEN` setli + container env pickup OK
-- **Önceki RESUME note "Faz 4 yapılmadı" YANLIŞ bilgiymiş — memory description doğru bilgiyi taşıyordu.** Bu ihlal `feedback_trust_auto_memory.md` feedback'ini pekiştirir: RESUME ↔ memory çelişirse **memory kazanır**, gerekirse curl/cert state ile cross-check.
+- Önceki RESUME note "Faz 4 yapılmadı" YANLIŞ bilgiymiş — memory description doğru bilgiyi taşıyordu (feedback_resume_vs_memory_infra.md).
+
+---
 
 ---
 
