@@ -20,7 +20,17 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Plan 5c Part 3 brainstorm (catalog analytics dashboard — Plausible API + Supabase aggregation) VEYA Plan 5a Faz 4 (CF proxy + DNS-01 + SSL Full strict). CF API token hazırlanmalı Faz 4 için.
+**Oturumun hedefi:** Aktif teknik borç YOK. Plan 5c Part 3 brainstorm (catalog analytics dashboard — Plausible API + Supabase aggregation) veya yeni feature/iş. Tier 2 Dockerfile retry hâlâ opsiyonel/riskli — prod stabil (Nixpacks), runtime impact yok, defer kararı geçerli.
+
+---
+
+**Plan 5a Faz 4 ✅ CANLIDA (zaten tamamlanmıştı, 2026-04-25 mini-session ile doğrulandı):**
+- DNS proxy orange (`@` + `www`) — CF dashboard "4 days ago"
+- SSL/TLS Full (strict) — CF dashboard "2 days ago"
+- Wildcard Let's Encrypt cert (`*.kitaplastik.com` SAN) — DNS-01 ile alınmış, expiry 19 Jul 2026
+- SSL Labs A+ — 4/4 endpoint READY (2× IPv4 + 2× IPv6, cached query)
+- Coolify Traefik `/data/coolify/proxy/.env` `CF_DNS_API_TOKEN` setli + container env pickup OK
+- **Önceki RESUME note "Faz 4 yapılmadı" YANLIŞ bilgiymiş — memory description doğru bilgiyi taşıyordu.** Bu ihlal `feedback_trust_auto_memory.md` feedback'ini pekiştirir: RESUME ↔ memory çelişirse **memory kazanır**, gerekirse curl/cert state ile cross-check.
 
 ---
 
