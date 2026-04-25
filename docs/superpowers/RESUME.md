@@ -20,7 +20,50 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-25+)
 
-**Oturumun hedefi:** Aktif teknik borç YOK. Plan 5c Part 3 brainstorm (catalog analytics dashboard — Plausible API + Supabase aggregation) veya yeni feature/iş. Tier 2 Dockerfile retry hâlâ opsiyonel/riskli — prod stabil (Nixpacks), runtime impact yok, defer kararı geçerli.
+**Oturumun hedefi:** Plan 5b MVP — **PR A: Data minimization + 30-gün auto-delete (~90 dk).** A yolu kararı 2026-04-25 mini-session'da alındı: hukuk müşaviri olmadan KVKK pragmatik uyum (data minimization + template aydınlatma metni + cookie consent banner GEREKSİZ keşif edildi). PR B (Legal pages 4 dil ~2-3 sa) sonraki oturuma.
+
+### PR A scope (bu oturum)
+
+**Hedef:** `catalog_requests` tablosunda `ip_address` + `user_agent` kolonlarını drop et, eski satırları amnesia, 30-gün otomatik silme cron'u kur, API/admin code paths'larını güncelle.
+
+**Code targets:**
+- `app/api/catalog/route.ts:73-74` — `ip_address` + `user_agent` insert payload'dan kaldır (rate-limit için ip hâlâ kullanılır, sadece DB'ye yazılmaz)
+- `app/admin/catalog-requests/page.tsx` — IP kolonu UI + interface kaldır
+- `lib/supabase/types.ts` — catalog_requests row type manual patch (SUPABASE 401 — gen-types yapamayız)
+- Migration `supabase/migrations/2026XXXX_catalog_requests_data_min.sql`:
+  - Eski rows amnesia: `update catalog_requests set ip_address = null, user_agent = null;`
+  - Drop kolon: `alter table public.catalog_requests drop column ip_address; drop column user_agent;`
+  - pg_cron deneyelim: `create extension if not exists pg_cron; select cron.schedule('catalog_requests_30day_cleanup', '0 3 * * *', $$ delete from public.catalog_requests where created_at < now() - interval '30 days' $$);`
+  - Fallback (pg_cron Free Tier'da yoksa): GHA workflow `.github/workflows/catalog-cleanup.yml` daily cron + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` GHA secrets
+- Test: `tests/unit/app/api/catalog/route.test.ts` — POST payload assertion ip/ua absent
+- Verify (`pnpm verify`) + commit feature branch → PR → **Gate 2 Codex review** (`codex-rescue` subagent ile, memory `feedback_codex_dual_review_gate.md`) → critical/high inline fix → re-CI → merge → deploy → smoke
+
+**Migration apply:** SUPABASE 401 nedeniyle user Studio SQL Editor'dan tek-tıkla apply edecek. Veya SUPABASE_ACCESS_TOKEN rotate (~5 dk user dashboard) + `supabase db push`.
+
+**Kalite gates:**
+- TDD: önce test yaz (RED → GREEN), sonra implementation
+- pnpm verify before push (memory `feedback_verify_before_push.md`)
+- Codex Gate 2 PR-level review zorunlu
+- Implementer: Claude tek başına (subagent dispatch yok, scope küçük)
+
+### Cookie envanteri (PR B için — bu oturum gerekmez)
+
+`NEXT_LOCALE` + Turnstile = strict-necessary; Plausible cookieless; Sentry no-cookie; CF NEL altyapı. **Cookie banner gereksiz.** Plan 5a Faz 3 (GWS) deferred ama `info@kitaplastik.com` için CF Email Routing forward'u bir alternatif (yarım saat).
+
+### Şirket bilgileri (PR B için — bu oturum gerekmez)
+
+- Tüzel ünvan: Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.
+- Adres: Küçükbalıklı, 2. Kadem Sk. No:40, 16250 Osmangazi/Bursa
+- VERBIS: yok / DPO: yok / Vergi-sicil: TBD placeholder
+- KVKK email: info@kitaplastik.com
+
+### Plan 5c Part 3 ❌ CANCELLED
+
+YAGNI — `/admin/catalog-requests` liste yeter, `catalog_requests` tablosunda sector kolonu yok, Plausible CE kendi dashboard'ı zaten canlı.
+
+### Tier 2 Dockerfile retry — opsiyonel/defer geçerli
+
+Prod stabil Nixpacks, runtime impact yok. PR A + PR B sonrası gündeme alınabilir.
 
 ---
 
