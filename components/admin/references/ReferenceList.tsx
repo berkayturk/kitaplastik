@@ -101,6 +101,7 @@ export function ReferenceList({ activeRefs, deletedRefs, sectors, actions }: Pro
                       <form action={() => actions.moveUp(r.id)} className="inline">
                         <button
                           type="submit"
+                          aria-label="Sıralamayı yukarı taşı"
                           disabled={isFirst}
                           className="px-2 py-1 disabled:opacity-30"
                         >
@@ -110,6 +111,7 @@ export function ReferenceList({ activeRefs, deletedRefs, sectors, actions }: Pro
                       <form action={() => actions.moveDown(r.id)} className="inline">
                         <button
                           type="submit"
+                          aria-label="Sıralamayı aşağı taşı"
                           disabled={isLast}
                           className="px-2 py-1 disabled:opacity-30"
                         >
