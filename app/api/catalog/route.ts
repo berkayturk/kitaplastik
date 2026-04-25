@@ -23,8 +23,9 @@ function catalogPdfUrl(sector: string, locale: "tr" | "en" | "ru" | "ar"): strin
 }
 
 export async function POST(request: NextRequest) {
+  // IP is used in-memory for rate-limit + Turnstile only; never persisted
+  // (Plan 5b data minimization — no consent banner, no DB IP/UA storage).
   const ip = ipFromHeaders(request.headers);
-  const userAgent = request.headers.get("user-agent") ?? null;
 
   // 1) Rate limit
   const rl = catalogLimiter.check(ip);
@@ -61,18 +62,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "turnstile_failed" }, { status: 403 });
   }
 
-  // 4) Record request (best-effort — do not block email on DB failure)
+  // 4) Record request (best-effort — do not block email on DB failure).
+  // Plan 5b: only email + locale persisted; pg_cron auto-deletes after 30 d.
   const svc = createServiceClient();
   try {
-    // Cast: catalog_requests isn't in the generated Database type yet;
-    // regenerate via `supabase gen types typescript --linked` after deploy.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (svc as any).from("catalog_requests").insert({
+    await svc.from("catalog_requests").insert({
       email: input.email,
       locale: input.locale,
-      ip_address: ip === "unknown" ? null : ip,
-      user_agent: userAgent,
-      // sector is part of the request payload but not yet a column on
+      // sector is part of the request payload but not a column on
       // catalog_requests — logged into the audit_log row instead so no
       // schema change is required for the sector selector rollout.
     });
@@ -104,13 +101,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "email_failed" }, { status: 502 });
   }
 
-  // 6) Audit log
+  // 6) Audit log — IP is intentionally null for end-user catalog requests
+  // (Plan 5b data minimization). Admin actions still log IP for forensics.
   await recordAudit({
     action: "catalog_requested",
     entity_type: "catalog_request",
     entity_id: null,
     user_id: null,
-    ip,
+    ip: null,
     diff: { locale: input.locale, sector: input.sector },
   });
 

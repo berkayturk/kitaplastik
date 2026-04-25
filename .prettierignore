@@ -8,3 +8,7 @@ playwright-report/
 test-results/
 .superpowers/
 docs/
+# Harness-managed (Claude Code) — local-only files; committed command
+# markdown is whitelisted so prettier still checks it.
+.claude/
+!.claude/commands/

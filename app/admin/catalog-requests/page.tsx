@@ -1,7 +1,8 @@
 // app/admin/catalog-requests/page.tsx
 //
 // Admin list of catalog download requests. Service-client read (bypasses RLS);
-// most-recent first; includes email, locale, time, and IP for spam review.
+// most-recent first. Plan 5b data minimization: only email + locale + time
+// stored; IP/UA never persisted, rows auto-deleted after 30 days via pg_cron.
 
 import { requireAdmin } from "@/lib/admin/auth";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -11,8 +12,6 @@ interface CatalogRequestRow {
   id: string;
   email: string;
   locale: "tr" | "en" | "ru" | "ar";
-  ip_address: string | null;
-  user_agent: string | null;
   created_at: string;
 }
 
@@ -27,11 +26,9 @@ export default async function Page() {
   const user = await requireAdmin();
 
   const svc = createServiceClient();
-  // Type cast: catalog_requests isn't in the generated Database type yet.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (svc as any)
+  const { data, error } = await svc
     .from("catalog_requests")
-    .select("id, email, locale, ip_address, user_agent, created_at")
+    .select("id, email, locale, created_at")
     .order("created_at", { ascending: false })
     .limit(200);
 
@@ -49,7 +46,7 @@ export default async function Page() {
           Katalog İstekleri
         </h1>
         <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-          Son {rows.length} kayıt · yeni istekler otomatik burada görünür
+          Son {rows.length} kayıt · 30 günden eski kayıtlar otomatik silinir
         </p>
       </div>
 
@@ -70,14 +67,13 @@ export default async function Page() {
               <th className="px-4 py-3 font-medium">Tarih</th>
               <th className="px-4 py-3 font-medium">E-posta</th>
               <th className="px-4 py-3 font-medium">Dil</th>
-              <th className="px-4 py-3 font-medium">IP</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--color-border-hairline)]">
             {rows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={3}
                   className="px-4 py-10 text-center text-[var(--color-text-tertiary)]"
                 >
                   Henüz katalog isteği yok.
@@ -99,9 +95,6 @@ export default async function Page() {
                   </td>
                   <td className="px-4 py-3 text-[var(--color-text-secondary)]">
                     {LOCALE_LABEL[r.locale] ?? r.locale}
-                  </td>
-                  <td className="px-4 py-3 font-mono text-[12px] text-[var(--color-text-tertiary)]">
-                    {r.ip_address ?? "—"}
                   </td>
                 </tr>
               ))

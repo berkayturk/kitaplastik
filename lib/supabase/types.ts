@@ -92,25 +92,19 @@ export type Database = {
           created_at: string;
           email: string;
           id: string;
-          ip_address: unknown;
           locale: string;
-          user_agent: string | null;
         };
         Insert: {
           created_at?: string;
           email: string;
           id?: string;
-          ip_address?: unknown;
           locale: string;
-          user_agent?: string | null;
         };
         Update: {
           created_at?: string;
           email?: string;
           id?: string;
-          ip_address?: unknown;
           locale?: string;
-          user_agent?: string | null;
         };
         Relationships: [];
       };
