@@ -192,7 +192,31 @@ export async function hardDeleteReference(id: string): Promise<void> {
     logo_path: existing.logo_path,
   };
 
-  // Storage cleanup — best-effort, non-fatal. Only managed bucket paths are touched.
+  // Atomic DB delete first — guard `active=false` in the DELETE itself so a
+  // concurrent restore between the read above and this write cannot result in
+  // an active row being permanently deleted (TOCTOU). `count: "exact"` lets
+  // us detect the race when zero rows match.
+  const { error, count } = await svc
+    .from("clients")
+    .delete({ count: "exact" })
+    .eq("id", id)
+    .eq("active", false);
+  if (error) throw new Error(error.message);
+  if (count === 0) {
+    throw new Error("Referans silinemedi: kayıt bulunamadı veya bu sırada tekrar aktifleştirildi.");
+  }
+
+  await recordAudit({
+    action: "reference_hard_deleted",
+    entity_type: "client",
+    entity_id: id,
+    user_id: user.id,
+    ip: null,
+    diff: { snapshot, irreversible: true },
+  });
+
+  // Storage cleanup AFTER DB delete — best-effort, non-fatal. Doing this only
+  // post-DB ensures we never orphan storage objects when the DB delete fails.
   if (existing.logo_path?.startsWith("client-logos/")) {
     const oldKey = existing.logo_path.substring("client-logos/".length);
     const { error: removeErr } = await svc.storage.from("client-logos").remove([oldKey]);
@@ -208,18 +232,6 @@ export async function hardDeleteReference(id: string): Promise<void> {
       );
     }
   }
-
-  const { error } = await svc.from("clients").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-
-  await recordAudit({
-    action: "reference_hard_deleted",
-    entity_type: "client",
-    entity_id: id,
-    user_id: user.id,
-    ip: null,
-    diff: { snapshot, irreversible: true },
-  });
 
   revalidatePublicReferences();
   revalidatePath("/admin/references");
