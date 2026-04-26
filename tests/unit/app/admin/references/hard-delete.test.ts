@@ -1,11 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { deleteSpy, removeSpy, fromSpy, getReferenceByIdMock, recordAuditMock } = vi.hoisted(() => {
-  const deleteSpy = vi.fn().mockResolvedValue({ data: null, error: null });
+const {
+  deleteSpy,
+  eqIdSpy,
+  eqActiveSpy,
+  removeSpy,
+  fromSpy,
+  getReferenceByIdMock,
+  recordAuditMock,
+} = vi.hoisted(() => {
+  const eqActiveSpy = vi.fn().mockResolvedValue({ data: null, error: null, count: 1 });
+  const eqIdSpy = vi.fn().mockReturnValue({ eq: eqActiveSpy });
+  const deleteSpy = vi.fn().mockReturnValue({ eq: eqIdSpy });
   const removeSpy = vi.fn().mockResolvedValue({ data: null, error: null });
   const fromSpy = vi.fn();
   return {
     deleteSpy,
+    eqIdSpy,
+    eqActiveSpy,
     removeSpy,
     fromSpy,
     getReferenceByIdMock: vi.fn(),
@@ -50,11 +62,11 @@ import { hardDeleteReference } from "@/app/admin/references/actions";
 describe("hardDeleteReference — irreversible delete", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    deleteSpy.mockResolvedValue({ data: null, error: null });
+    eqActiveSpy.mockResolvedValue({ data: null, error: null, count: 1 });
+    eqIdSpy.mockReturnValue({ eq: eqActiveSpy });
+    deleteSpy.mockReturnValue({ eq: eqIdSpy });
     removeSpy.mockResolvedValue({ data: null, error: null });
-    fromSpy.mockReturnValue({
-      delete: () => ({ eq: deleteSpy }),
-    });
+    fromSpy.mockReturnValue({ delete: deleteSpy });
     recordAuditMock.mockResolvedValue(undefined);
   });
 
@@ -84,7 +96,7 @@ describe("hardDeleteReference — irreversible delete", () => {
     expect(deleteSpy).not.toHaveBeenCalled();
   });
 
-  it("deletes DB row + storage logo + records irreversible audit", async () => {
+  it("deletes DB row first (atomic active=false guard) + storage logo after + records irreversible audit", async () => {
     getReferenceByIdMock.mockResolvedValue({
       id: "00000000-0000-0000-0000-000000000013",
       key: "client-c",
@@ -95,11 +107,17 @@ describe("hardDeleteReference — irreversible delete", () => {
 
     await hardDeleteReference("00000000-0000-0000-0000-000000000013");
 
+    expect(fromSpy).toHaveBeenCalledWith("clients");
+    expect(deleteSpy).toHaveBeenCalledWith({ count: "exact" });
+    expect(eqIdSpy).toHaveBeenCalledWith("id", "00000000-0000-0000-0000-000000000013");
+    expect(eqActiveSpy).toHaveBeenCalledWith("active", false);
+
     expect(removeSpy).toHaveBeenCalledTimes(1);
     expect(removeSpy).toHaveBeenCalledWith(["clientc.svg"]);
 
-    expect(fromSpy).toHaveBeenCalledWith("clients");
-    expect(deleteSpy).toHaveBeenCalledWith("id", "00000000-0000-0000-0000-000000000013");
+    const dbDeleteOrder = eqActiveSpy.mock.invocationCallOrder[0] ?? Number.POSITIVE_INFINITY;
+    const storageRemoveOrder = removeSpy.mock.invocationCallOrder[0] ?? 0;
+    expect(dbDeleteOrder).toBeLessThan(storageRemoveOrder);
 
     expect(recordAuditMock).toHaveBeenCalledTimes(1);
     const auditEntry = recordAuditMock.mock.calls[0]?.[0];
@@ -116,7 +134,47 @@ describe("hardDeleteReference — irreversible delete", () => {
     });
   });
 
-  it("continues DB delete even if storage cleanup fails (non-fatal)", async () => {
+  it("throws race error when DB delete affects zero rows (restore between read and write, or already gone)", async () => {
+    getReferenceByIdMock.mockResolvedValue({
+      id: "00000000-0000-0000-0000-000000000020",
+      key: "client-r",
+      logo_path: "client-logos/r.svg",
+      sector_id: null,
+      active: false,
+    });
+    eqActiveSpy.mockResolvedValueOnce({ data: null, error: null, count: 0 });
+
+    await expect(hardDeleteReference("00000000-0000-0000-0000-000000000020")).rejects.toThrow(
+      /silinemedi|aktif/i,
+    );
+
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(recordAuditMock).not.toHaveBeenCalled();
+  });
+
+  it("does NOT call storage cleanup when DB delete fails", async () => {
+    getReferenceByIdMock.mockResolvedValue({
+      id: "00000000-0000-0000-0000-000000000021",
+      key: "client-s",
+      logo_path: "client-logos/s.svg",
+      sector_id: null,
+      active: false,
+    });
+    eqActiveSpy.mockResolvedValueOnce({
+      data: null,
+      error: { message: "RLS denied" },
+      count: null,
+    });
+
+    await expect(hardDeleteReference("00000000-0000-0000-0000-000000000021")).rejects.toThrow(
+      /RLS denied/,
+    );
+
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(recordAuditMock).not.toHaveBeenCalled();
+  });
+
+  it("completes successfully even if post-DB storage cleanup fails (non-fatal)", async () => {
     getReferenceByIdMock.mockResolvedValue({
       id: "00000000-0000-0000-0000-000000000014",
       key: "client-d",
@@ -131,8 +189,8 @@ describe("hardDeleteReference — irreversible delete", () => {
 
     await hardDeleteReference("00000000-0000-0000-0000-000000000014");
 
+    expect(eqActiveSpy).toHaveBeenCalledWith("active", false);
     expect(removeSpy).toHaveBeenCalledTimes(1);
-    expect(deleteSpy).toHaveBeenCalledWith("id", "00000000-0000-0000-0000-000000000014");
     expect(recordAuditMock).toHaveBeenCalledTimes(1);
   });
 
@@ -148,7 +206,8 @@ describe("hardDeleteReference — irreversible delete", () => {
     await hardDeleteReference("00000000-0000-0000-0000-000000000015");
 
     expect(removeSpy).not.toHaveBeenCalled();
-    expect(deleteSpy).toHaveBeenCalledWith("id", "00000000-0000-0000-0000-000000000015");
+    expect(eqIdSpy).toHaveBeenCalledWith("id", "00000000-0000-0000-0000-000000000015");
+    expect(eqActiveSpy).toHaveBeenCalledWith("active", false);
     expect(recordAuditMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -174,7 +174,31 @@ export async function hardDeleteProduct(id: string): Promise<void> {
     image_count: existing.images?.length ?? 0,
   };
 
-  // Storage cleanup — best-effort, non-fatal.
+  // Atomic DB delete first — guard `active=false` in the DELETE itself so a
+  // concurrent restore between the read above and this write cannot result in
+  // an active row being permanently deleted (TOCTOU). `count: "exact"` lets
+  // us detect the race when zero rows match.
+  const { error, count } = await svc
+    .from("products")
+    .delete({ count: "exact" })
+    .eq("id", id)
+    .eq("active", false);
+  if (error) throw new Error(error.message);
+  if (count === 0) {
+    throw new Error("Ürün silinemedi: kayıt bulunamadı veya bu sırada tekrar aktifleştirildi.");
+  }
+
+  await recordAudit({
+    action: "product_hard_deleted",
+    entity_type: "product",
+    entity_id: id,
+    user_id: user.id,
+    ip: null,
+    diff: { snapshot, irreversible: true },
+  });
+
+  // Storage cleanup AFTER DB delete — best-effort, non-fatal. Doing this only
+  // post-DB ensures we never orphan storage objects when the DB delete fails.
   if (existing.images && existing.images.length > 0) {
     const paths = existing.images.map((img) => img.path);
     const { error: removeErr } = await svc.storage.from("product-images").remove(paths);
@@ -190,18 +214,6 @@ export async function hardDeleteProduct(id: string): Promise<void> {
       );
     }
   }
-
-  const { error } = await svc.from("products").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-
-  await recordAudit({
-    action: "product_hard_deleted",
-    entity_type: "product",
-    entity_id: id,
-    user_id: user.id,
-    ip: null,
-    diff: { snapshot, irreversible: true },
-  });
 
   revalidatePublicProducts();
   revalidatePath("/admin/products");
