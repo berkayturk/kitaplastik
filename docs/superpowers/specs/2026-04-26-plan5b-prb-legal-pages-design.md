@@ -68,19 +68,21 @@ const company = await getCompany();
 | Adres | `getCompany().address` (street/district/city) | DB (existing schema) |
 | Telefon | `getCompany().phone.display` | DB (existing schema) |
 | E-posta (başvuru) | `getCompany().email.primary` | DB (existing schema) |
-| Vergi dairesi / sicil no | `legal.<locale>.privacy.staticFacts.taxOffice` | locale string, **TBD release-gated** |
-| MERSİS no | `legal.<locale>.privacy.staticFacts.mersisNo` | locale string, **TBD release-gated** |
-| KEP adresi (varsa) | `legal.<locale>.privacy.staticFacts.kep` | locale string, **TBD release-gated**, opsiyonel |
-| VERBIS kaydı durumu | `legal.<locale>.privacy.staticFacts.verbisStatus` | "Teyit bekliyor — bu PR kapsamında değerlendirilmemiştir" varsayılan; user implementation'da net değer (`yok`/`başvuru yapıldı: tarih`) verirse o yazılır |
-| DPO durumu | `legal.<locale>.privacy.staticFacts.dpoStatus` | "Teyit bekliyor — bu PR kapsamında değerlendirilmemiştir" varsayılan; user net değer (`atanmadı`/`atandı: ad`) verirse o yazılır |
+| Vergi dairesi / sicil no | `legal.<locale>.privacy.staticFacts.taxOffice` | "Bilgi güncelleniyor" placeholder, patch PR ile değiştirilecek |
+| MERSİS no | `legal.<locale>.privacy.staticFacts.mersisNo` | "Bilgi güncelleniyor" placeholder, patch PR ile değiştirilecek |
+| KEP adresi (varsa) | `legal.<locale>.privacy.staticFacts.kep` | "Bilgi güncelleniyor" placeholder veya `null` (opsiyonel — yoksa hiç render edilmez) |
+| VERBIS kaydı durumu | `legal.<locale>.privacy.staticFacts.verbisStatus` | "Bilgi güncelleniyor" placeholder, patch PR ile değiştirilecek |
+| DPO durumu | `legal.<locale>.privacy.staticFacts.dpoStatus` | "Bilgi güncelleniyor" placeholder, patch PR ile değiştirilecek |
 
 **Neden hibrit (DB + JSON)?** Şu anki `Company` schema'sında `tax`/`mersis`/`kep` alanları yok. Bunları schema'ya eklemek admin UI editor değişikliği + migration + test güncellemesi gerektirir, PR B scope'unu ~50% şişirir. Bu PR'da sadece KVKK-spesifik alanlar `legal.json`'a static facts olarak girer; ileride bir Plan 5b PR C (eğer gelirse) bunları `Company` schema'sına consolide edebilir.
 
 **`staticFacts` block lokal-bağımsız değer içeren alanlar için kullanılsa bile** her 4 locale dosyasında **aynı raw string** olmalı (vergi numarası locale'a göre değişmez). Implementation'da `messages/{tr,en,ru,ar}/legal.json` `staticFacts` block'unun değerleri identical tutulur; sadece label key'leri (`taxOfficeLabel: "Vergi Dairesi"` / `Tax Office` / `Налоговая инспекция` / `الدائرة الضريبية`) çevrilir.
 
-**Release-gate kuralı (acceptance criteria'ya bağlı):**
-- Vergi dairesi / sicil no / MERSİS / KEP alanları **TBD** ise PR merge edilmez. Implementation phase başlangıcında user'a sorulur, doldurulmadan TR canonical metin yazımı başlamaz.
-- VERBIS ve DPO durumları için "varsayım yerine teyit bekliyor" formülasyonu kullanılır — yanıltıcı beyan riski elimine edilir. User implementation review'unda ya "VERBIS kaydımız yok" / "DPO atadık" netliğini verir, ya "teyit bekliyor" formu metinde kalır.
+**Placeholder yaklaşımı (user kararı 2026-04-26):**
+
+Bu PR'da 5 alan (Vergi dairesi, sicil no, MERSİS, KEP, VERBIS, DPO) için **görünür placeholder string** kullanılır: TR `"Bilgi güncelleniyor"`, EN `"Information being updated"`, RU `"Информация обновляется"`, AR `"المعلومات قيد التحديث"`. Sayfa canlıya placeholder ile çıkar; user net değerleri sonradan verince **kısa bir patch PR** ile (~5 dakika, sadece 4 dosya değişikliği — `messages/{tr,en,ru,ar}/legal.json`) doldurulur.
+
+**Release-gate yumuşak:** Bu PR placeholder string'leri ile merge edilebilir; release blocker değildir. Patch PR follow-up risk listesinde takip edilir.
 
 **`getCompany()` ve SSG ilişkisi:** Bu sayfalar `generateStaticParams` ile build-time render edilir. `getCompany()` build-time bir kez fetch edilir (Supabase env build pipeline'da mevcut, mevcut `app/[locale]/about/page.tsx` ve Footer aynı pattern'i kullanıyor — drift yok). Runtime fetch yok, client JS yok.
 
@@ -610,8 +612,8 @@ test("catalog form consent link round-trip (TR)", async ({ page }) => {
 **Content**
 - [ ] `messages/{tr,en,ru,ar}/legal.json` × 4 dosya oluşturulmuş, **tüm key set'i her locale'de eksiksiz** (eksik key fallback yok — runtime warn).
 - [ ] İçerik PR A canlı state'iyle uyumlu (`email + locale` only, 30 gün auto-purge, üçüncü taraflar = CF Turnstile + CF bot mgmt + Plausible self-host + Sentry + Resend).
-- [ ] **TBD release-gate:** Vergi dairesi / sicil no / MERSİS / KEP alanları için user net değer verdi VEYA "teyit bekliyor" formu kullanıldı; PR body'de hangi yolun seçildiği documented.
-- [ ] VERBIS ve DPO durumu: "teyit bekliyor — bu PR kapsamında değerlendirilmemiştir" varsayılan VEYA user net değer (yok / atandı: ad) verdi.
+- [ ] 5 staticFacts alanı (taxOffice / mersisNo / kep / verbisStatus / dpoStatus) "Bilgi güncelleniyor" locale-translated placeholder ile doldurulmuş; release blocker değil.
+- [ ] **Patch PR follow-up notu**: PR body'de "Bu PR'da KVKK staticFacts alanları placeholder string ile gönderilmiştir; user net değerleri verince ~5dk'lık follow-up patch PR atılacak (sadece 4 messages JSON dosyası değişir)" ifadesi var.
 
 **Render & SEO**
 - [ ] `app/[locale]/legal/privacy/page.tsx` ve `app/[locale]/legal/cookies/page.tsx` RSC + SSG, `generateStaticParams` 4 locale.
@@ -636,28 +638,29 @@ test("catalog form consent link round-trip (TR)", async ({ page }) => {
 
 ## Sequencing (next-step)
 
-1. **User onayı**: TBD release-gate alanları (vergi/sicil/MERSİS/KEP/VERBIS/DPO) — user implementation öncesinde değer verir veya "teyit bekliyor" formu seçer.
-2. `i18n/routing.ts` ek pathnames + `i18n/request.ts` `legal` namespace import + `lib/seo/routes.ts` `PUBLIC_ROUTES` ekleme.
-3. `tests/unit/i18n/pathnames.test.ts` 8 yeni case (RED→GREEN).
-4. `messages/tr/legal.json` canonical TR — full content (tüm section + cols + table + staticFacts).
-5. LLM-assisted EN/RU/AR + terminoloji sözlüğü (`messages/{en,ru,ar}/legal.json`); user audit pass.
-6. `components/legal/*` — LegalLayout, LegalSection, LegalTable, LegalDisclaimer, LegalControllerBlock, index.
-7. `tests/unit/components/legal/LegalLayout.test.tsx` + `LegalTable.test.tsx` (a11y caption + scope) + `LegalDisclaimer.test.tsx` — toplam 4 case.
-8. `app/[locale]/legal/privacy/page.tsx` ve `cookies/page.tsx` (`getCompany()` privacy'de, `buildAlternates` mevcut pattern).
-9. `components/layout/Footer.tsx` bottom-bar 3-element + `Footer.test.tsx` 8 yeni assert.
-10. `components/catalog/CatalogRequestForm.tsx` + `components/contact/ContactForm.tsx` consent notice satırı.
-11. `tests/e2e/legal.spec.ts` 10 case.
-12. `pnpm verify` full CI mirror; `rm -rf .next` ilk fail görüldüyse.
-13. PR aç → CI yeşil → `codex:codex-rescue` Gate 2 → critical/high inline fix, low/medium PR body'e.
-14. Squash merge → auto-deploy → 8 URL canlı 200 smoke; AR ve RU footer responsive görsel doğrulama (768/900/1280px).
-15. Memory + RESUME update; `/save-session`.
+1. `i18n/routing.ts` ek pathnames + `i18n/request.ts` `legal` namespace import + `lib/seo/routes.ts` `PUBLIC_ROUTES` ekleme.
+2. `tests/unit/i18n/pathnames.test.ts` 8 yeni case (RED→GREEN).
+3. `messages/tr/legal.json` canonical TR — full content (tüm section + cols + table + staticFacts; staticFacts alanları "Bilgi güncelleniyor" placeholder).
+4. LLM-assisted EN/RU/AR + terminoloji sözlüğü (`messages/{en,ru,ar}/legal.json`); staticFacts placeholder her locale'a çevrilir; user audit pass.
+5. `components/legal/*` — LegalLayout, LegalSection, LegalTable, LegalDisclaimer, LegalControllerBlock, index.
+6. `tests/unit/components/legal/LegalLayout.test.tsx` + `LegalTable.test.tsx` (a11y caption + scope) + `LegalDisclaimer.test.tsx` — toplam 4 case.
+7. `app/[locale]/legal/privacy/page.tsx` ve `cookies/page.tsx` (`getCompany()` privacy'de, `buildAlternates` mevcut pattern).
+8. `components/layout/Footer.tsx` bottom-bar 3-element + `Footer.test.tsx` 8 yeni assert.
+9. `components/catalog/CatalogRequestForm.tsx` + `components/contact/ContactForm.tsx` consent notice satırı.
+10. `tests/e2e/legal.spec.ts` 10 case.
+11. `pnpm verify` full CI mirror; `rm -rf .next` ilk fail görüldüyse.
+12. PR aç (body'de patch PR follow-up notu) → CI yeşil → `codex:codex-rescue` Gate 2 → critical/high inline fix, low/medium PR body'e.
+13. Squash merge → auto-deploy → 8 URL canlı 200 smoke; AR ve RU footer responsive görsel doğrulama (768/900/1280px).
+14. Memory + RESUME update; `/save-session`.
+
+**Patch PR (follow-up, ~5 dakika, ayrı PR):** User staticFacts net değerleri verince `messages/{tr,en,ru,ar}/legal.json` 4 dosyada placeholder string'leri gerçek değerlerle replace + verify + merge. Bu PR'ın scope'una dahil değil.
 
 ---
 
 ## Risks
 
 - **`lib/company.ts` ile drift** — Footer ve `LegalLayout` aynı şirket verisini ayrı string olarak tutarsa, ileride bir alan değişirse iki yerde eşit güncellenmezse yanıltıcılık oluşur. Mitigasyon: `lib/company.ts` (zaten var) tek doğruluk kaynağı; `legal.json` static block sadece KVKK-spesifik alanları (VERBIS, DPO durumu) tutar; address + phone + email Footer ile aynı kaynaktan okunur.
-- **Vergi dairesi / MERSİS placeholder** — implementation öncesinde user tarafından doldurulmadan PR açılırsa metinde `[Vergi dairesi: TBD]` görünür. Mitigasyon: implementation phase başlangıcında user'a açıkça sorulur, doldurulmadan TR canonical content yazımı başlamaz.
+- **Placeholder string canlıya çıkıyor (kabul edilmiş)** — User kararı 2026-04-26: `staticFacts` 5 alanı "Bilgi güncelleniyor" placeholder ile gönderilir, kısa patch PR ile düzeltilir. Risk: patch PR unutulursa "Bilgi güncelleniyor" string'i prod'da uzun süre kalır → KVKK denetiminde profesyonellik puanı düşer. Mitigasyon: PR B merge sonrası RESUME.md'de "patch PR follow-up: legal staticFacts" todo entry, en geç 7 gün içinde patch açılır.
 - **LLM çeviri terminoloji drift** — mitigasyon: terminoloji sözlüğü (yukarıda) prompt'a inject edilir, user post-output audit eder.
 - **Tablo responsive mobile stack pattern** — design system'de mevcut değil, ilk kez `LegalTable`'da kuruluyor; örnek için sectors/products tablo paternleri yok. Mitigasyon: `LegalTable.test.tsx` viewport assertion + manuel mobile preview.
 - **AR `dir="rtl"` table flip** — CSS `text-align: start` kullanımı; manuel AR sayfa preview gerekli.
@@ -680,7 +683,7 @@ test("catalog form consent link round-trip (TR)", async ({ page }) => {
 - **AR `kuki` article'sız** — mevcut pathname konvansiyonuyla tutarlı (`ittisal` gibi).
 - **`Company` schema değişmez** — `tax`/`mersis`/`kep` alanları DB schema yerine `legal.json staticFacts` block'una konur; admin UI editor + migration scope'una girilmez (PR B süresi dar tutulur).
 - **`getCompany()` build-time fetch (SSG-uyumlu)** — page-level `await getCompany()` mevcut `app/[locale]/about/page.tsx` pattern'iyle aynı; runtime fetch yok.
-- **TBD release-gate** — vergi/MERSİS/KEP/VERBIS/DPO alanlarından biri belirsiz kalırsa PR merge edilmez; "teyit bekliyor" formu kabul edilebilir alternatif.
+- **`staticFacts` placeholder + patch PR follow-up** — User kararı 2026-04-26: 5 alan (taxOffice / mersisNo / kep / verbisStatus / dpoStatus) "Bilgi güncelleniyor" locale-translated placeholder ile gönderilir; release blocker değil. User net değerleri verince ~5dk'lık ayrı patch PR açılır. RESUME.md'de follow-up todo tutulur.
 - **`buildAlternates` reuse** — özel `getPathname` çağrısı yerine `lib/seo/routes.ts` mevcut helper'ı kullanılır (canonical absolute URL, `x-default` defaultLocale).
 - **Translation completeness zorunlu** — fallback locale yok; tüm 4 locale dosyası tüm key set'ini içermeli, eksik key runtime warn üretir.
 - **External link `rel="noopener noreferrer"` zorunlu kural** — `t.rich` external-link convention'ı code review'da enforce edilir.
