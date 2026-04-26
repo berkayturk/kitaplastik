@@ -12,6 +12,8 @@ export const PUBLIC_ROUTES = [
   "/contact",
   "/references",
   "/request-quote",
+  "/legal/privacy",
+  "/legal/cookies",
 ] as const;
 
 export type PublicRoute = (typeof PUBLIC_ROUTES)[number];
