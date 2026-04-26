@@ -15,7 +15,7 @@ export function LegalLayout({ title, intro, children }: LegalLayoutProps) {
         </h1>
         <div className="text-text-secondary mt-5 text-[17px] leading-[1.65]">{intro}</div>
       </header>
-      <article className="prose-legal">{children}</article>
+      <article>{children}</article>
     </section>
   );
 }
