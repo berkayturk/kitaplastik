@@ -18,35 +18,72 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ---
 
-## 👉 NEXT SESSION KICKOFF (2026-04-26+)
+## 👉 NEXT SESSION KICKOFF (2026-04-26 sonrası)
 
-**Hukuk yükü tamamen bitti — site canlıda 4 dil eksiksiz.** Plan 5b PR B ✅ canlıda 2026-04-26 (`dde1ee2`, PR #7) — 8 URL × 200 OK doğrulandı 18:04 TRT (Coolify deploy 10m 45s). KVKK aydınlatma + çerez politikası 4 locale × 2 page; cookie banner GEREKMEZ (ePrivacy 5(3) muafiyet — strict-necessary only).
+**Hedef:** GWS hariç tüm patch PR follow-up + low-priority temizlikleri tek oturumda bitir. Plan 5b PR B canlıda ve doğrulandı (2026-04-26 18:04 TRT, 8/8 URL 200 OK). Bu oturumda site **tam olgun MVP** state'ine getirilecek.
 
-### Patch PR follow-up'lar (low priority, opsiyonel)
+**Mod:** subagent-driven veya direct execution (tercih: direct, çünkü işler küçük + bağımsız + mekanik). Codex Gate 1 spec gerekmez (ufak fix'ler), Gate 2 zorunlu (combined cleanup PR).
 
-1. **5dk patch — staticFacts net değerleri** (release blocker DEĞİL, "Bilgi güncelleniyor" placeholder şu an canlı). User net değerleri verince:
-   - 4 messages JSON dosyası (`messages/{tr,en,ru,ar}/legal.json` `privacy.staticFacts`)
-   - 5 alan: `taxOffice` (vergi dairesi/sicil no), `mersisNo`, `kep` (KEP adresi), `verbisStatus` (kayıt no veya teyit form), `dpoStatus` (atanmışsa iletişim, değilse "atanmamış")
-   - **7 gün içinde** yapılması memory'de mitigasyon olarak kayıtlı
+### Yapılacaklar listesi (3 ana + 2 opsiyonel — combined cleanup PR)
 
-2. **`app/api/contact/route.ts` IP minimization** — Codex Gate 2 PR B HIGH bulgu kapsamında copy-honest fix uygulandı (privacy policy IP retention'ı doğru beyan ediyor). Code-side minimization ayrı patch PR. Pattern: PR A catalog'a uygulanan `email + locale + created_at` minimization (`ip_address` + `user_agent` drop) contact form'a port edilir.
+#### A. About/Contact canonical bug fix (~5 dk × 2 dosya)
+- `app/[locale]/about/page.tsx:19` ve `app/[locale]/contact/page.tsx:24`
+- Current: `canonical: \`${origin}/${locale}/about\`` (TR'de `/tr/about` yazıyor ama actual URL `/tr/hakkimizda` — mismatch, hreflang/SEO bug)
+- Fix: PR B pattern: `const alternates = buildAlternates("/about", origin); canonical: alternates.languages[locale]` (next-intl `getPathname` locale-specific URL üretir)
+- Test: `tests/unit/lib/seo/routes.test.ts` zaten `buildAlternates` doğruluyor; manual probe canlıdan curl `<link rel="canonical">` header check
+- Memory: `feedback_next_intl_getpathname_prefix.md` zaten flag etmişti
 
-3. **About/Contact page canonical bug** — `app/[locale]/about/page.tsx:19` + `app/[locale]/contact/page.tsx:24` `canonical: \`${origin}/${locale}/about\`` (TR'de `/tr/about`) — fakat actual URL `/tr/hakkimizda`. Doğru pattern PR B `legal/{privacy,cookies}/page.tsx`'te: `canonical: alternates.languages[locale]`. Tek satır fix, 2 dosya, ~5 dk.
+#### B. staticFacts 5 alan net değerleri (~5 dk + user input)
+- **USER ACTION REQUIRED:** Şu 5 değeri net olarak ver (oturumun ilk işi):
+  1. **Vergi dairesi + Vergi no** (örn: "Osmangazi VD - 1234567890")
+  2. **Ticaret sicil no** (örn: "Bursa Ticaret Sicil - 12345-6") veya MERSİS varsa o yeterli
+  3. **MERSİS no** (16 hane, örn: "0123456789012345")
+  4. **KEP adresi** (varsa, örn: "kitaplastik@hs01.kep.tr"; yoksa "Kayıt mevcut değil")
+  5. **VERBIS sicil no** (kayıtlıysa örn: "VBS123456"; kayıt yoksa "Şirketimiz VERBIS kayıt zorunluluğu kapsamında değildir" veya "Kayıt süreci sürmektedir")
+  6. **DPO** (atanmışsa "Ad Soyad - email"; değilse "Veri Koruma Görevlisi atanmamıştır" — KVKK m.16 zorunlu değil 50+ kişi/2.5M+ TL ciro altında)
+- 4 messages JSON dosyası (`messages/{tr,en,ru,ar}/legal.json` `privacy.staticFacts`) — 5 alan × 4 locale = 20 string update (locale-translated)
+- E2E spec.ts `tests/e2e/legal.spec.ts` placeholder regex'leri kaldır veya real value beklesin
 
-### Site tamamlanma için kalan iş — düşük öncelikli
+#### C. `app/api/contact/route.ts` IP minimization (~30 dk)
+- Pattern: PR A catalog (`1958e7b`) ile aynı — `ip_address` + `user_agent` drop, audit log IP-less
+- Files:
+  - `app/api/contact/route.ts:62,91-97` — `ip` parametre kaldır
+  - `lib/email/templates/contact-team.ts:27,45` — IP rendering kaldır (team email artık IP göstermeyecek)
+  - `lib/audit.ts` — gerekiyorsa contact action'lar için IP null geçir (PR A pattern)
+  - Optional: contact submissions table schema audit (eğer DB'ye IP yazıyorsa migration gerek; PR A'da catalog için yapıldı)
+- Test: `tests/unit/app/api/contact/route.test.ts` (yoksa create) — insert payload IP yok assertion
+- Privacy policy copy update gerek mi? **HAYIR** — copy zaten "IP saklanır (geçici, güvenlik amaçlı)" diyordu Gate 2 fix'inde. Şimdi tersine, IP minimization tamamlanınca privacy copy'yi de "IP saklanmaz" olarak update edilebilir AMA bu Gate 2'ye karşılık geçici copy idi → 4 messages JSON `categories.table[1].data` IP referansı + `categories.table[2].data` audit IP referansı + `retention.table[2].dataType` "Audit log" → "Audit log (IP'siz)" geri çevrilir
+- E2E ekle: contact submission → admin DB row check IP null
 
-**Pipeline:**
-- Tier 2 Dockerfile retry — defer geçerli (prod Nixpacks stabil, runtime impact yok)
-- `SUPABASE_ACCESS_TOKEN` rotate — low priority (MCP plugin variant on-demand auth aynı işi görüyor)
+#### D. (Opsiyonel) Tier 2 Dockerfile retry (~1-2 sa)
+- Memory `feedback_coolify_dockerfile_deferred.md` — 2026-04-23'teki 2. deneme fail'i deep-dive gerek
+- Lesson 1 alındı: HEALTHCHECK port env'den oku
+- Lesson 2 root-cause edilmedi → bu sefer: Coolify deploy log + container log birlikte read
+- "Hepsini" dedi user; ama bu deferred opsiyonel-status'lu, prod stabil Nixpacks. Önce A+B+C bitir, kalan zamana göre. Eğer skip → memory `feedback_coolify_dockerfile_deferred.md`'a "deferred 2026-04-26" not düş
+- **Bu task'ı yapacaksan ayrı PR olarak ele al** — cleanup PR scope'una karıştırma
 
-**Operasyonel:**
-- Plan 5a Faz 3 (GWS inbox) — maddi karar bekliyor; CF Email Routing forward ucuz alternatif
-- Sentry source maps prod build verify (T15 verify'da OpenTelemetry warning'ler pre-existing — düşük öncelik refactor)
+#### E. (Opsiyonel) SUPABASE_ACCESS_TOKEN rotate (~10 dk)
+- Supabase dashboard'dan rotate → `~/.zshenv` `export SUPABASE_ACCESS_TOKEN=...` update → terminal restart
+- Plus `supabase login` test → `mcp__supabase__list_projects` çalışıyor mu kontrol
+- Memory'de "low priority" çünkü plugin variant on-demand auth zaten çalışıyor
 
-**SEO:**
-- About/Contact canonical bug (yukarıda)
+### Sıra önerim
 
-**MVP olarak şu an site fonksiyonel olarak tamamen production-ready:** anasayfa + sektörler + ürünler + hakkımızda + iletişim + katalog + referanslar + KVKK gizlilik + çerez politikası — 4 dilde + admin paneli + audit log + bot koruması + analytics + hata izleme + auto-deploy + SSL A+ + 4-dil hreflang + sitemap + 30-gün veri auto-purge.
+1. **İlk mesaj:** User'dan B'deki 5 alan net değerleri al (dictate → JSON keys)
+2. **Branch aç:** `git checkout -b chore/cleanup-canonical-staticfacts-contactip`
+3. **A bitir** (about/contact canonical) → 1 commit
+4. **B bitir** (staticFacts 4 locale) → 1 commit
+5. **C bitir** (contact IP min + privacy copy revert) → 2-3 commit (code, copy, test)
+6. **Verify:** `pnpm verify` CI mirror full → tüm yeşil
+7. **PR aç:** combined cleanup PR (#8 muhtemelen)
+8. **Codex Gate 2:** `codex:codex-rescue` subagent
+9. **Squash merge** → Coolify deploy ~10 dk → live smoke
+10. **D, E opsiyonel** zaman varsa
+11. **/save-session** + RESUME update
+
+### Site tam-MVP state hedefi (sonrası)
+
+GWS (Plan 5a Faz 3) hariç site %100 production-mature olur. GWS sadece şirket email infrastructure (info@kitaplastik.com gerçek inbox) maddi karar bekliyor — CF Email Routing forward ucuz alternatif var, hemen gerek yok.
 
 ---
 
