@@ -61,10 +61,28 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 | CI parallel sharding + paths-ignore + GHA workflow_run deploy | ✅ aktif |
 | Supabase + Coolify token rotate | ✅ 2026-04-26 |
 | **Admin hard-delete (products + references)** | ✅ canlı (#9, 6a5395b) |
+| **Admin hard-delete atomicity fix (active guard + DB-first)** | ✅ canlı (#10, b7b411f) |
 | **GWS (Faz 3)** | 🟡 maddi karar |
 | **B staticFacts net değer** | 🟡 user input bekler |
 | **Tier 2 Dockerfile** | ❌ ABANDONED 2026-04-26 (Nixpacks kalıcı tercih) |
-| **Codex Gate 2 retroactive #8 + #9** | 🟡 CLI quota refresh sonrası |
+| **Codex Gate 2 retroactive #8** | ✅ done 2026-04-26 (concerns medium 3M/1L — patch yok) |
+| **Codex Gate 2 retroactive #9** | ✅ done 2026-04-26 (4 HIGH → fix #10 ile resolve) |
+| **HardDeleteDialog server-side token validation** | 🟢 follow-up (medium 5, defense-in-depth, opsiyonel) |
+
+---
+
+## Patch PR #10 ✅ CANLIDA (2026-04-26 bu oturum) — admin hard-delete atomicity fix
+
+- Squash commit: `b7b411f fix(admin): atomic hard-delete + DB-first storage ordering (#10)` (CI 10/10 ✓ + Deploy ✓ + manual UI smoke PASS 2026-04-26)
+- Codex Gate 2 #9 retroactive 4 HIGH bulgu için direkt patch
+- Atomicity (HIGH 1+2): `.delete({count:"exact"}).eq("id",id).eq("active",false)` + count===0 race throw "Ürün/Referans silinemedi: kayıt bulunamadı veya bu sırada tekrar aktifleştirildi" — TOCTOU race window kapanır
+- Order swap (HIGH 3+4): DB delete → audit → storage cleanup; DB fail asla orphan storage objects yaratmaz
+- TDD: 14/14 GREEN incl 4 yeni assertion (race scenario count=0 + DB-fail-no-storage × 2 entity + invocation order — DB delete must precede storage remove)
+- Mock pattern güncellendi: `eqIdSpy` + `eqActiveSpy` (chained) — supabase-js dual `.eq` chain
+- `pnpm verify`: 277 unit / 76 e2e / build / lint / format / audit ✓
+- **Out of scope:** confirmation token server-side validation (medium 5, defense-in-depth, opsiyonel follow-up)
+- Codex Gate 2 forward SKIPPED — bu patch zaten retroactive bulguların direct fix'i (tautolojik review olur)
+- Manual UI smoke 2026-04-26 user-confirmed: products + references "Pasifleştir → Silinmiş tab → Kalıcı Sil → token type → row gone + Storage clean" akışı PASS
 
 ---
 
