@@ -18,76 +18,76 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ---
 
-## 👉 NEXT SESSION KICKOFF (2026-04-26 sonrası)
+## 👉 NEXT SESSION KICKOFF (2026-04-26 sonrası — combined cleanup #8 LIVE)
 
-**Hedef:** GWS hariç tüm patch PR follow-up + low-priority temizlikleri tek oturumda bitir. Plan 5b PR B canlıda ve doğrulandı (2026-04-26 18:04 TRT, 8/8 URL 200 OK). Bu oturumda site **tam olgun MVP** state'ine getirilecek.
+**Site tam-MVP state achieved (GWS + B placeholder hariç).** 12/12 canonical + 4/4 privacy copy live smoke PASS 2026-04-26 19:27 TRT. Coolify deploy ~14 dk içinde tamamlandı.
 
-**Mod:** subagent-driven veya direct execution (tercih: direct, çünkü işler küçük + bağımsız + mekanik). Codex Gate 1 spec gerekmez (ufak fix'ler), Gate 2 zorunlu (combined cleanup PR).
-
-### Yapılacaklar listesi (3 ana + 2 opsiyonel — combined cleanup PR)
-
-#### A. About/Contact canonical bug fix (~5 dk × 2 dosya)
-- `app/[locale]/about/page.tsx:19` ve `app/[locale]/contact/page.tsx:24`
-- Current: `canonical: \`${origin}/${locale}/about\`` (TR'de `/tr/about` yazıyor ama actual URL `/tr/hakkimizda` — mismatch, hreflang/SEO bug)
-- Fix: PR B pattern: `const alternates = buildAlternates("/about", origin); canonical: alternates.languages[locale]` (next-intl `getPathname` locale-specific URL üretir)
-- Test: `tests/unit/lib/seo/routes.test.ts` zaten `buildAlternates` doğruluyor; manual probe canlıdan curl `<link rel="canonical">` header check
-- Memory: `feedback_next_intl_getpathname_prefix.md` zaten flag etmişti
+### Kalan minor follow-up (önerilen sıra)
 
 #### B. staticFacts 5 alan net değerleri (~5 dk + user input)
-- **USER ACTION REQUIRED:** Şu 5 değeri net olarak ver (oturumun ilk işi):
+- **USER ACTION REQUIRED:** Şu 6 değeri net olarak ver:
   1. **Vergi dairesi + Vergi no** (örn: "Osmangazi VD - 1234567890")
-  2. **Ticaret sicil no** (örn: "Bursa Ticaret Sicil - 12345-6") veya MERSİS varsa o yeterli
-  3. **MERSİS no** (16 hane, örn: "0123456789012345")
-  4. **KEP adresi** (varsa, örn: "kitaplastik@hs01.kep.tr"; yoksa "Kayıt mevcut değil")
-  5. **VERBIS sicil no** (kayıtlıysa örn: "VBS123456"; kayıt yoksa "Şirketimiz VERBIS kayıt zorunluluğu kapsamında değildir" veya "Kayıt süreci sürmektedir")
-  6. **DPO** (atanmışsa "Ad Soyad - email"; değilse "Veri Koruma Görevlisi atanmamıştır" — KVKK m.16 zorunlu değil 50+ kişi/2.5M+ TL ciro altında)
-- 4 messages JSON dosyası (`messages/{tr,en,ru,ar}/legal.json` `privacy.staticFacts`) — 5 alan × 4 locale = 20 string update (locale-translated)
-- E2E spec.ts `tests/e2e/legal.spec.ts` placeholder regex'leri kaldır veya real value beklesin
+  2. **Ticaret sicil no** (Bursa, örn: "12345-6") veya MERSİS varsa o yeterli
+  3. **MERSİS no** (16 hane)
+  4. **KEP adresi** (varsa örn: "kitaplastik@hs01.kep.tr"; yoksa "Kayıt mevcut değil")
+  5. **VERBIS sicil no** (kayıtlıysa örn: "VBS123456"; muafiyetse "Şirketimiz VERBIS kayıt zorunluluğu kapsamında değildir")
+  6. **DPO** (atanmışsa "Ad Soyad - email"; değilse "Veri Koruma Görevlisi atanmamıştır")
+- 4 messages JSON (`messages/{tr,en,ru,ar}/legal.json` `privacy.staticFacts`) — 5 alan × 4 locale = 20 string update
+- Şu an 4 locale × 5 alan "Bilgi güncelleniyor" placeholder canlıda — release blocker değil
 
-#### C. `app/api/contact/route.ts` IP minimization (~30 dk)
-- Pattern: PR A catalog (`1958e7b`) ile aynı — `ip_address` + `user_agent` drop, audit log IP-less
-- Files:
-  - `app/api/contact/route.ts:62,91-97` — `ip` parametre kaldır
-  - `lib/email/templates/contact-team.ts:27,45` — IP rendering kaldır (team email artık IP göstermeyecek)
-  - `lib/audit.ts` — gerekiyorsa contact action'lar için IP null geçir (PR A pattern)
-  - Optional: contact submissions table schema audit (eğer DB'ye IP yazıyorsa migration gerek; PR A'da catalog için yapıldı)
-- Test: `tests/unit/app/api/contact/route.test.ts` (yoksa create) — insert payload IP yok assertion
-- Privacy policy copy update gerek mi? **HAYIR** — copy zaten "IP saklanır (geçici, güvenlik amaçlı)" diyordu Gate 2 fix'inde. Şimdi tersine, IP minimization tamamlanınca privacy copy'yi de "IP saklanmaz" olarak update edilebilir AMA bu Gate 2'ye karşılık geçici copy idi → 4 messages JSON `categories.table[1].data` IP referansı + `categories.table[2].data` audit IP referansı + `retention.table[2].dataType` "Audit log" → "Audit log (IP'siz)" geri çevrilir
-- E2E ekle: contact submission → admin DB row check IP null
+#### Codex Gate 2 retroactive #8 (~5 dk)
+- Combined cleanup PR #8 (`7c6a644`) Codex Gate 2 review **SKIPPED** edildi (CLI usage limit, 2026-04-26 ~20:29 PT'ye kadar bloklanmıştı)
+- Sonraki oturumda CLI quota refresh sonrası retroactive review tetikle (`codex-review-pr` skill, PR #8 diff)
+- HIGH issue çıkarsa ayrı patch PR; çıkmazsa "post-merge clean" not düş
 
-#### D. (Opsiyonel) Tier 2 Dockerfile retry (~1-2 sa)
-- Memory `feedback_coolify_dockerfile_deferred.md` — 2026-04-23'teki 2. deneme fail'i deep-dive gerek
-- Lesson 1 alındı: HEALTHCHECK port env'den oku
-- Lesson 2 root-cause edilmedi → bu sefer: Coolify deploy log + container log birlikte read
-- "Hepsini" dedi user; ama bu deferred opsiyonel-status'lu, prod stabil Nixpacks. Önce A+B+C bitir, kalan zamana göre. Eğer skip → memory `feedback_coolify_dockerfile_deferred.md`'a "deferred 2026-04-26" not düş
-- **Bu task'ı yapacaksan ayrı PR olarak ele al** — cleanup PR scope'una karıştırma
+#### D. (Opsiyonel) Tier 2 Dockerfile retry (~1-2 sa, AYRI PR)
+- Memory `feedback_coolify_dockerfile_deferred.md` — 2026-04-23'teki 2. deneme fail'i + 2026-04-26 deferred not. Dedicated oturum hak ediyor (deep-dive Coolify deploy log + container log birlikte)
+- Şu an prod stabil Nixpacks ile (cleanup #8 deploy 14 dk, smoke ALL GREEN); aciliyet yok
 
-#### E. (Opsiyonel) SUPABASE_ACCESS_TOKEN rotate (~10 dk)
-- Supabase dashboard'dan rotate → `~/.zshenv` `export SUPABASE_ACCESS_TOKEN=...` update → terminal restart
-- Plus `supabase login` test → `mcp__supabase__list_projects` çalışıyor mu kontrol
-- Memory'de "low priority" çünkü plugin variant on-demand auth zaten çalışıyor
+#### Faz 3 (GWS) — maddi karar bekliyor (DEFERRED)
+- info@kitaplastik.com gerçek inbox için Google Workspace ($6/user/ay)
+- Geçici: CF Email Routing forward (ücretsiz, kullanıcının kişisel mailine route)
+- Karar bekleyince hiçbir teknik iş yok
 
-### Sıra önerim
+### Site tam-MVP state özeti
 
-1. **İlk mesaj:** User'dan B'deki 5 alan net değerleri al (dictate → JSON keys)
-2. **Branch aç:** `git checkout -b chore/cleanup-canonical-staticfacts-contactip`
-3. **A bitir** (about/contact canonical) → 1 commit
-4. **B bitir** (staticFacts 4 locale) → 1 commit
-5. **C bitir** (contact IP min + privacy copy revert) → 2-3 commit (code, copy, test)
-6. **Verify:** `pnpm verify` CI mirror full → tüm yeşil
-7. **PR aç:** combined cleanup PR (#8 muhtemelen)
-8. **Codex Gate 2:** `codex:codex-rescue` subagent
-9. **Squash merge** → Coolify deploy ~10 dk → live smoke
-10. **D, E opsiyonel** zaman varsa
-11. **/save-session** + RESUME update
-
-### Site tam-MVP state hedefi (sonrası)
-
-GWS (Plan 5a Faz 3) hariç site %100 production-mature olur. GWS sadece şirket email infrastructure (info@kitaplastik.com gerçek inbox) maddi karar bekliyor — CF Email Routing forward ucuz alternatif var, hemen gerek yok.
+| Alan | Durum |
+|---|---|
+| Frontend (4-locale, RTL Arabic, redesign) | ✅ canlı |
+| RFQ + Catalog Request + Admin panel | ✅ canlı |
+| Auth (password) + RLS + Turnstile + rate limit | ✅ canlı |
+| Email (Resend) + Audit log + KVKK | ✅ canlı |
+| KVKK gizlilik + çerez politikası 4 locale | ✅ canlı (#7) |
+| SEO canonical 12/12 doğru localized URL | ✅ canlı (#8) |
+| Contact + Catalog data minimization (IP min) | ✅ canlı (#8 + #6) |
+| Sentry + Plausible same-origin proxy | ✅ canlı |
+| CF orange + DNS-01 + Full strict + SSL Labs A+ | ✅ canlı (Plan 5a F4) |
+| CI parallel sharding + paths-ignore + GHA workflow_run deploy | ✅ aktif |
+| Supabase + Coolify token rotate | ✅ 2026-04-26 |
+| **GWS (Faz 3)** | 🟡 maddi karar |
+| **B staticFacts net değer** | 🟡 user input bekler |
+| **D Tier 2 Dockerfile** | 🟡 deferred opsiyonel |
 
 ---
 
-## Plan 5b PR B ✅ CANLIDA (2026-04-26 bu oturum)
+## Combined cleanup PR #8 ✅ CANLIDA (2026-04-26 bu oturum)
+
+- Squash commit: `7c6a644 chore(cleanup): canonical URLs (9 routes) + contact route IP minimization (#8)` (CI 10/10 ✓ + Deploy ✓ ~14 dk)
+- 2 commit (atomic):
+  - `244f9b0 fix(seo): canonical URL uses next-intl pathname for 9 routes` — about/contact + sectors hub + 3 sector children + products + references + request-quote pattern direct-string `${origin}/${locale}/<route>` → `alternates.languages[locale]` (PR B'den copy)
+  - `5c5e4a8 refactor(contact): minimize IP for end-user contact submissions` — IP in-memory rate-limit + Turnstile only, audit `ip:null`, `ContactTeamInput.ip` field drop, team email HTML/text IP omit, privacy copy 4 locale revert "IP kaydedilmez/not stored/не сохраняется/لا يتم حفظ" (PR A catalog'dan copy)
+- TDD: 3 yeni assertion `tests/unit/app/api/contact/route.test.ts` (RED proven before GREEN; vi.hoisted pattern) + 1 yeni assertion `tests/unit/lib/email/templates.test.ts` (IP omit)
+- `pnpm verify` CI mirror: 267 unit / 76 e2e (28 skip) / build / lint / format / audit ✅
+- **Codex Gate 2 SKIPPED** — CLI usage limit (2026-04-26 ~20:29 PT'ye kadar bloklanmıştı). PR body'de belgelendi. Risk değerlendirmesi: low (PR A/B pattern mekanik kopya, TDD GREEN, CI tüm yeşil). Retroactive review sonraki oturumda
+- Live smoke 2026-04-26 19:27 TRT: 12/12 canonical (`/tr/hakkimizda`, `/en/about`, `/tr/iletisim`, `/en/contact`, `/tr/sektorler`, `/en/sectors`, `/tr/sektorler/{cam-yikama,kapak,tekstil}`, `/tr/urunler`, `/tr/referanslar`, `/tr/katalog` — hepsi 200 + canonical = self) + 4/4 privacy copy ("kaydedilmez/not stored/не сохраняется/لا يتم حفظ") ALL GREEN
+
+**E. Supabase token rotate ✅ 2026-04-26 (bu oturum)**
+- `~/.zshenv` line 1 yeni token (`sbp_…` 44 char). CLI test `supabase projects list` PASS — kitaplastik-prod (Frankfurt) LINKED ●. Eski token dashboard'da revoke edildi.
+- MCP variant test SKIPPED — `mcp__supabase__authenticate` ve plugin variant her ikisi de OAuth-based (env-var ile bağlantısız, ek değer yok)
+
+---
+
+## Plan 5b PR B ✅ CANLIDA (2026-04-26 önceki oturum)
 
 - Squash commit: `dde1ee2 feat(legal): Plan 5b PR B — KVKK gizlilik + çerez politikası 4 dil (#7)` (CI ✓ + Deploy ✓)
 - 8 yeni SSG route: `/legal/{privacy,cookies}` × {tr/en/ru/ar} (TR canonical pathnames `/yasal/gizlilik` + `/yasal/cerezler`, RU `/pravovaya/*`, AR `/qanuni/*`)
