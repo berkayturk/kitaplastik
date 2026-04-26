@@ -20,7 +20,7 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-26 sonrası — cleanup #8 + admin hard-delete #9 LIVE)
 
-**Site tam-MVP state achieved (GWS + B placeholder hariç) + admin hard-delete option canlıda.** Cleanup #8 smoke PASS 2026-04-26 19:27 TRT. Hard-delete #9 merged 2026-04-26 ~20:05 TRT, deploy ⏳ ~14 dk + manual UI smoke kullanıcı tarafından.
+**Site tam-MVP state achieved (GWS + B placeholder hariç) + admin hard-delete option canlıda + doğrulandı.** Cleanup #8 smoke PASS 2026-04-26 19:27 TRT. Hard-delete #9 merged 2026-04-26 ~20:05 TRT, deploy + manual UI smoke PASS (admin → soft-delete → Silinmiş tab → Kalıcı sil + token type → row gone, Storage clean, Sentry quiet).
 
 ### Kalan minor follow-up (önerilen sıra)
 
@@ -74,7 +74,7 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ## Admin hard-delete PR #9 ✅ CANLIDA (2026-04-26 bu oturum)
 
-- Squash commit: `6a5395b feat(admin): hard-delete option for products + references (#9)` (CI 10/10 ✓ + Deploy ⏳ ~14 dk)
+- Squash commit: `6a5395b feat(admin): hard-delete option for products + references (#9)` (CI 10/10 ✓ + Deploy ✓ + manual UI smoke PASS 2026-04-26)
 - Pattern: PR önceki soft-delete kalıyor (`active=false` + restore), yanına irreversible `hardDelete*` action eklendi
 - 2 yeni server action:
   - `app/admin/products/actions.ts:hardDeleteProduct` — `delete().eq("id",id)` + `storage.from("product-images").remove(paths)` + audit `product_hard_deleted` (snapshot + irreversible:true)
@@ -95,7 +95,7 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 - **Codex Gate 2 SKIPPED** — CLI usage limit hâlâ bloklu (PR #8 ile aynı 8:29 PM PT refresh). PR body'de belgelendi. Risk düşük (mekanik pattern + TDD + safety guards)
 - **No FK cascade impact** — `products` + `clients` tablolarına FK referans veren tablo yok (verified via grep)
 
-**Manual UI smoke (deploy sonrası):** admin login → ürünler → soft-delete bir test ürünü → "Silinmiş" tab → "Kalıcı sil" → modal'da slug yazıp onayla → row gone + Storage object gone (Sentry log'larında error olmamalı)
+**Manual UI smoke ✅ PASS (2026-04-26 user-confirmed):** admin login → soft-delete → Silinmiş tab → Kalıcı sil + token type → row gone + Storage clean + Sentry quiet (no `hard_delete_storage` warning)
 
 ---
 
