@@ -154,6 +154,59 @@ export async function softDeleteProduct(id: string): Promise<void> {
   revalidatePath("/admin/products");
 }
 
+export async function hardDeleteProduct(id: string): Promise<void> {
+  const user = await requireAdminRole();
+  assertUuid(id);
+  const existing = await getProductById(id);
+  if (!existing) throw new Error("Ürün bulunamadı");
+  if (existing.active) {
+    throw new Error(
+      "Önce ürünü pasifleştirin (soft delete) — kalıcı silme yalnızca silinmiş ürünler için kullanılabilir.",
+    );
+  }
+
+  const svc = createServiceClient();
+
+  const snapshot = {
+    slug: existing.slug,
+    code: existing.code,
+    sector_id: existing.sector_id,
+    image_count: existing.images?.length ?? 0,
+  };
+
+  // Storage cleanup — best-effort, non-fatal.
+  if (existing.images && existing.images.length > 0) {
+    const paths = existing.images.map((img) => img.path);
+    const { error: removeErr } = await svc.storage.from("product-images").remove(paths);
+    if (removeErr) {
+      const Sentry = await import("@sentry/nextjs");
+      Sentry.captureMessage(
+        `[admin_products] hard-delete storage cleanup failed: ${removeErr.message}`,
+        {
+          level: "warning",
+          tags: { module: "admin_products", phase: "hard_delete_storage" },
+          extra: { product_id: id, paths },
+        },
+      );
+    }
+  }
+
+  const { error } = await svc.from("products").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await recordAudit({
+    action: "product_hard_deleted",
+    entity_type: "product",
+    entity_id: id,
+    user_id: user.id,
+    ip: null,
+    diff: { snapshot, irreversible: true },
+  });
+
+  revalidatePublicProducts();
+  revalidatePath("/admin/products");
+}
+
 export async function restoreProduct(id: string): Promise<void> {
   const user = await requireAdminRole();
   assertUuid(id);

@@ -6,6 +6,7 @@ import { listSectors } from "@/lib/admin/sectors";
 import {
   softDeleteReference,
   restoreReference,
+  hardDeleteReference,
   moveReferenceUp,
   moveReferenceDown,
 } from "./actions";
@@ -32,6 +33,10 @@ export default async function AdminReferencesPage() {
     "use server";
     await restoreReference(id);
   }
+  async function hardDelete(id: string) {
+    "use server";
+    await hardDeleteReference(id);
+  }
   async function moveUp(id: string) {
     "use server";
     await moveReferenceUp(id);
@@ -49,7 +54,7 @@ export default async function AdminReferencesPage() {
           activeRefs={active}
           deletedRefs={deleted}
           sectors={sectorsMap}
-          actions={{ softDelete, restore, moveUp, moveDown }}
+          actions={{ softDelete, restore, hardDelete, moveUp, moveDown }}
         />
       </div>
     </Shell>
