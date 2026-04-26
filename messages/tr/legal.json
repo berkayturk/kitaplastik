@@ -73,7 +73,7 @@
           },
           {
             "category": "İşlem Güvenliği",
-            "data": "Audit log kayıtları (IP <strong>kaydedilmez</strong> – yalnızca işlem türü ve zaman damgası)",
+            "data": "Audit log kayıtları (IP kaydedilmez – yalnızca işlem türü ve zaman damgası)",
             "source": "Sunucu logları",
             "purpose": "Yasal yükümlülük + güvenlik"
           }
