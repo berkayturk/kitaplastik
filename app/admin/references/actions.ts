@@ -173,6 +173,58 @@ export async function softDeleteReference(id: string): Promise<void> {
   revalidatePath("/admin/references");
 }
 
+export async function hardDeleteReference(id: string): Promise<void> {
+  const user = await requireAdminRole();
+  assertUuid(id);
+  const existing = await getReferenceById(id);
+  if (!existing) throw new Error("Referans bulunamadı");
+  if (existing.active) {
+    throw new Error(
+      "Önce referansı pasifleştirin (soft delete) — kalıcı silme yalnızca silinmiş referanslar için kullanılabilir.",
+    );
+  }
+
+  const svc = createServiceClient();
+
+  const snapshot = {
+    key: existing.key,
+    sector_id: existing.sector_id,
+    logo_path: existing.logo_path,
+  };
+
+  // Storage cleanup — best-effort, non-fatal. Only managed bucket paths are touched.
+  if (existing.logo_path?.startsWith("client-logos/")) {
+    const oldKey = existing.logo_path.substring("client-logos/".length);
+    const { error: removeErr } = await svc.storage.from("client-logos").remove([oldKey]);
+    if (removeErr) {
+      const Sentry = await import("@sentry/nextjs");
+      Sentry.captureMessage(
+        `[admin_references] hard-delete storage cleanup failed: ${removeErr.message}`,
+        {
+          level: "warning",
+          tags: { module: "admin_references", phase: "hard_delete_storage" },
+          extra: { reference_id: id, oldKey },
+        },
+      );
+    }
+  }
+
+  const { error } = await svc.from("clients").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await recordAudit({
+    action: "reference_hard_deleted",
+    entity_type: "client",
+    entity_id: id,
+    user_id: user.id,
+    ip: null,
+    diff: { snapshot, irreversible: true },
+  });
+
+  revalidatePublicReferences();
+  revalidatePath("/admin/references");
+}
+
 export async function restoreReference(id: string): Promise<void> {
   const user = await requireAdminRole();
   assertUuid(id);

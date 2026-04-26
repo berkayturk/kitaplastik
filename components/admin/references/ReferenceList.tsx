@@ -4,12 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Database } from "@/lib/supabase/types";
+import { HardDeleteDialog } from "@/components/admin/HardDeleteDialog";
 
 type Client = Database["public"]["Tables"]["clients"]["Row"];
 
 interface Actions {
   softDelete: (id: string) => Promise<void>;
   restore: (id: string) => Promise<void>;
+  hardDelete: (id: string) => Promise<void>;
   moveUp: (id: string) => Promise<void>;
   moveDown: (id: string) => Promise<void>;
 }
@@ -134,11 +136,18 @@ export function ReferenceList({ activeRefs, deletedRefs, sectors, actions }: Pro
                         </button>
                       </form>
                     ) : (
-                      <form action={() => actions.restore(r.id)} className="inline">
-                        <button type="submit" className="text-emerald-600 hover:underline">
-                          Geri yükle
-                        </button>
-                      </form>
+                      <span className="inline-flex items-center gap-3">
+                        <form action={() => actions.restore(r.id)} className="inline">
+                          <button type="submit" className="text-emerald-600 hover:underline">
+                            Geri yükle
+                          </button>
+                        </form>
+                        <HardDeleteDialog
+                          entityLabel={r.key}
+                          confirmToken={r.key}
+                          action={() => actions.hardDelete(r.id)}
+                        />
+                      </span>
                     )}
                   </td>
                 </tr>

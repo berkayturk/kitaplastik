@@ -40,6 +40,7 @@ describe("ReferenceList", () => {
         actions={{
           softDelete: async () => {},
           restore: async () => {},
+          hardDelete: async () => {},
           moveUp: async () => {},
           moveDown: async () => {},
         }}
@@ -58,6 +59,7 @@ describe("ReferenceList", () => {
         actions={{
           softDelete: async () => {},
           restore: async () => {},
+          hardDelete: async () => {},
           moveUp: async () => {},
           moveDown: async () => {},
         }}
@@ -78,6 +80,7 @@ describe("ReferenceList", () => {
         actions={{
           softDelete: async () => {},
           restore: async () => {},
+          hardDelete: async () => {},
           moveUp: async () => {},
           moveDown: async () => {},
         }}

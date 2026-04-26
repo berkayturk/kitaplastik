@@ -4,7 +4,7 @@ import { Shell } from "@/components/admin/Shell";
 import { ProductList } from "@/components/admin/products/ProductList";
 import { listProducts } from "@/lib/admin/products";
 import { createServiceClient } from "@/lib/supabase/service";
-import { softDeleteProduct, restoreProduct } from "./actions";
+import { softDeleteProduct, restoreProduct, hardDeleteProduct } from "./actions";
 
 async function loadSectors(): Promise<Record<string, string>> {
   const svc = createServiceClient();
@@ -34,6 +34,10 @@ export default async function AdminProductsPage() {
     "use server";
     await restoreProduct(id);
   }
+  async function hardDelete(id: string) {
+    "use server";
+    await hardDeleteProduct(id);
+  }
 
   return (
     <Shell user={user} active="products">
@@ -43,6 +47,7 @@ export default async function AdminProductsPage() {
         sectors={sectors}
         softDelete={softDelete}
         restore={restore}
+        hardDelete={hardDelete}
       />
     </Shell>
   );

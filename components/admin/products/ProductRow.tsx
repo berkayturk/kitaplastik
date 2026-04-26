@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { ProductRow as ProductRowData } from "@/lib/admin/products";
 import { DeleteDialog } from "./DeleteDialog";
 import { RestoreButton } from "./RestoreButton";
+import { HardDeleteDialog } from "@/components/admin/HardDeleteDialog";
 import { env } from "@/lib/env.client";
 
 interface Props {
@@ -10,9 +11,10 @@ interface Props {
   sectorName: string | null;
   onDelete: () => Promise<void>;
   onRestore: () => Promise<void>;
+  onHardDelete: () => Promise<void>;
 }
 
-export function ProductRow({ product, sectorName, onDelete, onRestore }: Props) {
+export function ProductRow({ product, sectorName, onDelete, onRestore, onHardDelete }: Props) {
   const thumb = product.images?.[0]?.path;
   const url = thumb
     ? `${env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/$/, "")}/storage/v1/object/public/product-images/${thumb}`
@@ -49,7 +51,14 @@ export function ProductRow({ product, sectorName, onDelete, onRestore }: Props) 
       {product.active ? (
         <DeleteDialog productName={product.name.tr || product.slug} action={onDelete} />
       ) : (
-        <RestoreButton action={onRestore} />
+        <div className="flex items-center gap-3">
+          <RestoreButton action={onRestore} />
+          <HardDeleteDialog
+            entityLabel={product.name.tr || product.slug}
+            confirmToken={product.slug}
+            action={onHardDelete}
+          />
+        </div>
       )}
     </div>
   );
