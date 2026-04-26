@@ -52,7 +52,7 @@ export default async function PrivacyPage({ params }: PageProps) {
 
   const richTags = {
     mail: (chunks: ReactNode) => (
-      <a href="mailto:info@kitaplastik.com" className="underline">
+      <a href={`mailto:${company.email.primary}`} className="underline">
         {chunks}
       </a>
     ),
