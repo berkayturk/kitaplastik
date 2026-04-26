@@ -63,6 +63,14 @@ const messages = {
     contact: "İletişim",
     language: "Dil",
   },
+  legal: {
+    shared: {
+      linkLabel: {
+        privacy: "Gizlilik Politikası",
+        cookies: "Çerez Politikası",
+      },
+    },
+  },
 };
 
 function renderFooter(locale: "tr" | "en" | "ru" | "ar" = "tr") {
@@ -101,5 +109,19 @@ describe("Footer", () => {
     expect(screen.getByRole("link", { name: /teklif İste/i })).toBeInTheDocument();
     // Sektörler kolon başlığı H3 olarak (link değil) görünmeli
     expect(screen.getByRole("heading", { level: 3, name: /sektörler/i })).toBeInTheDocument();
+  });
+
+  it("renders bottom-bar legal links (privacy + cookies)", () => {
+    render(
+      <NextIntlClientProvider locale="tr" messages={messages}>
+        <Footer company={TEST_COMPANY} />
+      </NextIntlClientProvider>,
+    );
+    const privacy = screen.getByRole("link", { name: "Gizlilik Politikası" });
+    const cookies = screen.getByRole("link", { name: "Çerez Politikası" });
+    expect(privacy).toBeInTheDocument();
+    expect(cookies).toBeInTheDocument();
+    expect(privacy.getAttribute("href")).toBe("/legal/privacy");
+    expect(cookies.getAttribute("href")).toBe("/legal/cookies");
   });
 });

@@ -1,0 +1,241 @@
+{
+  "meta": {
+    "publishedDate": "April 26, 2026",
+    "lastUpdated": "April 26, 2026",
+    "publishedLabel": "Published",
+    "updatedLabel": "Last updated",
+    "disclaimer": "This text is for informational purposes only; for binding interpretation, please consult the competent authorities."
+  },
+  "shared": {
+    "linkLabel": {
+      "privacy": "Privacy Policy",
+      "cookies": "Cookie Policy"
+    },
+    "formConsentNotice": "By submitting this form, you accept our <privacyLink>Privacy Policy</privacyLink>."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "As Kıta Plastik ve Tekstil Sanayi ve Ticaret Limited Şirketi (\"Kıta Plastik\", \"we\"), we hereby inform you about the personal data we process under Law No. 6698 on the Protection of Personal Data (\"<kvkk>KVKK</kvkk>\"). On our website we process only <strong>the minimum data strictly necessary for contact and catalog requests</strong>; we do not use third-party advertising cookies or user tracking.",
+    "staticFacts": {
+      "taxOffice": "Information being updated",
+      "mersisNo": "Information being updated",
+      "kep": "Information being updated",
+      "verbisStatus": "Information being updated",
+      "dpoStatus": "Information being updated"
+    },
+    "sections": {
+      "controller": {
+        "heading": "1. Data Controller",
+        "fields": {
+          "legalName": "Legal Name",
+          "address": "Address",
+          "phone": "Phone",
+          "email": "Email (KVKK requests)",
+          "taxOffice": "Tax Office / Registry No",
+          "mersisNo": "MERSIS No",
+          "kep": "KEP Address",
+          "verbisStatus": "VERBIS Registration",
+          "dpoStatus": "Data Protection Officer (DPO)"
+        }
+      },
+      "purposes": {
+        "heading": "2. Purposes of Processing Personal Data",
+        "bullets": [
+          "Sending the catalog you requested to your email address",
+          "Responding to messages submitted via the contact form",
+          "Conducting quotation and feasibility processes related to our services",
+          "Preventing bots and unsolicited requests (technical protection via Cloudflare Turnstile)",
+          "Documenting our services within the scope of legal obligations (audit log)"
+        ]
+      },
+      "legalBasis": {
+        "heading": "3. Legal Basis",
+        "body": "Your personal data is processed on the legal grounds of KVKK Art. 5/2-(c) <strong>necessity for the establishment and performance of a contract</strong>, Art. 5/2-(e) <strong>necessity for the establishment and protection of our rights</strong>, and Art. 5/2-(f) <strong>necessity for our legitimate interest</strong>. No processing requiring explicit consent is carried out."
+      },
+      "categories": {
+        "heading": "4. Categories of Data Processed",
+        "cols": {
+          "category": "Category",
+          "data": "Data Processed",
+          "source": "Source",
+          "purpose": "Purpose"
+        },
+        "table": [
+          {
+            "category": "Contact (Catalog Request)",
+            "data": "Email address, language preference (locale)",
+            "source": "Catalog request form input",
+            "purpose": "Catalog delivery"
+          },
+          {
+            "category": "Identity & Contact (Message Form)",
+            "data": "Full name, email, company (optional), phone (optional), subject, message content, IP address (for security purposes)",
+            "source": "Contact form input",
+            "purpose": "Responding to your message"
+          },
+          {
+            "category": "Transaction Security",
+            "data": "Audit log records (operation type, timestamp, IP address — for security purposes)",
+            "source": "Server logs",
+            "purpose": "Legal obligation + security"
+          }
+        ]
+      },
+      "thirdParties": {
+        "heading": "5. Transfers & Third Parties",
+        "body": "We share your data only with the following <strong>service providers (data processors)</strong>, and only to perform the defined function. No advertising, marketing, or analytics data is sold.",
+        "cols": {
+          "provider": "Service Provider",
+          "purpose": "Purpose",
+          "country": "Country / Region",
+          "safeguards": "Safeguards"
+        },
+        "table": [
+          {
+            "provider": "Resend (email delivery)",
+            "purpose": "Catalog and form message delivery",
+            "country": "EU / USA",
+            "safeguards": "TLS 1.2+, service agreement"
+          },
+          {
+            "provider": "Cloudflare (CDN, Turnstile, bot mitigation)",
+            "purpose": "Website delivery + anti-bot protection",
+            "country": "Global Edge",
+            "safeguards": "TLS 1.2+, GDPR-compliant DPA"
+          },
+          {
+            "provider": "Supabase (database)",
+            "purpose": "Storage of form requests (email + locale)",
+            "country": "EU (eu-central-1)",
+            "safeguards": "EU data residency, TLS 1.2+"
+          },
+          {
+            "provider": "Plausible Analytics (self-host)",
+            "purpose": "Website visit statistics (cookieless, anonymous)",
+            "country": "Germany",
+            "safeguards": "Uses no cookies, IP is hashed"
+          },
+          {
+            "provider": "Sentry (error monitoring)",
+            "purpose": "Server/client error reporting",
+            "country": "EU",
+            "safeguards": "Uses no cookies, sensitive data is filtered"
+          }
+        ]
+      },
+      "retention": {
+        "heading": "6. Retention Periods",
+        "body": "We retain your data only for as long as necessary for the purpose of processing:",
+        "cols": {
+          "dataType": "Data Type",
+          "period": "Period",
+          "basis": "Basis"
+        },
+        "table": [
+          {
+            "dataType": "Catalog request (email + locale)",
+            "period": "30 days (automatic deletion)",
+            "basis": "Data minimization — pg_cron daily 03:00 UTC"
+          },
+          {
+            "dataType": "Contact form message",
+            "period": "Until reply + 12 months archive",
+            "basis": "Reply to your message + potential legal obligation"
+          },
+          {
+            "dataType": "Audit log",
+            "period": "12 months",
+            "basis": "Security + legal obligation"
+          }
+        ]
+      },
+      "rights": {
+        "heading": "7. Data Subject Rights (KVKK Art. 11)",
+        "bullets": [
+          "Learning whether your personal data is being processed",
+          "Requesting information if it has been processed",
+          "Learning the purpose of processing and whether it is used in line with that purpose",
+          "Learning the third parties to whom data has been transferred domestically or abroad",
+          "Requesting correction if data has been processed incompletely or incorrectly",
+          "Requesting deletion or destruction when the conditions are met",
+          "Requesting that correction/deletion be communicated to the third parties to whom data was transferred",
+          "Objecting to an adverse outcome arising from automated analysis",
+          "Requesting compensation for damages incurred due to unlawful processing"
+        ]
+      },
+      "application": {
+        "heading": "8. Application Method",
+        "body": "To exercise your rights under KVKK Art. 13, you may submit a written application to <mail>info@kitaplastik.com</mail>. Your application will be concluded within at most <strong>30 days</strong>. For a detailed application guide, you may consult the <kvkk>KVKK Official Website</kvkk>."
+      }
+    }
+  },
+  "cookies": {
+    "title": "Cookie Policy",
+    "intro": "Our website uses <strong>only strictly necessary (essential) cookies</strong>; we do not place cookies for advertising, marketing, or user tracking purposes. For this reason, we do not display a cookie consent banner — all cookies we use fall within the category technically required for the website to function (ePrivacy Directive Article 5(3) exemption).",
+    "sections": {
+      "what": {
+        "heading": "1. What Is a Cookie?",
+        "body": "Cookies are small text files saved to your browser by the websites you visit. Site owners can use these files to remember your preferences, store session information, or perform site analytics. Not all cookies are in the same category — some are essential for the site to function, while others are optional."
+      },
+      "approach": {
+        "heading": "2. Our Approach",
+        "body": "The Kıta Plastik website uses only <strong>three categories of strictly necessary technical cookies</strong>: language preference (locale), bot protection (Cloudflare Turnstile), and infrastructure protection (Cloudflare bot management). All of these are required to provide the site's core functions; no advertising, profiling, or cross-site tracking is performed."
+      },
+      "inventory": {
+        "heading": "3. Cookie Inventory",
+        "cols": {
+          "name": "Name",
+          "purpose": "Purpose",
+          "party": "Owner",
+          "duration": "Duration",
+          "category": "Category"
+        },
+        "table": [
+          {
+            "name": "NEXT_LOCALE",
+            "purpose": "Remembering your selected language preference",
+            "party": "First party (Kıta Plastik)",
+            "duration": "1 year",
+            "category": "Strictly necessary"
+          },
+          {
+            "name": "cf_chl_*",
+            "purpose": "Cloudflare Turnstile bot protection (on form submissions)",
+            "party": "Third party (Cloudflare)",
+            "duration": "Session",
+            "category": "Strictly necessary"
+          },
+          {
+            "name": "__cf_bm",
+            "purpose": "Cloudflare bot management (infrastructure protection)",
+            "party": "Third party (Cloudflare)",
+            "duration": "~30 minutes",
+            "category": "Strictly necessary"
+          },
+          {
+            "name": "Plausible Analytics",
+            "purpose": "Anonymous page-view statistics",
+            "party": "First party (Kıta Plastik self-host)",
+            "duration": "Uses no cookies (cookieless)",
+            "category": "None"
+          },
+          {
+            "name": "Sentry",
+            "purpose": "Error monitoring",
+            "party": "Third party (Sentry.io)",
+            "duration": "Uses no cookies",
+            "category": "None"
+          }
+        ]
+      },
+      "control": {
+        "heading": "4. Browser Control",
+        "body": "You can reject or delete cookies from your browser settings. However, if <strong>strictly necessary cookies are disabled</strong>, core functions such as form submissions and language preference may not work correctly. For browser-specific guidance, see the help pages of your browser provider (Chrome, Firefox, Safari, Edge)."
+      },
+      "changes": {
+        "heading": "5. Policy Changes",
+        "body": "When this policy is updated, the <strong>Last Updated</strong> date is revised and the text is published on this page. For significant changes, we will provide notice via the website."
+      }
+    }
+  }
+}

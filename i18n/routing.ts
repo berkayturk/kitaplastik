@@ -70,5 +70,17 @@ export const routing = defineRouting({
       ru: "/otrasli/tekstil",
       ar: "/al-qitaat/al-mansujat",
     },
+    "/legal/privacy": {
+      tr: "/yasal/gizlilik",
+      en: "/legal/privacy",
+      ru: "/pravovaya/konfidentsialnost",
+      ar: "/qanuni/khususiyya",
+    },
+    "/legal/cookies": {
+      tr: "/yasal/cerezler",
+      en: "/legal/cookies",
+      ru: "/pravovaya/kuki",
+      ar: "/qanuni/kuki",
+    },
   },
 });

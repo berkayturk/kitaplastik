@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { TurnstileWidget } from "@/components/rfq/TurnstileWidget";
 import { trackPlausible } from "@/lib/analytics/plausible";
+import { Link } from "@/i18n/navigation";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Locale = "tr" | "en" | "ru" | "ar";
@@ -23,6 +24,7 @@ export function CatalogRequestForm() {
   const t = useTranslations("catalog.form");
   const tLocale = useTranslations("catalog.locales");
   const tSector = useTranslations("catalog.sectors");
+  const tShared = useTranslations("legal.shared");
   const uiLocale = useLocale() as Locale;
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
@@ -227,6 +229,16 @@ export function CatalogRequestForm() {
         >
           {status === "submitting" ? t("submitting") : t("submit")}
         </Button>
+
+        <p className="text-text-secondary text-[12px] leading-[1.5]">
+          {tShared.rich("formConsentNotice", {
+            privacyLink: (chunks) => (
+              <Link href="/legal/privacy" className="underline">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
       </form>
     </div>
   );

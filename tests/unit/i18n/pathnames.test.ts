@@ -89,4 +89,20 @@ describe("next-intl pathnames per-locale mapping", () => {
       "/ar/al-qitaat/al-mansujat",
     );
   });
+
+  it("/legal/privacy", () => {
+    expect(getPathname({ href: "/legal/privacy", locale: "tr" })).toBe("/tr/yasal/gizlilik");
+    expect(getPathname({ href: "/legal/privacy", locale: "en" })).toBe("/en/legal/privacy");
+    expect(getPathname({ href: "/legal/privacy", locale: "ru" })).toBe(
+      "/ru/pravovaya/konfidentsialnost",
+    );
+    expect(getPathname({ href: "/legal/privacy", locale: "ar" })).toBe("/ar/qanuni/khususiyya");
+  });
+
+  it("/legal/cookies", () => {
+    expect(getPathname({ href: "/legal/cookies", locale: "tr" })).toBe("/tr/yasal/cerezler");
+    expect(getPathname({ href: "/legal/cookies", locale: "en" })).toBe("/en/legal/cookies");
+    expect(getPathname({ href: "/legal/cookies", locale: "ru" })).toBe("/ru/pravovaya/kuki");
+    expect(getPathname({ href: "/legal/cookies", locale: "ar" })).toBe("/ar/qanuni/kuki");
+  });
 });

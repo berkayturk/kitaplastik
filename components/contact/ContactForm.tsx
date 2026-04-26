@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { PhoneField } from "@/components/forms/PhoneField";
 import { TurnstileWidget } from "@/components/rfq/TurnstileWidget";
 import { trackPlausible } from "@/lib/analytics/plausible";
+import { Link } from "@/i18n/navigation";
 
 type SubjectKey = "general" | "quote" | "support" | "other";
 const SUBJECT_KEYS: readonly SubjectKey[] = ["general", "quote", "support", "other"];
@@ -15,6 +16,7 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
   const t = useTranslations("pages.contact.form");
+  const tShared = useTranslations("legal.shared");
   const locale = useLocale() as "tr" | "en" | "ru" | "ar";
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -189,6 +191,16 @@ export function ContactForm() {
           {status === "submitting" ? t("submitting") : t("submit")}
         </button>
       </div>
+
+      <p className="text-text-secondary text-[12px] leading-[1.5]">
+        {tShared.rich("formConsentNotice", {
+          privacyLink: (chunks) => (
+            <Link href="/legal/privacy" className="underline">
+              {chunks}
+            </Link>
+          ),
+        })}
+      </p>
     </form>
   );
 }

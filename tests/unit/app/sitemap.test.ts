@@ -24,8 +24,8 @@ describe("sitemap.ts — native URL generation", () => {
     urls = entries.map((e) => e.url);
   });
 
-  it("generates 40 URLs (10 routes × 4 locales)", () => {
-    expect(entries).toHaveLength(40);
+  it("generates 48 URLs (12 routes × 4 locales)", () => {
+    expect(entries).toHaveLength(48);
   });
 
   it("includes TR native slugs", () => {

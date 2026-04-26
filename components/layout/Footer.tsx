@@ -13,6 +13,7 @@ export function Footer({ company }: FooterProps) {
   const tCommon = useTranslations("common");
   const tNav = useTranslations("nav");
   const tFooter = useTranslations("common.footer");
+  const tLegal = useTranslations("legal.shared.linkLabel");
   const currentYear = new Date().getFullYear();
 
   return (
@@ -56,8 +57,26 @@ export function Footer({ company }: FooterProps) {
           </FooterColumn>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-[rgba(250,250,247,0.1)] py-6 text-[13px] text-[rgba(250,250,247,0.5)] md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-3 border-t border-[rgba(250,250,247,0.1)] py-6 text-[13px] text-[rgba(250,250,247,0.5)] md:flex-row md:flex-wrap md:items-center md:justify-between">
           <p className="font-mono">{tFooter("copyright", { year: currentYear })}</p>
+          <ul className="flex flex-wrap gap-x-4 gap-y-1">
+            <li>
+              <Link
+                href="/legal/privacy"
+                className="transition-colors duration-200 ease-out hover:text-[var(--color-text-inverse)]"
+              >
+                {tLegal("privacy")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/legal/cookies"
+                className="transition-colors duration-200 ease-out hover:text-[var(--color-text-inverse)]"
+              >
+                {tLegal("cookies")}
+              </Link>
+            </li>
+          </ul>
           <p>{tCommon("brand.tagline")}</p>
         </div>
       </Container>
