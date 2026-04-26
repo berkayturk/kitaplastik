@@ -14,7 +14,7 @@ interface Props {
   sectors: SectorMap;
   softDelete: (id: string) => Promise<void>;
   restore: (id: string) => Promise<void>;
-  hardDelete: (id: string) => Promise<void>;
+  hardDelete: (id: string, token: string) => Promise<void>;
 }
 
 export function ProductList({
@@ -88,7 +88,7 @@ export function ProductList({
             sectorName={p.sector_id ? (sectors[p.sector_id] ?? null) : null}
             onDelete={() => softDelete(p.id)}
             onRestore={() => restore(p.id)}
-            onHardDelete={() => hardDelete(p.id)}
+            onHardDelete={(token) => hardDelete(p.id, token)}
           />
         ))}
       </div>

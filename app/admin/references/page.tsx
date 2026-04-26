@@ -33,9 +33,9 @@ export default async function AdminReferencesPage() {
     "use server";
     await restoreReference(id);
   }
-  async function hardDelete(id: string) {
+  async function hardDelete(id: string, confirmToken: string) {
     "use server";
-    await hardDeleteReference(id);
+    await hardDeleteReference(id, confirmToken);
   }
   async function moveUp(id: string) {
     "use server";

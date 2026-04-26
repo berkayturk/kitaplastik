@@ -11,7 +11,7 @@ type Client = Database["public"]["Tables"]["clients"]["Row"];
 interface Actions {
   softDelete: (id: string) => Promise<void>;
   restore: (id: string) => Promise<void>;
-  hardDelete: (id: string) => Promise<void>;
+  hardDelete: (id: string, token: string) => Promise<void>;
   moveUp: (id: string) => Promise<void>;
   moveDown: (id: string) => Promise<void>;
 }
@@ -145,7 +145,7 @@ export function ReferenceList({ activeRefs, deletedRefs, sectors, actions }: Pro
                         <HardDeleteDialog
                           entityLabel={r.key}
                           confirmToken={r.key}
-                          action={() => actions.hardDelete(r.id)}
+                          action={(token) => actions.hardDelete(r.id, token)}
                         />
                       </span>
                     )}

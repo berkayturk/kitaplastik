@@ -11,7 +11,7 @@ interface Props {
   sectorName: string | null;
   onDelete: () => Promise<void>;
   onRestore: () => Promise<void>;
-  onHardDelete: () => Promise<void>;
+  onHardDelete: (token: string) => Promise<void>;
 }
 
 export function ProductRow({ product, sectorName, onDelete, onRestore, onHardDelete }: Props) {

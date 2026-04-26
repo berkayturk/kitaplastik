@@ -69,7 +69,7 @@ describe("hardDeleteProduct — irreversible delete", () => {
       active: true,
     });
 
-    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000001")).rejects.toThrow(
+    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000001", "p1")).rejects.toThrow(
       /pasifleştir/i,
     );
 
@@ -80,10 +80,29 @@ describe("hardDeleteProduct — irreversible delete", () => {
 
   it("throws when product is not found", async () => {
     getProductByIdMock.mockResolvedValue(null);
-    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000002")).rejects.toThrow(
+    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000002", "any")).rejects.toThrow(
       /bulunamadı/i,
     );
     expect(deleteSpy).not.toHaveBeenCalled();
+  });
+
+  it("throws when confirm token does not match the product slug", async () => {
+    getProductByIdMock.mockResolvedValue({
+      id: "00000000-0000-0000-0000-000000000030",
+      slug: "p30-real-slug",
+      code: null,
+      sector_id: null,
+      images: [{ path: "p30/x.jpg", order: 0, alt_text: { tr: "" } }],
+      active: false,
+    });
+
+    await expect(
+      hardDeleteProduct("00000000-0000-0000-0000-000000000030", "wrong-token"),
+    ).rejects.toThrow(/onay/i);
+
+    expect(deleteSpy).not.toHaveBeenCalled();
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(recordAuditMock).not.toHaveBeenCalled();
   });
 
   it("deletes DB row first (atomic active=false guard) + storage objects after + records irreversible audit", async () => {
@@ -99,7 +118,7 @@ describe("hardDeleteProduct — irreversible delete", () => {
       active: false,
     });
 
-    await hardDeleteProduct("00000000-0000-0000-0000-000000000003");
+    await hardDeleteProduct("00000000-0000-0000-0000-000000000003", "p3");
 
     expect(fromSpy).toHaveBeenCalledWith("products");
     expect(deleteSpy).toHaveBeenCalledWith({ count: "exact" });
@@ -139,7 +158,7 @@ describe("hardDeleteProduct — irreversible delete", () => {
     });
     eqActiveSpy.mockResolvedValueOnce({ data: null, error: null, count: 0 });
 
-    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000010")).rejects.toThrow(
+    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000010", "p10")).rejects.toThrow(
       /silinemedi|aktif/i,
     );
 
@@ -162,7 +181,7 @@ describe("hardDeleteProduct — irreversible delete", () => {
       count: null,
     });
 
-    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000011")).rejects.toThrow(
+    await expect(hardDeleteProduct("00000000-0000-0000-0000-000000000011", "p11")).rejects.toThrow(
       /RLS denied/,
     );
 
@@ -184,7 +203,7 @@ describe("hardDeleteProduct — irreversible delete", () => {
       error: { message: "storage offline" },
     });
 
-    await hardDeleteProduct("00000000-0000-0000-0000-000000000004");
+    await hardDeleteProduct("00000000-0000-0000-0000-000000000004", "p4");
 
     expect(eqActiveSpy).toHaveBeenCalledWith("active", false);
     expect(removeSpy).toHaveBeenCalledTimes(1);
@@ -201,7 +220,7 @@ describe("hardDeleteProduct — irreversible delete", () => {
       active: false,
     });
 
-    await hardDeleteProduct("00000000-0000-0000-0000-000000000005");
+    await hardDeleteProduct("00000000-0000-0000-0000-000000000005", "p5");
 
     expect(removeSpy).not.toHaveBeenCalled();
     expect(eqIdSpy).toHaveBeenCalledWith("id", "00000000-0000-0000-0000-000000000005");
