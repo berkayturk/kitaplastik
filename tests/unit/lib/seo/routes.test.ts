@@ -41,10 +41,12 @@ describe("buildAlternates — per-locale native URLs", () => {
     expect(alt.languages.ar).toBe("https://kitaplastik.com/ar/al-qitaat/ghasil-zujajat");
   });
 
-  it("PUBLIC_ROUTES contains all 10 canonical keys", () => {
-    expect(PUBLIC_ROUTES).toHaveLength(10);
+  it("PUBLIC_ROUTES contains all 12 canonical keys", () => {
+    expect(PUBLIC_ROUTES).toHaveLength(12);
     expect(PUBLIC_ROUTES).toContain("/");
     expect(PUBLIC_ROUTES).toContain("/request-quote");
     expect(PUBLIC_ROUTES).toContain("/sectors/bottle-washing");
+    expect(PUBLIC_ROUTES).toContain("/legal/privacy");
+    expect(PUBLIC_ROUTES).toContain("/legal/cookies");
   });
 });
