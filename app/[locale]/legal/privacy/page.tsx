@@ -25,9 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const alternates = buildAlternates("/legal/privacy", origin);
   return {
     title: `${t("title")} | Kıta Plastik`,
-    description: t("intro")
-      .replace(/<[^>]+>/g, "")
-      .slice(0, 160),
+    description: (t.raw("intro") as string).replace(/<[^>]+>/g, "").slice(0, 160),
     alternates: {
       canonical: alternates.languages[locale],
       languages: alternates.languages,
