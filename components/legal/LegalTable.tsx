@@ -6,8 +6,9 @@ interface LegalTableProps {
 
 export function LegalTable({ caption, cols, rows }: LegalTableProps) {
   const colKeys = Object.keys(cols);
-  if (process.env.NODE_ENV !== "production" && rows.length > 0) {
-    const rowKeys = Object.keys(rows[0]);
+  const firstRow = rows[0];
+  if (process.env.NODE_ENV !== "production" && firstRow) {
+    const rowKeys = Object.keys(firstRow);
     const missing = colKeys.filter((k) => !rowKeys.includes(k));
     if (missing.length > 0) {
       console.error("LegalTable: row missing keys", missing);
