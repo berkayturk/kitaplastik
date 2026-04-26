@@ -62,12 +62,27 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 | Supabase + Coolify token rotate | ✅ 2026-04-26 |
 | **Admin hard-delete (products + references)** | ✅ canlı (#9, 6a5395b) |
 | **Admin hard-delete atomicity fix (active guard + DB-first)** | ✅ canlı (#10, b7b411f) |
+| **HardDeleteDialog server-side confirmation token** | ✅ canlı (#11, 2f3743d) |
 | **GWS (Faz 3)** | 🟡 maddi karar |
 | **B staticFacts net değer** | 🟡 user input bekler |
 | **Tier 2 Dockerfile** | ❌ ABANDONED 2026-04-26 (Nixpacks kalıcı tercih) |
 | **Codex Gate 2 retroactive #8** | ✅ done 2026-04-26 (concerns medium 3M/1L — patch yok) |
-| **Codex Gate 2 retroactive #9** | ✅ done 2026-04-26 (4 HIGH → fix #10 ile resolve) |
-| **HardDeleteDialog server-side token validation** | 🟢 follow-up (medium 5, defense-in-depth, opsiyonel) |
+| **Codex Gate 2 retroactive #9** | ✅ done 2026-04-26 (4 HIGH+3M → #10 atomicity + #11 token tam kapandı) |
+
+---
+
+## Patch PR #11 ✅ CANLIDA (2026-04-26 bu oturum) — HardDeleteDialog server-side confirmation token
+
+- Squash commit: `2f3743d fix(admin): server-side confirmation token validation for hard-delete (#11)` (CI 10/10 ✓ + Deploy ✓)
+- Codex Gate 2 #9 retroactive medium 5 fix — defense-in-depth
+- Saldırı modeli kapatıldı: cookie hijack + curl direct call (modal bypass) artık server-side token validation'da fail
+- Server actions: `hardDeleteProduct(id, confirmToken)` + `hardDeleteReference(id, confirmToken)` — token DB'deki `existing.slug`/`existing.key` ile karşılaştırılır, mismatch → throw "Onay kelimesi eşleşmiyor — kalıcı silme iptal edildi."
+- HardDeleteDialog action signature: `() => Promise<void>` → `(typedToken: string) => Promise<void>` — typed token server'a gider
+- Plumbing: ProductRow/ProductList/ReferenceList/2 page.tsx tüm chain `(token: string)` accept eder, type system tüm call site'ları yakalar
+- TDD: 16/16 GREEN (was 14/14 in #10) — +1 mismatch contract test/entity asserts bad token → throws + zero side effects (no delete, no storage, no audit)
+- `pnpm verify`: 277 unit / 76 e2e / build / lint / format / audit ✓
+- Codex Gate 2 forward SKIPPED — bu PR Codex'in spesifik medium 5 suggestion'ının fix'i, tautolojik review olur
+- Notlar: dialog UX değişmedi (operatör hâlâ slug yazıyor, button hâlâ disabled until match); sadece backend katmanı eklendi
 
 ---
 
