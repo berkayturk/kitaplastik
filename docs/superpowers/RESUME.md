@@ -40,10 +40,6 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 - Sonraki oturumda CLI quota refresh sonrası retroactive review tetikle (`codex-review-pr` skill, PR #8 diff)
 - HIGH issue çıkarsa ayrı patch PR; çıkmazsa "post-merge clean" not düş
 
-#### D. (Opsiyonel) Tier 2 Dockerfile retry (~1-2 sa, AYRI PR)
-- Memory `feedback_coolify_dockerfile_deferred.md` — 2026-04-23'teki 2. deneme fail'i + 2026-04-26 deferred not. Dedicated oturum hak ediyor (deep-dive Coolify deploy log + container log birlikte)
-- Şu an prod stabil Nixpacks ile (cleanup #8 deploy 14 dk, smoke ALL GREEN); aciliyet yok
-
 #### Faz 3 (GWS) — maddi karar bekliyor (DEFERRED)
 - info@kitaplastik.com gerçek inbox için Google Workspace ($6/user/ay)
 - Geçici: CF Email Routing forward (ücretsiz, kullanıcının kişisel mailine route)
@@ -67,7 +63,7 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 | **Admin hard-delete (products + references)** | ✅ canlı (#9, 6a5395b) |
 | **GWS (Faz 3)** | 🟡 maddi karar |
 | **B staticFacts net değer** | 🟡 user input bekler |
-| **D Tier 2 Dockerfile** | 🟡 deferred opsiyonel |
+| **Tier 2 Dockerfile** | ❌ ABANDONED 2026-04-26 (Nixpacks kalıcı tercih) |
 | **Codex Gate 2 retroactive #8 + #9** | 🟡 CLI quota refresh sonrası |
 
 ---
@@ -232,7 +228,6 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 ### Session +1 preview (heads-up)
 - **Plan 5c Part 2** (~3-4 sa): `/admin/settings/company` (`lib/company.ts` editöre) + catalog request analytics dashboard (Plausible + Supabase)
 - **Gate 2 Medium follow-up** (~1-2 sa): E2E coverage genişletmesi — gerçek submit + upload + reorder swap assertion
-- **Pipeline Tier 2 retry** (~1-2 sa): Dockerfile deep-dive — Coolify log full + failed container exec (memory `feedback_coolify_dockerfile_deferred.md` retry protokolü)
 - **Pipeline Tier 3** (~45-60 dk): CI parallel jobs + Playwright browsers cache → CI 9dk → 4-5dk
 - **Secret rotate** (~30 dk): Coolify API token rotate + session'da transcriptte geçen `SUPABASE_ACCESS_TOKEN` rotate
 - **Redis rate limit** (yalnızca trigger'lı): multi-instance'a geçiş + trafik 10x artış sonrası yeniden değerlendir
@@ -240,7 +235,7 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 - **Plan 5a Faz 3** (maddi hazır sonrası): GWS email
 - **uuid moderate advisory** (opsiyonel): resend@6 → svix → uuid@10 transitive; resend major upgrade gerekebilir
 
-**İlk sorusu:** "Plan 5c Part 1 canlıda (2026-04-24, squash e5030bb). Sıradaki: Plan 5c Part 2 — `/admin/settings/company` editör + catalog request analytics dashboard. Brainstorm'a başlayalım mı yoksa başka bir önceliğe mi dalalım (pipeline Tier 2, secret rotate, E2E hygiene)?"
+**İlk sorusu:** "Plan 5c Part 1 canlıda (2026-04-24, squash e5030bb). Sıradaki: Plan 5c Part 2 — `/admin/settings/company` editör + catalog request analytics dashboard. Brainstorm'a başlayalım mı yoksa başka bir önceliğe mi dalalım (secret rotate, E2E hygiene)?"
 
 ---
 
