@@ -20,12 +20,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "catalog.page" });
   const origin = env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com";
+  const alternates = buildAlternates("/request-quote", origin);
   return {
     title: `${t("title")} | Kıta Plastik`,
     description: t("description"),
     alternates: {
-      canonical: `${origin}/${locale}/request-quote`,
-      languages: buildAlternates("/request-quote", origin).languages,
+      canonical: alternates.languages[locale],
+      languages: alternates.languages,
     },
   };
 }
