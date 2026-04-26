@@ -20,7 +20,7 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ## 👉 NEXT SESSION KICKOFF (2026-04-26+)
 
-**Hukuk yükü tamamen bitti — site canlıda 4 dil eksiksiz.** Plan 5b PR B ✅ canlıda 2026-04-26 (`dde1ee2`, PR #7). 8 yeni route (TR/EN/RU/AR × privacy/cookies), KVKK aydınlatma + çerez politikası, cookie banner GEREKMEZ (ePrivacy 5(3) muafiyet — strict-necessary only).
+**Hukuk yükü tamamen bitti — site canlıda 4 dil eksiksiz.** Plan 5b PR B ✅ canlıda 2026-04-26 (`dde1ee2`, PR #7) — 8 URL × 200 OK doğrulandı 18:04 TRT (Coolify deploy 10m 45s). KVKK aydınlatma + çerez politikası 4 locale × 2 page; cookie banner GEREKMEZ (ePrivacy 5(3) muafiyet — strict-necessary only).
 
 ### Patch PR follow-up'lar (low priority, opsiyonel)
 
