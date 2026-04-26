@@ -18,9 +18,9 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ---
 
-## 👉 NEXT SESSION KICKOFF (2026-04-26 sonrası — combined cleanup #8 LIVE)
+## 👉 NEXT SESSION KICKOFF (2026-04-26 sonrası — cleanup #8 + admin hard-delete #9 LIVE)
 
-**Site tam-MVP state achieved (GWS + B placeholder hariç).** 12/12 canonical + 4/4 privacy copy live smoke PASS 2026-04-26 19:27 TRT. Coolify deploy ~14 dk içinde tamamlandı.
+**Site tam-MVP state achieved (GWS + B placeholder hariç) + admin hard-delete option canlıda.** Cleanup #8 smoke PASS 2026-04-26 19:27 TRT. Hard-delete #9 merged 2026-04-26 ~20:05 TRT, deploy ⏳ ~14 dk + manual UI smoke kullanıcı tarafından.
 
 ### Kalan minor follow-up (önerilen sıra)
 
@@ -39,17 +39,6 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 - Combined cleanup PR #8 (`7c6a644`) Codex Gate 2 review **SKIPPED** edildi (CLI usage limit, 2026-04-26 ~20:29 PT'ye kadar bloklanmıştı)
 - Sonraki oturumda CLI quota refresh sonrası retroactive review tetikle (`codex-review-pr` skill, PR #8 diff)
 - HIGH issue çıkarsa ayrı patch PR; çıkmazsa "post-merge clean" not düş
-
-#### Admin hard-delete option for products + references (~1-2 sa, AYRI PR)
-- Şu an sadece soft delete var: `app/admin/products/actions.ts:135` `softDeleteProduct` ve `app/admin/references/actions.ts:158` `softDeleteReference` `active=false` update ediyor; `restore*` ile geri alınabiliyor; soft-deleted listesi ayrı görünüyor (`listProducts({ active: false })`)
-- Hard delete eklemesi gerekenler:
-  - **Action:** `hardDeleteProduct(id)` + `hardDeleteReference(id)` — `svc.from("products").delete().eq("id", id)` (RLS admin-only); audit `product_hard_deleted` / `reference_hard_deleted`
-  - **Storage cleanup:** products `images` array'i Supabase Storage URL'leri içeriyorsa Storage API ile sil. Memory `feedback_supabase_storage_delete.md` uyarısı: `protect_delete()` trigger DELETE'i bloklayabilir — service-role Storage API kullan (Node script pattern)
-  - **References image:** `clients.logo_url` veya benzeri image alanı Storage'dan silinmeli mi? (mevcut schema check)
-  - **UI:** soft-deleted listesinde "Permanently delete" red button + double-confirm modal (irreversible warning)
-  - **Test:** new action contract test (insert → soft-delete → hard-delete → row gone + storage object gone assertion)
-  - **Permission:** RLS admin-only veya service-role-only enforce
-- Bağımsız iş, B veya D ile karıştırma — kendi PR'ı
 
 #### D. (Opsiyonel) Tier 2 Dockerfile retry (~1-2 sa, AYRI PR)
 - Memory `feedback_coolify_dockerfile_deferred.md` — 2026-04-23'teki 2. deneme fail'i + 2026-04-26 deferred not. Dedicated oturum hak ediyor (deep-dive Coolify deploy log + container log birlikte)
@@ -75,10 +64,38 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 | CF orange + DNS-01 + Full strict + SSL Labs A+ | ✅ canlı (Plan 5a F4) |
 | CI parallel sharding + paths-ignore + GHA workflow_run deploy | ✅ aktif |
 | Supabase + Coolify token rotate | ✅ 2026-04-26 |
+| **Admin hard-delete (products + references)** | ✅ canlı (#9, 6a5395b) |
 | **GWS (Faz 3)** | 🟡 maddi karar |
 | **B staticFacts net değer** | 🟡 user input bekler |
 | **D Tier 2 Dockerfile** | 🟡 deferred opsiyonel |
-| **Admin hard-delete (products + references)** | 🟡 sadece soft delete var, ayrı PR ~1-2 sa |
+| **Codex Gate 2 retroactive #8 + #9** | 🟡 CLI quota refresh sonrası |
+
+---
+
+## Admin hard-delete PR #9 ✅ CANLIDA (2026-04-26 bu oturum)
+
+- Squash commit: `6a5395b feat(admin): hard-delete option for products + references (#9)` (CI 10/10 ✓ + Deploy ⏳ ~14 dk)
+- Pattern: PR önceki soft-delete kalıyor (`active=false` + restore), yanına irreversible `hardDelete*` action eklendi
+- 2 yeni server action:
+  - `app/admin/products/actions.ts:hardDeleteProduct` — `delete().eq("id",id)` + `storage.from("product-images").remove(paths)` + audit `product_hard_deleted` (snapshot + irreversible:true)
+  - `app/admin/references/actions.ts:hardDeleteReference` — `delete().eq("id",id)` + `storage.from("client-logos").remove([key])` + audit `reference_hard_deleted`
+- Safety guards:
+  - **Two-step flow:** hard-delete sadece `active=false` rows için (`existing.active` check throws "Önce ürünü/referansı pasifleştirin"). Aktif row'lar önce soft-delete edilmeli — kazara prod data kaybı önlenir
+  - **Confirmation token:** UI'da entity slug/key text input ile yazılmadan destructive button disabled
+  - **Best-effort storage:** Storage cleanup non-fatal (Sentry warning, DB delete devam eder)
+  - **Audit trail:** `*_hard_deleted` action + `diff.snapshot` (pre-delete state) + `diff.irreversible:true` marker
+- Yeni `components/admin/HardDeleteDialog.tsx` shared component — text-input confirmation modal + red destructive button
+- TDD: 10 yeni contract assertion (5 per entity)
+  - active guard → throws
+  - not-found guard → throws
+  - happy-path: DB delete + Storage remove + audit (entity_type + user_id + ip:null + diff.irreversible:true + diff.snapshot)
+  - non-fatal storage failure → DB delete still proceeds
+  - skip storage when no images / external URL
+- `pnpm verify`: 277 unit / 76 e2e / build / lint / format / audit ✅
+- **Codex Gate 2 SKIPPED** — CLI usage limit hâlâ bloklu (PR #8 ile aynı 8:29 PM PT refresh). PR body'de belgelendi. Risk düşük (mekanik pattern + TDD + safety guards)
+- **No FK cascade impact** — `products` + `clients` tablolarına FK referans veren tablo yok (verified via grep)
+
+**Manual UI smoke (deploy sonrası):** admin login → ürünler → soft-delete bir test ürünü → "Silinmiş" tab → "Kalıcı sil" → modal'da slug yazıp onayla → row gone + Storage object gone (Sentry log'larında error olmamalı)
 
 ---
 
