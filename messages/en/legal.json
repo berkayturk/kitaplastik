@@ -69,13 +69,13 @@
           },
           {
             "category": "Identity & Contact (Message Form)",
-            "data": "Full name, email, company (optional), phone (optional), subject, message content, IP address (for security purposes)",
+            "data": "Full name, email, company (optional), phone (optional), subject, message content",
             "source": "Contact form input",
             "purpose": "Responding to your message"
           },
           {
             "category": "Transaction Security",
-            "data": "Audit log records (operation type, timestamp, IP address — for security purposes)",
+            "data": "Audit log records (operation type, timestamp — IP not stored)",
             "source": "Server logs",
             "purpose": "Legal obligation + security"
           }

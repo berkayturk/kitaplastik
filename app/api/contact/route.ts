@@ -12,6 +12,9 @@ import { recordAudit } from "@/lib/audit";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
+  // IP is used in-memory for rate-limit + Turnstile only; never persisted
+  // (Plan 5b data minimization — no DB IP/UA storage, no IP in audit log,
+  //  no IP in team notification email).
   const ip = ipFromHeaders(request.headers);
 
   // 1) Rate limit
@@ -59,7 +62,6 @@ export async function POST(request: NextRequest) {
     subject: input.subject,
     message: input.message,
     locale: input.locale,
-    ip,
   });
   const customerMail = renderContactCustomerEmail({ name: input.name, locale: input.locale });
 
@@ -87,13 +89,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "email_failed" }, { status: 502 });
   }
 
-  // 5) Audit log
+  // 5) Audit log — IP is intentionally null for end-user contact submissions
+  // (Plan 5b data minimization). Admin actions still log IP for forensics.
   await recordAudit({
     action: "contact_submitted",
     entity_type: "contact",
     entity_id: null,
     user_id: null,
-    ip,
+    ip: null,
     diff: { subject: input.subject, locale: input.locale, company: input.company || null },
   });
 
