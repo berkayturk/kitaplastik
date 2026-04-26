@@ -18,34 +18,53 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 
 ---
 
-## 👉 NEXT SESSION KICKOFF (2026-04-25+)
+## 👉 NEXT SESSION KICKOFF (2026-04-26+)
 
-**Oturumun hedefi:** Plan 5b MVP — **PR B: Legal pages 4 dil (~2-3 sa).** PR A ✅ canlıda + DB migration uygulandı 2026-04-25; KVKK aydınlatma + çerez politikası sayfaları kalan iş.
+**Hukuk yükü tamamen bitti — site canlıda 4 dil eksiksiz.** Plan 5b PR B ✅ canlıda 2026-04-26 (`dde1ee2`, PR #7). 8 yeni route (TR/EN/RU/AR × privacy/cookies), KVKK aydınlatma + çerez politikası, cookie banner GEREKMEZ (ePrivacy 5(3) muafiyet — strict-necessary only).
 
-### PR B scope (sonraki oturum)
+### Patch PR follow-up'lar (low priority, opsiyonel)
 
-**Hedef:** TR canonical KVKK aydınlatma + çerez politikası, EN/RU/AR çevirileri, footer + form altı inline link.
+1. **5dk patch — staticFacts net değerleri** (release blocker DEĞİL, "Bilgi güncelleniyor" placeholder şu an canlı). User net değerleri verince:
+   - 4 messages JSON dosyası (`messages/{tr,en,ru,ar}/legal.json` `privacy.staticFacts`)
+   - 5 alan: `taxOffice` (vergi dairesi/sicil no), `mersisNo`, `kep` (KEP adresi), `verbisStatus` (kayıt no veya teyit form), `dpoStatus` (atanmışsa iletişim, değilse "atanmamış")
+   - **7 gün içinde** yapılması memory'de mitigasyon olarak kayıtlı
 
-- Plan dosyası `docs/superpowers/plans/2026-04-25-plan5b-mvp-legal.md` (kısa, spec yazılmadı; Plan 5b A yolu session file = implicit spec)
-- TR canonical content (KVKK Resmi Rehber adapt) → EN/RU/AR çeviri (terminoloji tutarlılığı önemli)
-- Routes `/[locale]/legal/privacy` + `/[locale]/legal/cookies` + pathnames config (TR `/yasal/gizlilik` + `/yasal/cerezler`, RU/AR slugify)
-- Footer link + form altı inline link + "hukuk müşaviri review değildir" disclaimer
-- E2E smoke: 4 locale × 2 page = 8 smoke
-- "Veri minimizasyonu" iddiasını PR A canlı state'iyle eşleştir (sadece `email + locale + created_at` saklanır + 30 gün sonra silinir)
-- Verify + PR + Gate 2 Codex review + merge
+2. **`app/api/contact/route.ts` IP minimization** — Codex Gate 2 PR B HIGH bulgu kapsamında copy-honest fix uygulandı (privacy policy IP retention'ı doğru beyan ediyor). Code-side minimization ayrı patch PR. Pattern: PR A catalog'a uygulanan `email + locale + created_at` minimization (`ip_address` + `user_agent` drop) contact form'a port edilir.
 
-**Şirket bilgileri (PR B'de embed):**
-- Tüzel ünvan: Kıta Plastik ve Tekstil San. Tic. Ltd. Şti.
-- Adres: Küçükbalıklı, 2. Kadem Sk. No:40, 16250 Osmangazi/Bursa
-- VERBIS: yok / DPO: yok / Vergi-sicil: TBD placeholder (user dolduracak)
-- KVKK email: info@kitaplastik.com
+3. **About/Contact page canonical bug** — `app/[locale]/about/page.tsx:19` + `app/[locale]/contact/page.tsx:24` `canonical: \`${origin}/${locale}/about\`` (TR'de `/tr/about`) — fakat actual URL `/tr/hakkimizda`. Doğru pattern PR B `legal/{privacy,cookies}/page.tsx`'te: `canonical: alternates.languages[locale]`. Tek satır fix, 2 dosya, ~5 dk.
 
-**Cookie envanteri (PR B referansı):**
-`NEXT_LOCALE` + Turnstile = strict-necessary; Plausible cookieless; Sentry no-cookie; CF NEL altyapı. **Cookie banner gereksiz.**
+### Site tamamlanma için kalan iş — düşük öncelikli
 
-### Tier 2 Dockerfile retry — opsiyonel/defer geçerli
+**Pipeline:**
+- Tier 2 Dockerfile retry — defer geçerli (prod Nixpacks stabil, runtime impact yok)
+- `SUPABASE_ACCESS_TOKEN` rotate — low priority (MCP plugin variant on-demand auth aynı işi görüyor)
 
-Prod stabil Nixpacks, runtime impact yok. PR B sonrası gündeme alınabilir.
+**Operasyonel:**
+- Plan 5a Faz 3 (GWS inbox) — maddi karar bekliyor; CF Email Routing forward ucuz alternatif
+- Sentry source maps prod build verify (T15 verify'da OpenTelemetry warning'ler pre-existing — düşük öncelik refactor)
+
+**SEO:**
+- About/Contact canonical bug (yukarıda)
+
+**MVP olarak şu an site fonksiyonel olarak tamamen production-ready:** anasayfa + sektörler + ürünler + hakkımızda + iletişim + katalog + referanslar + KVKK gizlilik + çerez politikası — 4 dilde + admin paneli + audit log + bot koruması + analytics + hata izleme + auto-deploy + SSL A+ + 4-dil hreflang + sitemap + 30-gün veri auto-purge.
+
+---
+
+## Plan 5b PR B ✅ CANLIDA (2026-04-26 bu oturum)
+
+- Squash commit: `dde1ee2 feat(legal): Plan 5b PR B — KVKK gizlilik + çerez politikası 4 dil (#7)` (CI ✓ + Deploy ✓)
+- 8 yeni SSG route: `/legal/{privacy,cookies}` × {tr/en/ru/ar} (TR canonical pathnames `/yasal/gizlilik` + `/yasal/cerezler`, RU `/pravovaya/*`, AR `/qanuni/*`)
+- 5 reusable component: `LegalLayout` / `LegalSection` / `LegalTable` / `LegalDisclaimer` (5-prop locale-translated labels) / `LegalControllerBlock` (getCompany SOT + staticFacts merge)
+- Footer bottom-bar 3-element (copyright / legal links / tagline), Catalog + Contact form altı consent notice
+- Cookie consent banner GEREKMEZ — strict-necessary only (NEXT_LOCALE + cf_chl_* + __cf_bm), Plausible cookieless, Sentry no-cookie → ePrivacy 5(3) muafiyet
+- Codex Gate 1 (spec) + Gate 2 (PR diff): Gate 1 6 high inline fix, Gate 2 round 1 = 2 high (privacy copy IP retention accuracy), Gate 2 round 2 = APPROVE 0 issues
+- 12 yeni unit test (i18n pathnames 8 + LegalDisclaimer 2 + LegalTable 3 + LegalLayout 4 + Footer 1) + 10 E2E case (8 smoke + 2 round-trip), 263 unit + 76 e2e (28 skip) yeşil
+- staticFacts placeholder pattern: 5 alan "Bilgi güncelleniyor" / "Information being updated" / "Информация обновляется" / "المعلومات قيد التحديث" — release blocker değil, 7-gün içinde patch PR
+
+**Out of scope follow-up'lar (RESUME kickoff'ta listeli):**
+- 5dk patch PR — staticFacts net değerleri (vergi dairesi/sicil/MERSİS/KEP/VERBIS/DPO 4 messages JSON)
+- `app/api/contact/route.ts` IP minimization (catalog gibi `email + locale + created_at` minimization, Codex Gate 2 round 1 HIGH yerine privacy copy honest fix uygulandı)
+- About/Contact `canonical` bug — `${origin}/${locale}/about` yerine PR B pattern `alternates.languages[locale]` (next-intl pathnames-based, TR'de `/hakkimizda` → /about mismatch)
 
 ---
 
