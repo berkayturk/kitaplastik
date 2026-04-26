@@ -2,6 +2,8 @@
   "meta": {
     "publishedDate": "April 26, 2026",
     "lastUpdated": "April 26, 2026",
+    "publishedLabel": "Published",
+    "updatedLabel": "Last updated",
     "disclaimer": "This text is for informational purposes only; for binding interpretation, please consult the competent authorities."
   },
   "shared": {
