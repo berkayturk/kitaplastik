@@ -69,13 +69,13 @@
           },
           {
             "category": "Kimlik & İletişim (Mesaj Formu)",
-            "data": "Ad-Soyad, e-posta, firma (opsiyonel), telefon (opsiyonel), konu, mesaj içeriği",
+            "data": "Ad-Soyad, e-posta, firma (opsiyonel), telefon (opsiyonel), konu, mesaj içeriği, IP adresi (güvenlik amaçlı)",
             "source": "İletişim formu girişi",
             "purpose": "Mesajınıza yanıt verme"
           },
           {
             "category": "İşlem Güvenliği",
-            "data": "Audit log kayıtları (IP kaydedilmez – yalnızca işlem türü ve zaman damgası)",
+            "data": "Audit log kayıtları (işlem türü, zaman damgası, IP adresi — güvenlik amaçlı)",
             "source": "Sunucu logları",
             "purpose": "Yasal yükümlülük + güvenlik"
           }
@@ -143,7 +143,7 @@
             "basis": "Mesajınıza dönüş + olası yasal yükümlülük"
           },
           {
-            "dataType": "Audit log (IP'siz)",
+            "dataType": "Audit log",
             "period": "12 ay",
             "basis": "Güvenlik + yasal yükümlülük"
           }
