@@ -177,7 +177,7 @@
       },
       "approach": {
         "heading": "2. Our Approach",
-        "body": "The Kıta Plastik website uses only <strong>three categories of strict-necessary technical cookies</strong>: language preference (locale), bot protection (Cloudflare Turnstile), and infrastructure protection (Cloudflare bot management). All of these are required to provide the site's core functions; no advertising, profiling, or cross-site tracking is performed."
+        "body": "The Kıta Plastik website uses only <strong>three categories of strictly necessary technical cookies</strong>: language preference (locale), bot protection (Cloudflare Turnstile), and infrastructure protection (Cloudflare bot management). All of these are required to provide the site's core functions; no advertising, profiling, or cross-site tracking is performed."
       },
       "inventory": {
         "heading": "3. Cookie Inventory",
@@ -194,21 +194,21 @@
             "purpose": "Remembering your selected language preference",
             "party": "First party (Kıta Plastik)",
             "duration": "1 year",
-            "category": "Strict-necessary"
+            "category": "Strictly necessary"
           },
           {
             "name": "cf_chl_*",
             "purpose": "Cloudflare Turnstile bot protection (on form submissions)",
             "party": "Third party (Cloudflare)",
             "duration": "Session",
-            "category": "Strict-necessary"
+            "category": "Strictly necessary"
           },
           {
             "name": "__cf_bm",
             "purpose": "Cloudflare bot management (infrastructure protection)",
             "party": "Third party (Cloudflare)",
             "duration": "~30 minutes",
-            "category": "Strict-necessary"
+            "category": "Strictly necessary"
           },
           {
             "name": "Plausible Analytics",
@@ -228,7 +228,7 @@
       },
       "control": {
         "heading": "4. Browser Control",
-        "body": "You can reject or delete cookies from your browser settings. However, if <strong>strict-necessary cookies are disabled</strong>, core functions such as form submissions and language preference may not work correctly. For browser-specific guidance, see the help pages of your browser provider (Chrome, Firefox, Safari, Edge)."
+        "body": "You can reject or delete cookies from your browser settings. However, if <strong>strictly necessary cookies are disabled</strong>, core functions such as form submissions and language preference may not work correctly. For browser-specific guidance, see the help pages of your browser provider (Chrome, Firefox, Safari, Edge)."
       },
       "changes": {
         "heading": "5. Policy Changes",
