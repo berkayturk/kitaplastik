@@ -40,6 +40,17 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 - Sonraki oturumda CLI quota refresh sonrası retroactive review tetikle (`codex-review-pr` skill, PR #8 diff)
 - HIGH issue çıkarsa ayrı patch PR; çıkmazsa "post-merge clean" not düş
 
+#### Admin hard-delete option for products + references (~1-2 sa, AYRI PR)
+- Şu an sadece soft delete var: `app/admin/products/actions.ts:135` `softDeleteProduct` ve `app/admin/references/actions.ts:158` `softDeleteReference` `active=false` update ediyor; `restore*` ile geri alınabiliyor; soft-deleted listesi ayrı görünüyor (`listProducts({ active: false })`)
+- Hard delete eklemesi gerekenler:
+  - **Action:** `hardDeleteProduct(id)` + `hardDeleteReference(id)` — `svc.from("products").delete().eq("id", id)` (RLS admin-only); audit `product_hard_deleted` / `reference_hard_deleted`
+  - **Storage cleanup:** products `images` array'i Supabase Storage URL'leri içeriyorsa Storage API ile sil. Memory `feedback_supabase_storage_delete.md` uyarısı: `protect_delete()` trigger DELETE'i bloklayabilir — service-role Storage API kullan (Node script pattern)
+  - **References image:** `clients.logo_url` veya benzeri image alanı Storage'dan silinmeli mi? (mevcut schema check)
+  - **UI:** soft-deleted listesinde "Permanently delete" red button + double-confirm modal (irreversible warning)
+  - **Test:** new action contract test (insert → soft-delete → hard-delete → row gone + storage object gone assertion)
+  - **Permission:** RLS admin-only veya service-role-only enforce
+- Bağımsız iş, B veya D ile karıştırma — kendi PR'ı
+
 #### D. (Opsiyonel) Tier 2 Dockerfile retry (~1-2 sa, AYRI PR)
 - Memory `feedback_coolify_dockerfile_deferred.md` — 2026-04-23'teki 2. deneme fail'i + 2026-04-26 deferred not. Dedicated oturum hak ediyor (deep-dive Coolify deploy log + container log birlikte)
 - Şu an prod stabil Nixpacks ile (cleanup #8 deploy 14 dk, smoke ALL GREEN); aciliyet yok
@@ -67,6 +78,7 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 | **GWS (Faz 3)** | 🟡 maddi karar |
 | **B staticFacts net değer** | 🟡 user input bekler |
 | **D Tier 2 Dockerfile** | 🟡 deferred opsiyonel |
+| **Admin hard-delete (products + references)** | 🟡 sadece soft delete var, ayrı PR ~1-2 sa |
 
 ---
 
