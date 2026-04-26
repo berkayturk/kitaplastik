@@ -1,0 +1,239 @@
+{
+  "meta": {
+    "publishedDate": "26 Nisan 2026",
+    "lastUpdated": "26 Nisan 2026",
+    "disclaimer": "Bu metin bilgilendirme amaçlıdır; bağlayıcı yorumda yetkili mercilere başvurun."
+  },
+  "shared": {
+    "linkLabel": {
+      "privacy": "Gizlilik Politikası",
+      "cookies": "Çerez Politikası"
+    },
+    "formConsentNotice": "Bu formu göndererek <privacyLink>Gizlilik Politikası</privacyLink>'nı kabul etmiş olursunuz."
+  },
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "intro": "Kıta Plastik ve Tekstil Sanayi ve Ticaret Limited Şirketi (\"Kıta Plastik\", \"biz\") olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"<kvkk>KVKK</kvkk>\") kapsamında işlediğimiz kişisel verilerinizle ilgili sizi bu metinle bilgilendiriyoruz. Web sitemizde yalnızca <strong>iletişim ve katalog talepleri için kesinlikle gerekli olan asgari veriyi</strong> işliyoruz; üçüncü taraf reklamcılık çerezleri ya da kullanıcı izleme yapmıyoruz.",
+    "staticFacts": {
+      "taxOffice": "Bilgi güncelleniyor",
+      "mersisNo": "Bilgi güncelleniyor",
+      "kep": "Bilgi güncelleniyor",
+      "verbisStatus": "Bilgi güncelleniyor",
+      "dpoStatus": "Bilgi güncelleniyor"
+    },
+    "sections": {
+      "controller": {
+        "heading": "1. Veri Sorumlusu",
+        "fields": {
+          "legalName": "Tüzel Ünvan",
+          "address": "Adres",
+          "phone": "Telefon",
+          "email": "E-posta (KVKK başvuru)",
+          "taxOffice": "Vergi Dairesi / Sicil No",
+          "mersisNo": "MERSİS No",
+          "kep": "KEP Adresi",
+          "verbisStatus": "VERBIS Kaydı",
+          "dpoStatus": "Veri Koruma Görevlisi (DPO)"
+        }
+      },
+      "purposes": {
+        "heading": "2. Kişisel Verilerin İşlenme Amaçları",
+        "bullets": [
+          "Talep ettiğiniz kataloğun e-posta adresinize gönderilmesi",
+          "İletişim formundan ilettiğiniz mesajlara cevap verilmesi",
+          "Hizmetlerimizle ilgili teklif ve fizibilite süreçlerinin yürütülmesi",
+          "Bot ve istenmeyen taleplerin engellenmesi (Cloudflare Turnstile ile teknik koruma)",
+          "Hizmetlerimizin yasal yükümlülükler kapsamında belgelenmesi (audit log)"
+        ]
+      },
+      "legalBasis": {
+        "heading": "3. Hukuki Sebep",
+        "body": "Kişisel verileriniz, KVKK m.5/2-(c) <strong>sözleşmenin kurulması ve ifası için gerekli olması</strong>, m.5/2-(e) <strong>haklarımızın tesisi ve korunması için zorunlu olması</strong> ve m.5/2-(f) <strong>meşru menfaatimiz için gerekli olması</strong> hukuki sebeplerine dayanılarak işlenir. Açık rıza gerektiren bir işleme yapılmamaktadır."
+      },
+      "categories": {
+        "heading": "4. İşlenen Veri Kategorileri",
+        "cols": {
+          "category": "Kategori",
+          "data": "İşlenen Veri",
+          "source": "Kaynak",
+          "purpose": "Amaç"
+        },
+        "table": [
+          {
+            "category": "İletişim (Katalog Talebi)",
+            "data": "E-posta adresi, dil tercihi (locale)",
+            "source": "Katalog talep formu girişi",
+            "purpose": "Katalog teslimi"
+          },
+          {
+            "category": "Kimlik & İletişim (Mesaj Formu)",
+            "data": "Ad-Soyad, e-posta, firma (opsiyonel), telefon (opsiyonel), konu, mesaj içeriği",
+            "source": "İletişim formu girişi",
+            "purpose": "Mesajınıza yanıt verme"
+          },
+          {
+            "category": "İşlem Güvenliği",
+            "data": "Audit log kayıtları (IP <strong>kaydedilmez</strong> – yalnızca işlem türü ve zaman damgası)",
+            "source": "Sunucu logları",
+            "purpose": "Yasal yükümlülük + güvenlik"
+          }
+        ]
+      },
+      "thirdParties": {
+        "heading": "5. Aktarım & Üçüncü Taraflar",
+        "body": "Verilerinizi yalnızca aşağıdaki <strong>hizmet sağlayıcı (veri işleyen)</strong> kuruluşlarla, yalnızca tanımlı işlevin yerine getirilmesi için paylaşıyoruz. Reklam, pazarlama veya analitik verisi satışı yapılmaz.",
+        "cols": {
+          "provider": "Hizmet Sağlayıcı",
+          "purpose": "Amaç",
+          "country": "Ülke / Bölge",
+          "safeguards": "Önlemler"
+        },
+        "table": [
+          {
+            "provider": "Resend (e-posta gönderimi)",
+            "purpose": "Katalog ve form mesajı teslimat",
+            "country": "AB / ABD",
+            "safeguards": "TLS 1.2+, hizmet sözleşmesi"
+          },
+          {
+            "provider": "Cloudflare (CDN, Turnstile, bot mitigation)",
+            "purpose": "Web sitesi teslimatı + anti-bot koruma",
+            "country": "Global Edge",
+            "safeguards": "TLS 1.2+, GDPR-uyumlu DPA"
+          },
+          {
+            "provider": "Supabase (veritabanı)",
+            "purpose": "Form taleplerinin saklanması (e-posta + locale)",
+            "country": "AB (eu-central-1)",
+            "safeguards": "AB içi veri ikametgahı, TLS 1.2+"
+          },
+          {
+            "provider": "Plausible Analytics (self-host)",
+            "purpose": "Web sitesi ziyaret istatistikleri (cookieless, anonim)",
+            "country": "Almanya",
+            "safeguards": "Çerez kullanmaz, IP hash'lenir"
+          },
+          {
+            "provider": "Sentry (hata izleme)",
+            "purpose": "Sunucu/istemci hata raporlama",
+            "country": "AB",
+            "safeguards": "Çerez kullanmaz, hassas veri filtrelenir"
+          }
+        ]
+      },
+      "retention": {
+        "heading": "6. Saklama Süreleri",
+        "body": "Verilerinizi yalnızca işleme amacı için gerekli olan süre kadar saklarız:",
+        "cols": {
+          "dataType": "Veri Türü",
+          "period": "Süre",
+          "basis": "Dayanak"
+        },
+        "table": [
+          {
+            "dataType": "Katalog talebi (e-posta + locale)",
+            "period": "30 gün (otomatik silme)",
+            "basis": "Veri minimizasyonu — pg_cron günlük 03:00 UTC"
+          },
+          {
+            "dataType": "İletişim formu mesajı",
+            "period": "Yanıt verilene kadar + 12 ay arşiv",
+            "basis": "Mesajınıza dönüş + olası yasal yükümlülük"
+          },
+          {
+            "dataType": "Audit log (IP'siz)",
+            "period": "12 ay",
+            "basis": "Güvenlik + yasal yükümlülük"
+          }
+        ]
+      },
+      "rights": {
+        "heading": "7. İlgili Kişi Hakları (KVKK m.11)",
+        "bullets": [
+          "Kişisel verilerinizin işlenip işlenmediğini öğrenme",
+          "İşlenmişse buna ilişkin bilgi talep etme",
+          "İşleme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme",
+          "Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri öğrenme",
+          "Eksik veya yanlış işlenmiş ise düzeltilmesini isteme",
+          "Şartların gerçekleşmesi halinde silinmesini veya yok edilmesini isteme",
+          "Düzeltme/silme işlemlerinin aktarılan üçüncü kişilere bildirilmesini isteme",
+          "Otomatik sistemlerle analiz sonucu aleyhinize bir sonucun ortaya çıkmasına itiraz etme",
+          "Kanuna aykırı işleme nedeniyle zarara uğramanız halinde tazminat talep etme"
+        ]
+      },
+      "application": {
+        "heading": "8. Başvuru Yöntemi",
+        "body": "KVKK m.13 kapsamında haklarınızı kullanmak için <mail>info@kitaplastik.com</mail> adresine yazılı başvuru yapabilirsiniz. Başvurunuz en geç <strong>30 gün</strong> içinde sonuçlandırılır. Detaylı başvuru rehberi için <kvkk>KVKK Resmi Web Sitesi</kvkk>'ni inceleyebilirsiniz."
+      }
+    }
+  },
+  "cookies": {
+    "title": "Çerez Politikası",
+    "intro": "Web sitemiz <strong>yalnızca kesinlikle gerekli (zorunlu) çerezleri</strong> kullanır; reklam, pazarlama veya kullanıcı izleme amacıyla çerez yerleştirmez. Bu nedenle çerez onay banner'ı göstermiyoruz — kullandığımız tüm çerezler, web sitesinin çalışması için teknik olarak gerekli kategorisindedir (ePrivacy Direktifi madde 5(3) muafiyeti).",
+    "sections": {
+      "what": {
+        "heading": "1. Çerez Nedir?",
+        "body": "Çerezler, ziyaret ettiğiniz web siteleri tarafından tarayıcınıza kaydedilen küçük metin dosyalarıdır. Site sahipleri bu dosyalar aracılığıyla tercihlerinizi hatırlayabilir, oturum bilgilerini saklayabilir veya site analitiği yapabilir. Tüm çerezler aynı kategoride değildir — bazıları sitenin çalışması için zorunludur, bazıları opsiyoneldir."
+      },
+      "approach": {
+        "heading": "2. Yaklaşımımız",
+        "body": "Kıta Plastik web sitesi yalnızca <strong>üç kategoride zorunlu teknik çerez</strong> kullanır: dil tercihi (locale), bot koruması (Cloudflare Turnstile), ve altyapı koruması (Cloudflare bot management). Bunların hepsi sitenin temel işlevlerini sağlamak için gereklidir; reklamcılık, profilleme veya çapraz site izleme yapılmaz."
+      },
+      "inventory": {
+        "heading": "3. Çerez Envanteri",
+        "cols": {
+          "name": "İsim",
+          "purpose": "Amaç",
+          "party": "Sahip",
+          "duration": "Süre",
+          "category": "Kategori"
+        },
+        "table": [
+          {
+            "name": "NEXT_LOCALE",
+            "purpose": "Seçilen dil tercihinizin hatırlanması",
+            "party": "1. taraf (Kıta Plastik)",
+            "duration": "1 yıl",
+            "category": "Zorunlu"
+          },
+          {
+            "name": "cf_chl_*",
+            "purpose": "Cloudflare Turnstile bot koruması (form submitlerinde)",
+            "party": "3. taraf (Cloudflare)",
+            "duration": "Oturum",
+            "category": "Zorunlu"
+          },
+          {
+            "name": "__cf_bm",
+            "purpose": "Cloudflare bot yönetimi (altyapı koruma)",
+            "party": "3. taraf (Cloudflare)",
+            "duration": "~30 dakika",
+            "category": "Zorunlu"
+          },
+          {
+            "name": "Plausible Analytics",
+            "purpose": "Anonim sayfa görüntüleme istatistikleri",
+            "party": "1. taraf (Kıta Plastik self-host)",
+            "duration": "Çerez kullanmaz (cookieless)",
+            "category": "Yok"
+          },
+          {
+            "name": "Sentry",
+            "purpose": "Hata izleme",
+            "party": "3. taraf (Sentry.io)",
+            "duration": "Çerez kullanmaz",
+            "category": "Yok"
+          }
+        ]
+      },
+      "control": {
+        "heading": "4. Tarayıcı Kontrolü",
+        "body": "Tarayıcınızın ayarlarından çerezleri reddedebilir veya silebilirsiniz. Ancak <strong>zorunlu çerezler devre dışı bırakılırsa</strong> form gönderimleri ve dil tercihi gibi temel işlevler düzgün çalışmayabilir. Tarayıcınıza özel rehberler için tarayıcı sağlayıcısının yardım sayfalarına bakın (Chrome, Firefox, Safari, Edge)."
+      },
+      "changes": {
+        "heading": "5. Politika Değişiklikleri",
+        "body": "Bu politikada değişiklik yapıldığında, <strong>Son Güncelleme</strong> tarihi yenilenir ve metin bu sayfada yayınlanır. Önemli değişikliklerde web sitesi üzerinden bildirim sağlarız."
+      }
+    }
+  }
+}
