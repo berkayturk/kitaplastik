@@ -6,7 +6,6 @@ export interface ContactTeamInput {
   subject: string;
   message: string;
   locale: string;
-  ip: string;
 }
 
 export function renderContactTeamEmail(input: ContactTeamInput): {
@@ -24,7 +23,6 @@ export function renderContactTeamEmail(input: ContactTeamInput): {
     input.phone ? `Telefon: ${input.phone}` : null,
     `Konu: ${input.subject}`,
     `Dil: ${input.locale}`,
-    `IP: ${input.ip}`,
     ``,
     `Mesaj:`,
     input.message,
@@ -42,7 +40,6 @@ export function renderContactTeamEmail(input: ContactTeamInput): {
   ${input.phone ? `<tr><td><b>Telefon</b></td><td>${escapeHtml(input.phone)}</td></tr>` : ""}
   <tr><td><b>Konu</b></td><td>${escapeHtml(input.subject)}</td></tr>
   <tr><td><b>Dil</b></td><td>${escapeHtml(input.locale)}</td></tr>
-  <tr><td><b>IP</b></td><td>${escapeHtml(input.ip)}</td></tr>
 </table>
 <hr>
 <pre style="white-space:pre-wrap;font-family:system-ui;font-size:14px">${escapeHtml(input.message)}</pre>`.trim();

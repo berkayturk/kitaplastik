@@ -13,11 +13,22 @@ describe("email templates", () => {
       subject: "Teklif",
       message: "<script>alert(1)</script>",
       locale: "tr",
-      ip: "1.1.1.1",
     });
     expect(r.html).not.toContain("<script>");
     expect(r.html).toContain("&lt;script&gt;");
     expect(r.text).toContain("alert(1)");
+  });
+
+  it("contact team: omits IP entirely (Plan 5b data minimization)", () => {
+    const r = renderContactTeamEmail({
+      name: "Ali",
+      email: "a@b.com",
+      subject: "quote",
+      message: "Hello world test",
+      locale: "tr",
+    });
+    expect(r.html).not.toMatch(/<b>IP<\/b>/i);
+    expect(r.text).not.toMatch(/^IP:/m);
   });
 
   it("contact customer: localizes subject for all 4 locales", () => {
