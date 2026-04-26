@@ -34,9 +34,9 @@ export default async function AdminProductsPage() {
     "use server";
     await restoreProduct(id);
   }
-  async function hardDelete(id: string) {
+  async function hardDelete(id: string, confirmToken: string) {
     "use server";
-    await hardDeleteProduct(id);
+    await hardDeleteProduct(id, confirmToken);
   }
 
   return (

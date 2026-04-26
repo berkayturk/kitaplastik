@@ -79,9 +79,9 @@ describe("hardDeleteReference — irreversible delete", () => {
       active: true,
     });
 
-    await expect(hardDeleteReference("00000000-0000-0000-0000-000000000011")).rejects.toThrow(
-      /pasifleştir/i,
-    );
+    await expect(
+      hardDeleteReference("00000000-0000-0000-0000-000000000011", "client-a"),
+    ).rejects.toThrow(/pasifleştir/i);
 
     expect(deleteSpy).not.toHaveBeenCalled();
     expect(removeSpy).not.toHaveBeenCalled();
@@ -90,10 +90,28 @@ describe("hardDeleteReference — irreversible delete", () => {
 
   it("throws when reference is not found", async () => {
     getReferenceByIdMock.mockResolvedValue(null);
-    await expect(hardDeleteReference("00000000-0000-0000-0000-000000000012")).rejects.toThrow(
-      /bulunamadı/i,
-    );
+    await expect(
+      hardDeleteReference("00000000-0000-0000-0000-000000000012", "any"),
+    ).rejects.toThrow(/bulunamadı/i);
     expect(deleteSpy).not.toHaveBeenCalled();
+  });
+
+  it("throws when confirm token does not match the reference key", async () => {
+    getReferenceByIdMock.mockResolvedValue({
+      id: "00000000-0000-0000-0000-000000000031",
+      key: "client-real-key",
+      logo_path: "client-logos/r.svg",
+      sector_id: null,
+      active: false,
+    });
+
+    await expect(
+      hardDeleteReference("00000000-0000-0000-0000-000000000031", "wrong-token"),
+    ).rejects.toThrow(/onay/i);
+
+    expect(deleteSpy).not.toHaveBeenCalled();
+    expect(removeSpy).not.toHaveBeenCalled();
+    expect(recordAuditMock).not.toHaveBeenCalled();
   });
 
   it("deletes DB row first (atomic active=false guard) + storage logo after + records irreversible audit", async () => {
@@ -105,7 +123,7 @@ describe("hardDeleteReference — irreversible delete", () => {
       active: false,
     });
 
-    await hardDeleteReference("00000000-0000-0000-0000-000000000013");
+    await hardDeleteReference("00000000-0000-0000-0000-000000000013", "client-c");
 
     expect(fromSpy).toHaveBeenCalledWith("clients");
     expect(deleteSpy).toHaveBeenCalledWith({ count: "exact" });
@@ -144,9 +162,9 @@ describe("hardDeleteReference — irreversible delete", () => {
     });
     eqActiveSpy.mockResolvedValueOnce({ data: null, error: null, count: 0 });
 
-    await expect(hardDeleteReference("00000000-0000-0000-0000-000000000020")).rejects.toThrow(
-      /silinemedi|aktif/i,
-    );
+    await expect(
+      hardDeleteReference("00000000-0000-0000-0000-000000000020", "client-r"),
+    ).rejects.toThrow(/silinemedi|aktif/i);
 
     expect(removeSpy).not.toHaveBeenCalled();
     expect(recordAuditMock).not.toHaveBeenCalled();
@@ -166,9 +184,9 @@ describe("hardDeleteReference — irreversible delete", () => {
       count: null,
     });
 
-    await expect(hardDeleteReference("00000000-0000-0000-0000-000000000021")).rejects.toThrow(
-      /RLS denied/,
-    );
+    await expect(
+      hardDeleteReference("00000000-0000-0000-0000-000000000021", "client-s"),
+    ).rejects.toThrow(/RLS denied/);
 
     expect(removeSpy).not.toHaveBeenCalled();
     expect(recordAuditMock).not.toHaveBeenCalled();
@@ -187,7 +205,7 @@ describe("hardDeleteReference — irreversible delete", () => {
       error: { message: "storage offline" },
     });
 
-    await hardDeleteReference("00000000-0000-0000-0000-000000000014");
+    await hardDeleteReference("00000000-0000-0000-0000-000000000014", "client-d");
 
     expect(eqActiveSpy).toHaveBeenCalledWith("active", false);
     expect(removeSpy).toHaveBeenCalledTimes(1);
@@ -203,7 +221,7 @@ describe("hardDeleteReference — irreversible delete", () => {
       active: false,
     });
 
-    await hardDeleteReference("00000000-0000-0000-0000-000000000015");
+    await hardDeleteReference("00000000-0000-0000-0000-000000000015", "client-e");
 
     expect(removeSpy).not.toHaveBeenCalled();
     expect(eqIdSpy).toHaveBeenCalledWith("id", "00000000-0000-0000-0000-000000000015");

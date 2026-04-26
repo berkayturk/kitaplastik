@@ -6,8 +6,12 @@ interface Props {
   entityLabel: string;
   /** What the user must type into the confirmation field to enable the destructive button. */
   confirmToken: string;
-  /** Server action that performs the irreversible delete. */
-  action: () => Promise<void>;
+  /**
+   * Server action that performs the irreversible delete. Receives the typed
+   * token; the server re-validates it against the DB so a direct call without
+   * the dialog is rejected.
+   */
+  action: (typedToken: string) => Promise<void>;
   /** Compact label displayed on the trigger button. */
   triggerLabel?: string;
 }
@@ -87,7 +91,7 @@ export function HardDeleteDialog({
                   setError(null);
                   start(async () => {
                     try {
-                      await action();
+                      await action(typed.trim());
                       close();
                     } catch (err) {
                       setError(err instanceof Error ? err.message : "Kalıcı silme başarısız");

@@ -173,7 +173,7 @@ export async function softDeleteReference(id: string): Promise<void> {
   revalidatePath("/admin/references");
 }
 
-export async function hardDeleteReference(id: string): Promise<void> {
+export async function hardDeleteReference(id: string, confirmToken: string): Promise<void> {
   const user = await requireAdminRole();
   assertUuid(id);
   const existing = await getReferenceById(id);
@@ -182,6 +182,12 @@ export async function hardDeleteReference(id: string): Promise<void> {
     throw new Error(
       "Önce referansı pasifleştirin (soft delete) — kalıcı silme yalnızca silinmiş referanslar için kullanılabilir.",
     );
+  }
+  // Defense-in-depth: server validates the confirmation token (key typed
+  // into the modal) against the actual DB value, so a direct call without
+  // going through the dialog is rejected even if the caller is admin.
+  if (confirmToken !== existing.key) {
+    throw new Error("Onay kelimesi eşleşmiyor — kalıcı silme iptal edildi.");
   }
 
   const svc = createServiceClient();
