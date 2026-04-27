@@ -1,7 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n/routing";
-import { buildAlternates } from "@/lib/seo/routes";
+import { buildAlternates, languagesWithDefault } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 
 interface PageProps {
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: t("subtitle"),
     alternates: {
       canonical: alternates.languages[locale],
-      languages: alternates.languages,
+      languages: languagesWithDefault(alternates),
     },
   };
 }

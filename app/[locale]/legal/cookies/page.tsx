@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { locales, type Locale } from "@/i18n/routing";
-import { buildAlternates } from "@/lib/seo/routes";
+import { buildAlternates, languagesWithDefault } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 import { LegalLayout, LegalSection, LegalTable, LegalDisclaimer } from "@/components/legal";
 
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: (t.raw("intro") as string).replace(/<[^>]+>/g, "").slice(0, 160),
     alternates: {
       canonical: alternates.languages[locale],
-      languages: alternates.languages,
+      languages: languagesWithDefault(alternates),
     },
   };
 }

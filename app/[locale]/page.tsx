@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
-import { buildAlternates } from "@/lib/seo/routes";
+import { buildAlternates, languagesWithDefault } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 import { Hero } from "@/components/home/Hero";
 import { ReferencesStrip } from "@/components/home/ReferencesStrip";
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
     description: tHero("subtitle"),
     alternates: {
       canonical: alternates.languages[locale],
-      languages: alternates.languages,
+      languages: languagesWithDefault(alternates),
     },
   };
 }
