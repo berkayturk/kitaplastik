@@ -63,11 +63,33 @@ Kullanıcı 2026-04-23 oturumunda belirledi. Tüm yeni yazılan specler ve tüm 
 | **Admin hard-delete (products + references)** | ✅ canlı (#9, 6a5395b) |
 | **Admin hard-delete atomicity fix (active guard + DB-first)** | ✅ canlı (#10, b7b411f) |
 | **HardDeleteDialog server-side confirmation token** | ✅ canlı (#11, 2f3743d) |
-| **GWS (Faz 3)** | 🟡 maddi karar |
-| **B staticFacts net değer** | 🟡 user input bekler |
+| **KVKK staticFacts net değerleri (5 alan × 4 locale)** | ✅ canlı (#12, 6b47d52, 2026-04-27) |
+| **GWS (Faz 3)** | 🟡 maddi karar (opsiyonel) |
 | **Tier 2 Dockerfile** | ❌ ABANDONED 2026-04-26 (Nixpacks kalıcı tercih) |
 | **Codex Gate 2 retroactive #8** | ✅ done 2026-04-26 (concerns medium 3M/1L — patch yok) |
 | **Codex Gate 2 retroactive #9** | ✅ done 2026-04-26 (4 HIGH+3M → #10 atomicity + #11 token tam kapandı) |
+
+---
+
+## 🎉 PR #12 ✅ CANLIDA (2026-04-27) — KVKK staticFacts release closure
+
+- Squash commit: `6b47d52 feat(legal): KVKK staticFacts net değerleri (5 alan × 4 locale) (#12)` (CI 10/10 ✓ + Deploy ✓)
+- **MVP RELEASE-READY** — bu PR son release blocker olan staticFacts placeholder'larını gerçek değerlerle dolduruyor
+- 5 alan × 4 locale (TR/EN/RU/AR):
+  - **taxOffice:** Bursa Uludağ Vergi Dairesi Müdürlüğü · VKN: 5590360157
+  - **mersisNo:** 0559036015700012
+  - **kep:** Tüzel KEP yok → kvkk@kitaplastik.com kullanım yönlendirmesi
+  - **verbisStatus:** VERBIS kapsam dışı (KVK Kurulu eşik kriterleri altında)
+  - **dpoStatus:** Atanmış DPO yok; veri sorumlusu sıfatıyla Kıta Plastik Ltd. Şti.
+- KEP/VERBIS/DPO için "yok" durumu KVKK uygulamasıyla tam uyumlu (önce 2026-04-26'da, sonra Bursa Uludağ + MERSİS + VKN değerleri 2026-04-27'de eklendi)
+- Resmi tam ünvan MERSİS'te `KITA PLASTİK ENJEKSİYON MAKİNE KALIP APARAT TEKSTİL İNŞAAT SANAYİ TİCARET LİMİTED ŞİRKETİ`; sitedeki kısa unvan KVKK için yeterli, ileride opsiyonel ünvan-genişletme PR'ı atılabilir
+- `pnpm verify`: 277 unit / 76 e2e / build / lint / format / audit ✓
+- Live smoke 4 locale × 3 değer:
+  - TR: `0559036015700012` + `5590360157` + `Uludağ Vergi` ✓
+  - EN: aynı ✓ · RU: aynı ✓ · AR: aynı ✓
+  - 0 "Bilgi güncelleniyor" placeholder kalmadı (önceden 15 vardı)
+- Codex Gate 2 forward SKIPPED — 4 dosya × 5 string-only değişiklik, kod yok, tautolojik
+- 1 deploy retry not: ilk deploy success'inde HTML'de eski placeholder göründü gibi (CDN/test artifact'ı), empty commit `a86973a` ile redeploy tetiklendi ama önceki deploy aslında başarılıydı, false alarm
 
 ---
 
