@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n/routing";
-import { buildProductAlternates } from "@/lib/seo/routes";
+import { buildProductAlternates, languagesWithDefault } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { ProductDetail } from "@/components/public/products/ProductDetail";
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: description?.slice(0, 160),
     alternates: {
       canonical: alternates.languages[locale],
-      languages: alternates.languages,
+      languages: languagesWithDefault(alternates),
     },
   };
 }

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/i18n/routing";
-import { PUBLIC_ROUTES, buildAlternates } from "@/lib/seo/routes";
+import { PUBLIC_ROUTES, buildAlternates, languagesWithDefault } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -14,7 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: "monthly" as const,
         priority: route === "/" ? 1 : 0.7,
         alternates: {
-          languages: alt.languages,
+          languages: languagesWithDefault(alt),
         },
       };
     }),

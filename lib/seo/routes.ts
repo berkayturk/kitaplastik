@@ -45,6 +45,12 @@ export function buildAlternates(route: PublicRoute, origin: string): Alternates 
   };
 }
 
+// Next.js Metadata.alternates.languages accepts an `x-default` key alongside locale codes.
+// Helper flattens our Alternates contract to that shape so callers don't repeat the spread.
+export function languagesWithDefault(alt: Alternates): Record<string, string> {
+  return { ...alt.languages, "x-default": alt["x-default"] };
+}
+
 export function buildProductAlternates(slug: string, origin: string): Alternates {
   const languages = locales.reduce<Record<Locale, string>>(
     (acc, locale) => {

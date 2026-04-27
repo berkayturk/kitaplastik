@@ -66,11 +66,21 @@ describe("sitemap.ts — native URL generation", () => {
     expect(urls).toContain("https://kitaplastik.com/ar");
   });
 
-  it("each entry has alternates.languages with 4 locales", () => {
+  it("each entry has alternates.languages with 4 locales + x-default", () => {
     for (const entry of entries) {
       expect(entry.alternates?.languages).toBeDefined();
       const langs = entry.alternates?.languages as Record<string, string>;
-      expect(Object.keys(langs)).toHaveLength(4);
+      expect(Object.keys(langs)).toHaveLength(5);
+      expect(langs).toHaveProperty("x-default");
     }
+  });
+
+  it("x-default points at TR canonical for each route", () => {
+    const trUrl = entries.find((e) => e.url === "https://kitaplastik.com/tr/urunler");
+    const enUrl = entries.find((e) => e.url === "https://kitaplastik.com/en/products");
+    const langs = trUrl?.alternates?.languages as Record<string, string>;
+    const enLangs = enUrl?.alternates?.languages as Record<string, string>;
+    expect(langs["x-default"]).toBe("https://kitaplastik.com/tr/urunler");
+    expect(enLangs["x-default"]).toBe("https://kitaplastik.com/tr/urunler");
   });
 });
