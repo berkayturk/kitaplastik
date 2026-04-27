@@ -17,11 +17,11 @@
     "title": "Gizlilik Politikası",
     "intro": "Kıta Plastik ve Tekstil Sanayi ve Ticaret Limited Şirketi (\"Kıta Plastik\", \"biz\") olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (\"<kvkk>KVKK</kvkk>\") kapsamında işlediğimiz kişisel verilerinizle ilgili sizi bu metinle bilgilendiriyoruz. Web sitemizde yalnızca <strong>iletişim ve katalog talepleri için kesinlikle gerekli olan asgari veriyi</strong> işliyoruz; üçüncü taraf reklamcılık çerezleri ya da kullanıcı izleme yapmıyoruz.",
     "staticFacts": {
-      "taxOffice": "Bilgi güncelleniyor",
-      "mersisNo": "Bilgi güncelleniyor",
-      "kep": "Bilgi güncelleniyor",
-      "verbisStatus": "Bilgi güncelleniyor",
-      "dpoStatus": "Bilgi güncelleniyor"
+      "taxOffice": "Bursa Uludağ Vergi Dairesi Müdürlüğü · VKN: 5590360157",
+      "mersisNo": "0559036015700012",
+      "kep": "Tüzel KEP adresi bulunmamaktadır; resmi başvurular için kvkk@kitaplastik.com adresi kullanılabilir.",
+      "verbisStatus": "VERBIS kayıt yükümlülüğü kapsamında değildir (KVK Kurulu eşik kriterlerinin altında).",
+      "dpoStatus": "Atanmış Veri Koruma Görevlisi (DPO) bulunmamaktadır; veri sorumlusu sıfatıyla Kıta Plastik Ltd. Şti. yetkilidir, iletişim: kvkk@kitaplastik.com."
     },
     "sections": {
       "controller": {
