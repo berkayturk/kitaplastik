@@ -31,6 +31,19 @@ function isAuthLandingPath(pathname: string): boolean {
   );
 }
 
+// Supabase SSR pattern: updateSession refresh edilen access token'ı `response`
+// üzerine cookie olarak yazar. Redirect dönerken bu cookie'leri yeni response'a
+// kopyalamazsak browser eski/expired token'la kalır → bir sonraki Server Action
+// sırasında getUser() null döner → kullanıcı login'e atılır. Bu helper redirect
+// response'una refresh cookie'lerini taşır.
+function redirectWithCookies(target: URL, sourceResponse: NextResponse): NextResponse {
+  const redirect = NextResponse.redirect(target);
+  sourceResponse.cookies.getAll().forEach((cookie) => {
+    redirect.cookies.set(cookie);
+  });
+  return redirect;
+}
+
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -40,13 +53,13 @@ export default async function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/catalog-requests";
       url.search = "";
-      return NextResponse.redirect(url);
+      return redirectWithCookies(url, response);
     }
     if (!isAdminPublicPath(pathname) && !userId) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
       url.searchParams.set("next", pathname);
-      return NextResponse.redirect(url);
+      return redirectWithCookies(url, response);
     }
     return response;
   }
