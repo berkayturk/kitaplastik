@@ -6,11 +6,11 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://*.supabase.co https://challenges.cloudflare.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com",
+  "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com https://cloudflareinsights.com",
   "frame-src https://challenges.cloudflare.com",
   "object-src 'none'",
   "base-uri 'self'",
