@@ -7,11 +7,13 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const rawNext = searchParams.get("next") ?? "/admin/catalog-requests";
   // Open-redirect guard: only internal absolute paths (reject scheme-relative like "//evil.com")
-  const next =
+  const safeNext =
     rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/admin/catalog-requests";
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const code = searchParams.get("code");
+  // Recovery flow her zaman /admin/set-password'a yönlenir.
+  const next = type === "recovery" ? "/admin/set-password" : safeNext;
 
   const supabase = await createClient();
 

@@ -1,15 +1,15 @@
-// app/admin/login/page.tsx
+// app/admin/forgot-password/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useActionState } from "react";
 import { TextField, Button, Card, CardEyebrow, CardTitle } from "@/components/ui";
-import { signIn } from "./actions";
+import { requestReset } from "./actions";
 
 const INITIAL_STATE = { ok: false, message: "" };
 
-export default function LoginPage() {
-  const [state, action, pending] = useActionState(signIn, INITIAL_STATE);
+export default function ForgotPasswordPage() {
+  const [state, action, pending] = useActionState(requestReset, INITIAL_STATE);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[var(--color-bg-secondary)] px-6 py-16">
@@ -17,21 +17,28 @@ export default function LoginPage() {
         <Card elevated padding="lg" className="space-y-6">
           <div>
             <CardEyebrow>Admin paneli</CardEyebrow>
-            <CardTitle className="mt-2">Giriş</CardTitle>
+            <CardTitle className="mt-2">Şifre sıfırla</CardTitle>
             <p className="mt-3 text-[14px] leading-[1.55] text-[var(--color-text-secondary)]">
-              Yetkili hesap ile giriş yapın.
+              E-posta adresine sıfırlama bağlantısı gönderelim. Bağlantı 1 saat geçerlidir.
             </p>
           </div>
-          <TextField name="email" type="email" label="E-posta" autoComplete="email" required />
           <TextField
-            name="password"
-            type="password"
-            label="Şifre"
-            autoComplete="current-password"
+            name="email"
+            type="email"
+            label="E-posta"
+            autoComplete="email"
             required
+            disabled={state.ok}
           />
-          <Button type="submit" variant="primary" size="md" isLoading={pending} className="w-full">
-            Giriş Yap
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            isLoading={pending}
+            disabled={state.ok}
+            className="w-full"
+          >
+            Sıfırlama Bağlantısı Gönder
           </Button>
           {state.message && (
             <p
@@ -46,10 +53,10 @@ export default function LoginPage() {
             </p>
           )}
           <Link
-            href="/admin/forgot-password"
+            href="/admin/login"
             className="block text-center text-[13px] text-[var(--color-text-secondary)] underline-offset-4 hover:underline"
           >
-            Şifremi unuttum
+            Giriş ekranına dön
           </Link>
         </Card>
       </form>

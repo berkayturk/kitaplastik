@@ -14,6 +14,8 @@ function isAdminPublicPath(pathname: string): boolean {
   return (
     pathname === "/admin/login" ||
     pathname.startsWith("/admin/login/") ||
+    pathname === "/admin/forgot-password" ||
+    pathname.startsWith("/admin/forgot-password/") ||
     pathname.startsWith("/admin/auth/callback")
   );
 }
