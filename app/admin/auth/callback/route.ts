@@ -3,8 +3,19 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 
+// Coolify/Traefik gibi reverse proxy arkasında NextRequest.url internal Docker
+// hostname'ini ('http://localhost:80/...') döndürebiliyor. X-Forwarded-* header'ları
+// ile public origin'i yeniden inşa et — yoksa redirect localhost:80'e gidiyor.
+function publicOrigin(request: NextRequest): string {
+  const proto = request.headers.get("x-forwarded-proto") ?? "https";
+  const host =
+    request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? request.nextUrl.host;
+  return `${proto}://${host}`;
+}
+
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
+  const origin = publicOrigin(request);
   const rawNext = searchParams.get("next") ?? "/admin/catalog-requests";
   // Open-redirect guard: only internal absolute paths (reject scheme-relative like "//evil.com")
   const safeNext =
