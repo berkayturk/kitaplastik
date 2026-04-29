@@ -20,11 +20,28 @@ function isAdminPublicPath(pathname: string): boolean {
   );
 }
 
+// Auth callback hariç login + forgot-password'da kullanıcı zaten oturumlu ise
+// dashboard'a yönlendirilir. Callback dışarıda — session'ı kuran handler odur.
+function isAuthLandingPath(pathname: string): boolean {
+  return (
+    pathname === "/admin/login" ||
+    pathname.startsWith("/admin/login/") ||
+    pathname === "/admin/forgot-password" ||
+    pathname.startsWith("/admin/forgot-password/")
+  );
+}
+
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isAdminPath(pathname)) {
     const { response, userId } = await updateSession(request);
+    if (isAuthLandingPath(pathname) && userId) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/catalog-requests";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
     if (!isAdminPublicPath(pathname) && !userId) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
