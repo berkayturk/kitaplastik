@@ -26,7 +26,7 @@ export function ProductGallery({ images, name, locale, imageLabel }: Props) {
   const main = images[active] ?? first;
   return (
     <div>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-md border border-[var(--color-border-subtle-dark)]">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-md border border-[var(--color-border-subtle-dark)] bg-bg-elevated">
         <Image
           src={`${base}/${main.path}`}
           alt={getImageAltText({ name, locale, order: main.order, imageLabel })}

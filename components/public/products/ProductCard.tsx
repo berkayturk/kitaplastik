@@ -29,7 +29,7 @@ export function ProductCard({ product, locale, imageLabel }: Props) {
       href={{ pathname: "/products/[slug]", params: { slug: product.slug } }}
       className="group block overflow-hidden rounded-md border border-[var(--color-border-subtle-dark)] bg-bg-primary transition hover:border-[var(--color-accent-cobalt)]"
     >
-      <div className="relative aspect-[4/3] bg-bg-secondary">
+      <div className="relative aspect-[4/3] bg-bg-elevated">
         {url && (
           <Image
             src={url}
