@@ -32,7 +32,7 @@ export function ProductGallery({ images, name, locale, imageLabel }: Props) {
           alt={getImageAltText({ name, locale, order: main.order, imageLabel })}
           fill
           sizes="(min-width: 1024px) 60vw, 100vw"
-          className="object-cover"
+          className="object-contain"
           unoptimized
           priority
         />

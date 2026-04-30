@@ -36,7 +36,7 @@ export function ProductCard({ product, locale, imageLabel }: Props) {
             alt={alt}
             fill
             sizes="(min-width: 1024px) 25vw, 50vw"
-            className="object-cover"
+            className="object-contain"
             unoptimized
           />
         )}
