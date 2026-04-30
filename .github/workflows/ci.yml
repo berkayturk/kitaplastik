@@ -19,10 +19,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: lint
+  quality:
+    name: quality
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,82 +35,14 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
       - name: Lint
         run: pnpm lint
-
-  typecheck:
-    name: typecheck
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Setup Node 22 (pinned via .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Type check
-        run: pnpm typecheck
-
-  format:
-    name: format
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Setup Node 22 (pinned via .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
       - name: Format check
         run: pnpm format:check
-
-  unit-tests:
-    name: unit-tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Setup Node 22 (pinned via .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
       - name: Unit tests
         run: pnpm test
-
-  audit:
-    name: audit
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Setup Node 22 (pinned via .nvmrc)
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
       - name: Security audit
         run: pnpm audit --audit-level=high --prod
 
@@ -161,6 +93,8 @@ jobs:
   e2e:
     name: e2e-shard-${{ matrix.shard }}
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -178,27 +112,6 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      # Cache Playwright browsers by @playwright/test version (resolved from
-      # installed package) so unrelated dep changes don't invalidate.
-      - name: Resolve Playwright version
-        id: playwright-version
-        run: |
-          version=$(node -p "require('./node_modules/@playwright/test/package.json').version")
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-      - name: Install Playwright browsers (with system deps)
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
-      - name: Install Playwright system deps only (cache hit)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
       - name: Run E2E tests
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
@@ -228,7 +141,7 @@ jobs:
   # job = workflow failure), so this job is just a human-readable marker.
   ci-success:
     name: ci-success
-    needs: [lint, typecheck, format, unit-tests, audit, build, e2e]
+    needs: [quality, build, e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:

@@ -17,14 +17,14 @@ const { cacheKey, CATALOG_CACHE_BUCKET } = await import("@/lib/catalog/cache");
 
 describe("catalog cache key", () => {
   it("produces the documented {sector}-{lang}-{hash}.pdf format", () => {
-    expect(cacheKey("kapak", "tr", "abcd1234")).toBe("kapak-tr-abcd1234.pdf");
+    expect(cacheKey("otomotiv", "tr", "abcd1234")).toBe("kapak-tr-abcd1234.pdf");
     expect(cacheKey("all", "ar", "deadbeefcafebabe")).toBe("all-ar-deadbeefcafebabe.pdf");
   });
 
   it("changes when any component changes", () => {
-    const a = cacheKey("kapak", "tr", "h1");
-    const b = cacheKey("kapak", "tr", "h2");
-    const c = cacheKey("kapak", "en", "h1");
+    const a = cacheKey("otomotiv", "tr", "h1");
+    const b = cacheKey("otomotiv", "tr", "h2");
+    const c = cacheKey("otomotiv", "en", "h1");
     const d = cacheKey("tekstil", "tr", "h1");
     expect(new Set([a, b, c, d]).size).toBe(4);
   });

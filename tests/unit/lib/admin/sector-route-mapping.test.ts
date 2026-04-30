@@ -5,7 +5,7 @@ import { dbSlugToRouteSlug, SECTOR_DB_TO_ROUTE } from "@/lib/admin/sector-route-
 describe("dbSlugToRouteSlug", () => {
   it("maps all 3 seeded DB slugs to canonical EN", () => {
     expect(dbSlugToRouteSlug("cam-yikama")).toBe("bottle-washing");
-    expect(dbSlugToRouteSlug("kapak")).toBe("caps");
+    expect(dbSlugToRouteSlug("otomotiv")).toBe("automotive");
     expect(dbSlugToRouteSlug("tekstil")).toBe("textile");
   });
 

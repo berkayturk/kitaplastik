@@ -13,6 +13,13 @@ import { cn } from "@/lib/utils";
 import { fraunces, hankenGrotesk, jetbrainsMono } from "@/lib/fonts";
 import { PlausibleScript } from "@/components/PlausibleScript";
 import { getCompany } from "@/lib/company";
+import "@fontsource/ibm-plex-serif/400.css";
+import "@fontsource/ibm-plex-serif/500.css";
+import "@fontsource/ibm-plex-sans/300.css";
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/500.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import "@fontsource-variable/noto-sans-arabic/wght.css";
 import "@/app/globals.css";
 

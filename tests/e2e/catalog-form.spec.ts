@@ -16,13 +16,13 @@ test.describe("catalog request form — sector selector", () => {
     const options = await sector
       .locator("option")
       .evaluateAll((nodes) => (nodes as HTMLOptionElement[]).map((o) => o.value));
-    expect(options.sort()).toEqual(["all", "cam-yikama", "kapak", "tekstil"].sort());
+    expect(options.sort()).toEqual(["all", "cam-yikama", "otomotiv", "tekstil"].sort());
   });
 
   test("sector is user-editable", async ({ page }) => {
     await page.goto("/en/catalog");
     const sector = page.locator('select[name="sector"]');
-    await sector.selectOption("kapak");
-    await expect(sector).toHaveValue("kapak");
+    await sector.selectOption("otomotiv");
+    await expect(sector).toHaveValue("otomotiv");
   });
 });

@@ -89,7 +89,7 @@ test.describe("Pathname mapping — legacy redirects", () => {
       ["/tr/request-quote", "/tr/katalog"],
       ["/tr/sectors", "/tr/sektorler"],
       ["/tr/sectors/bottle-washing", "/tr/sektorler/cam-yikama"],
-      ["/tr/sectors/caps", "/tr/sektorler/kapak"],
+      ["/tr/sectors/automotive", "/tr/sektorler/otomotiv"],
       ["/tr/sectors/textile", "/tr/sektorler/tekstil"],
     ];
     for (const [from, to] of pairs) {

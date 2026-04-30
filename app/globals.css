@@ -76,20 +76,18 @@
   --color-focus-ring: #1e4dd8;
 
   /* ---- Typography ----
-   * Display: Fraunces variable (opsz axis) — serif with optical sizing,
-   *   warm industrial-editorial voice. Cyrillic supported. No Arabic.
-   * Sans: Hanken Grotesk variable — crisp grotesque, warmer than Inter,
-   *   Cyrillic supported. Default body + UI.
-   * Mono: JetBrains Mono — tabular figures ON, technical labels.
+   * Display: IBM Plex Serif — self-hosted editorial serif.
+   * Sans: IBM Plex Sans — self-hosted body + UI face.
+   * Mono: IBM Plex Mono — self-hosted technical labels and numerics.
    * Arabic: Noto Sans Arabic Variable (via @fontsource import in layout).
    */
   --font-display:
-    var(--font-display-family, "Fraunces"), "Iowan Old Style", "Apple Garamond", "Baskerville",
-    "Times New Roman", serif;
+    var(--font-display-family, "IBM Plex Serif"), "Iowan Old Style", "Apple Garamond",
+    "Baskerville", "Times New Roman", serif;
   --font-sans:
-    var(--font-sans-family, "Hanken Grotesk"), ui-sans-serif, system-ui, -apple-system, sans-serif;
+    var(--font-sans-family, "IBM Plex Sans"), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono:
-    var(--font-mono-family, "JetBrains Mono"), ui-monospace, "SFMono-Regular", "Menlo", monospace;
+    var(--font-mono-family, "IBM Plex Mono"), ui-monospace, "SFMono-Regular", "Menlo", monospace;
   --font-arabic: "Noto Sans Arabic Variable", "Noto Sans Arabic", system-ui, sans-serif;
 
   /* ---- Radii ----

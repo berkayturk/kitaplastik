@@ -13,7 +13,7 @@ test.describe("Admin sectors CRUD", () => {
   test("lists 3 seed sectors", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Sektörler" })).toBeVisible();
     await expect(page.getByText("cam-yikama")).toBeVisible();
-    await expect(page.getByText("kapak")).toBeVisible();
+    await expect(page.getByText("otomotiv")).toBeVisible();
     await expect(page.getByText("tekstil")).toBeVisible();
   });
 

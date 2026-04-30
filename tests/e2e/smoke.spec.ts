@@ -14,7 +14,7 @@ test.describe("Anasayfa smoke", () => {
   test("3 sektör kartı görünür", async ({ page }) => {
     await page.goto("/tr");
     await expect(page.getByText(/cam yıkama/i).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /kapak/i }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /otomotiv/i }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: /tekstil/i }).first()).toBeVisible();
   });
 
