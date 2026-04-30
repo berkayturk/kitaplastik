@@ -17,7 +17,7 @@ const { cacheKey, CATALOG_CACHE_BUCKET } = await import("@/lib/catalog/cache");
 
 describe("catalog cache key", () => {
   it("produces the documented {sector}-{lang}-{hash}.pdf format", () => {
-    expect(cacheKey("otomotiv", "tr", "abcd1234")).toBe("kapak-tr-abcd1234.pdf");
+    expect(cacheKey("otomotiv", "tr", "abcd1234")).toBe("otomotiv-tr-abcd1234.pdf");
     expect(cacheKey("all", "ar", "deadbeefcafebabe")).toBe("all-ar-deadbeefcafebabe.pdf");
   });
 

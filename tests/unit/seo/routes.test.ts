@@ -6,7 +6,7 @@ describe("seo routes", () => {
     expect(PUBLIC_ROUTES).toContain("/");
     expect(PUBLIC_ROUTES).toContain("/sectors");
     expect(PUBLIC_ROUTES).toContain("/sectors/bottle-washing");
-    expect(PUBLIC_ROUTES).toContain("/sectors/caps");
+    expect(PUBLIC_ROUTES).toContain("/sectors/automotive");
     expect(PUBLIC_ROUTES).toContain("/sectors/textile");
     expect(PUBLIC_ROUTES).toContain("/products");
     expect(PUBLIC_ROUTES).toContain("/about");
