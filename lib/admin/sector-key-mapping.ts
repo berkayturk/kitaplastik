@@ -1,7 +1,7 @@
 // lib/admin/sector-key-mapping.ts
 const DB_SLUG_TO_KEY: Readonly<Record<string, string>> = Object.freeze({
   "cam-yikama": "camYikama",
-  kapak: "kapak",
+  otomotiv: "otomotiv",
   tekstil: "tekstil",
 });
 

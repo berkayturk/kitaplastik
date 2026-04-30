@@ -18,7 +18,7 @@
     "recoveryTitle": "MAYBE THESE?",
     "cards": {
       "products": { "title": "Products", "desc": "Browse the full product family" },
-      "sectors": { "title": "Sectors", "desc": "Bottle washing · caps · textile" },
+      "sectors": { "title": "Sectors", "desc": "Bottle washing · automotive · textile" },
       "catalog": { "title": "Request catalog", "desc": "PDF catalog request form" },
       "contact": { "title": "Contact", "desc": "Get in touch" }
     }

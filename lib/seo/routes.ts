@@ -5,7 +5,7 @@ export const PUBLIC_ROUTES = [
   "/",
   "/sectors",
   "/sectors/bottle-washing",
-  "/sectors/caps",
+  "/sectors/automotive",
   "/sectors/textile",
   "/products",
   "/about",

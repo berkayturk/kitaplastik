@@ -3,7 +3,7 @@
     "eyebrow": "Since 1989 · Bursa, Türkiye",
     "titleLead": "Engineering partner in",
     "titleAccent": "plastic injection moulding.",
-    "subtitle": "36 years of production experience · 3 sectors · Global B2B supply in 4 languages. From our Bursa workshop to the glass-washing, caps and textile sectors — production and custom engineering.",
+    "subtitle": "36 years of production experience · 3 sectors · Global B2B supply in 4 languages. From our Bursa workshop to the glass-washing, automotive and textile sectors — production and custom engineering.",
     "primaryCta": "Request a Quote",
     "secondaryCta": "Explore Sectors"
   },
@@ -20,9 +20,9 @@
       "title": "Glass Washing",
       "description": "Durable washing-line components for bottling operations."
     },
-    "kapak": {
-      "title": "Caps",
-      "description": "High-volume cap production — food, cosmetics and chemical packaging."
+    "otomotiv": {
+      "title": "Automotive",
+      "description": "Safety accessories, interior trim and fasteners for EV and ICE vehicles."
     },
     "tekstil": {
       "title": "Textile",

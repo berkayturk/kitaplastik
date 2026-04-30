@@ -22,7 +22,7 @@ const deleted = [
     display_name: null,
     logo_path: "/references/c2.svg",
     sector_id: "s1",
-    sector_key: "kapak",
+    sector_key: "otomotiv",
     display_order: 20,
     active: false,
     created_at: "",

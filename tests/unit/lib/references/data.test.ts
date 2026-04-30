@@ -83,7 +83,7 @@ describe("references data (supabase-backed)", () => {
                         id: "2",
                         key: "c2",
                         logo_path: "/references/c2.svg",
-                        sector_key: "kapak",
+                        sector_key: "otomotiv",
                         display_name: null,
                       },
                     ],
@@ -96,7 +96,7 @@ describe("references data (supabase-backed)", () => {
       }),
     }));
     const { getReferencesBySector } = await import("@/lib/references/data");
-    const refs = await getReferencesBySector("kapak");
+    const refs = await getReferencesBySector("otomotiv");
     expect(refs).toHaveLength(1);
     expect(refs[0]!.key).toBe("c2");
   });

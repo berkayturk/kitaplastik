@@ -5,8 +5,8 @@ import type { Locale } from "@/i18n/routing";
 import { buildAlternates, languagesWithDefault } from "@/lib/seo/routes";
 import { env } from "@/lib/env";
 
-const ROUTE = "/sectors/caps";
-const NS = "sectors.kapak";
+const ROUTE = "/sectors/automotive";
+const NS = "sectors.otomotiv";
 
 interface PageProps {
   params: Promise<{ locale: Locale }>;
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function KapakPage({ params }: PageProps) {
+export default async function OtomotivPage({ params }: PageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations(NS);

@@ -89,7 +89,9 @@ const nextConfig: NextConfig = {
         destination: "/tr/sektorler/cam-yikama",
         permanent: true,
       },
-      { source: "/tr/sectors/caps", destination: "/tr/sektorler/kapak", permanent: true },
+      // /sectors/caps deprecated 2026-04-30 — sektör kaldırıldı, hub'a yönlendir
+      { source: "/tr/sectors/caps", destination: "/tr/sektorler", permanent: true },
+      { source: "/tr/sektorler/kapak", destination: "/tr/sektorler", permanent: true },
       { source: "/tr/sectors/textile", destination: "/tr/sektorler/tekstil", permanent: true },
       { source: "/tr/sectors", destination: "/tr/sektorler", permanent: true },
 
@@ -110,7 +112,8 @@ const nextConfig: NextConfig = {
         destination: "/ru/otrasli/moyka-butylok",
         permanent: true,
       },
-      { source: "/ru/sectors/caps", destination: "/ru/otrasli/kryshki", permanent: true },
+      { source: "/ru/sectors/caps", destination: "/ru/otrasli", permanent: true },
+      { source: "/ru/otrasli/kryshki", destination: "/ru/otrasli", permanent: true },
       { source: "/ru/sectors/textile", destination: "/ru/otrasli/tekstil", permanent: true },
       { source: "/ru/sectors", destination: "/ru/otrasli", permanent: true },
 
@@ -131,11 +134,8 @@ const nextConfig: NextConfig = {
         destination: "/ar/al-qitaat/ghasil-zujajat",
         permanent: true,
       },
-      {
-        source: "/ar/sectors/caps",
-        destination: "/ar/al-qitaat/al-aghtiya",
-        permanent: true,
-      },
+      { source: "/ar/sectors/caps", destination: "/ar/al-qitaat", permanent: true },
+      { source: "/ar/al-qitaat/al-aghtiya", destination: "/ar/al-qitaat", permanent: true },
       {
         source: "/ar/sectors/textile",
         destination: "/ar/al-qitaat/al-mansujat",

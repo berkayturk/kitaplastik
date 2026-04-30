@@ -3,11 +3,11 @@ import { Container } from "../layout/Container";
 import { Card, CardEyebrow, CardTitle, CardBody, CardFooter } from "@/components/ui";
 import { SectorCardLink } from "./SectorCardLink";
 
-type SectorPathname = "/sectors/bottle-washing" | "/sectors/caps" | "/sectors/textile";
+type SectorPathname = "/sectors/bottle-washing" | "/sectors/automotive" | "/sectors/textile";
 
 interface SectorDef {
   pathname: SectorPathname;
-  nsKey: "camYikama" | "kapak" | "tekstil";
+  nsKey: "camYikama" | "otomotiv" | "tekstil";
   number: string;
   spec: string;
 }
@@ -19,7 +19,12 @@ const SECTORS: readonly SectorDef[] = [
     number: "01",
     spec: "Ø 80–320 mm · 12–480 g",
   },
-  { pathname: "/sectors/caps", nsKey: "kapak", number: "02", spec: "26–83 mm · HDPE / PP / PET" },
+  {
+    pathname: "/sectors/automotive",
+    nsKey: "otomotiv",
+    number: "02",
+    spec: "ABS · PC · PP · TPE — EV güvenlik aksesuarları",
+  },
   {
     pathname: "/sectors/textile",
     nsKey: "tekstil",
@@ -53,7 +58,10 @@ export function SectorGrid() {
               key={sector.pathname}
               pathname={sector.pathname}
               slug={
-                sector.pathname.replace("/sectors/", "") as "bottle-washing" | "caps" | "textile"
+                sector.pathname.replace("/sectors/", "") as
+                  | "bottle-washing"
+                  | "automotive"
+                  | "textile"
               }
               className="group block focus-visible:outline-none"
             >

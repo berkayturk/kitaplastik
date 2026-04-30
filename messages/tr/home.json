@@ -3,7 +3,7 @@
     "eyebrow": "1989'dan beri · Bursa, Türkiye",
     "titleLead": "Plastik enjeksiyonun",
     "titleAccent": "mühendislik partneri.",
-    "subtitle": "36 yıllık üretim deneyimi · 3 sektör · 4 dilde küresel B2B tedarik. Bursa atölyemizden cam yıkama, kapak ve tekstil sektörlerine üretim ve özel mühendislik.",
+    "subtitle": "36 yıllık üretim deneyimi · 3 sektör · 4 dilde küresel B2B tedarik. Bursa atölyemizden cam yıkama, otomotiv ve tekstil sektörlerine üretim ve özel mühendislik.",
     "primaryCta": "Teklif İste",
     "secondaryCta": "Sektörleri Keşfet"
   },
@@ -20,9 +20,9 @@
       "title": "Cam Yıkama",
       "description": "Şişeleme hatlarına dayanıklı yıkama ekipmanı parçaları."
     },
-    "kapak": {
-      "title": "Kapak",
-      "description": "Yüksek hacimli kapak üretimi — gıda, kozmetik, kimya ambalaj."
+    "otomotiv": {
+      "title": "Otomotiv",
+      "description": "EV ve içten yanmalı araçlar için güvenlik aksesuarları, iç trim ve bağlantı elemanları."
     },
     "tekstil": {
       "title": "Tekstil",

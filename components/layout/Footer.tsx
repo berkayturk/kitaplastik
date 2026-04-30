@@ -39,7 +39,7 @@ export function Footer({ company }: FooterProps) {
           {/* Sektörler */}
           <FooterColumn title={tNav("sectors")}>
             <FooterLink href="/sectors/bottle-washing">Cam Yıkama</FooterLink>
-            <FooterLink href="/sectors/caps">Kapak</FooterLink>
+            <FooterLink href="/sectors/automotive">Otomotiv</FooterLink>
             <FooterLink href="/sectors/textile">Tekstil</FooterLink>
           </FooterColumn>
 

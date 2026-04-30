@@ -53,7 +53,7 @@ export interface CatalogChrome {
   /** Sector editorial content — subtitles and overview paragraphs,
    * keyed by sector slug. */
   sectors: Record<
-    "cam-yikama" | "kapak" | "tekstil",
+    "cam-yikama" | "otomotiv" | "tekstil",
     {
       subtitle: string;
       overview: string[];
@@ -78,7 +78,7 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
     coverTitle: `Ürün Kataloğu ${YEAR}.`,
     coverTagline: "Plastik enjeksiyonun mühendislik partneri.",
     coverMeta: "3 SEKTÖR · 36 YIL · ±0.02MM",
-    coverSectors: "Cam Yıkama · Kapak · Tekstil",
+    coverSectors: "Cam Yıkama · Otomotiv · Tekstil",
     runningFooter: `KITAPLASTIK · KATALOG ${YEAR}`,
     sectorWord: "Sektör",
     sectionEyebrow: (title) => `${title.toLocaleUpperCase("tr")} ÜRÜNLERİ`,
@@ -109,17 +109,17 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
           { label: "Sertifika", value: "ISO 9001" },
         ],
       },
-      kapak: {
-        subtitle: "Gıda & kozmetik ambalajı",
+      otomotiv: {
+        subtitle: "Otomotiv yan sanayi & EV güvenliği",
         overview: [
-          "Gıda ve kozmetik hatlarında kullanılan kapak ve kapak sistemleri — tamper-evident ve child-resistant varyantlar dahil.",
-          "Hammadde gıda onaylıdır; üretim temiz oda koşullarında yapılır. Ø 20 mm ile Ø 110 mm arasında geniş bir spektrum.",
+          "Elektrikli, hibrit ve içten yanmalı araçlar için plastik enjeksiyon çözümleri — güvenlik aksesuarları, iç trim ve bağlantı elemanları.",
+          "EV-özel acil çıkış aksesuarlarından (imdat çekici, kemer kesici, kapı bypass) standart döşeme klipslerine geniş bir spektrum.",
         ],
         stats: [
-          { label: "Çap aralığı", value: "Ø 20 — 110 mm" },
-          { label: "Malzeme", value: "HDPE · PP" },
-          { label: "MOQ", value: "10.000 adet" },
-          { label: "Sertifika", value: "FDA · EU 10/2011" },
+          { label: "Malzeme", value: "ABS · PC · PP · TPE" },
+          { label: "Tolerans", value: "±0.05 mm" },
+          { label: "MOQ", value: "1.000 adet" },
+          { label: "Sertifika", value: "ISO 9001 · IATF 16949 hedef" },
         ],
       },
       tekstil: {
@@ -143,7 +143,7 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
     coverTitle: `Product Catalog ${YEAR}.`,
     coverTagline: "The engineering partner for plastic injection.",
     coverMeta: "3 SECTORS · 36 YEARS · ±0.02MM",
-    coverSectors: "Glass Washing · Caps · Textile",
+    coverSectors: "Glass Washing · Automotive · Textile",
     runningFooter: `KITAPLASTIK · CATALOG ${YEAR}`,
     sectorWord: "Sector",
     sectionEyebrow: (title) => `${title.toUpperCase()} PRODUCTS`,
@@ -174,17 +174,17 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
           { label: "Certificate", value: "ISO 9001" },
         ],
       },
-      kapak: {
-        subtitle: "Food & cosmetic packaging",
+      otomotiv: {
+        subtitle: "Automotive supply & EV safety",
         overview: [
-          "Closures and cap systems for food and cosmetic lines — including tamper-evident and child-resistant variants.",
-          "Raw materials are food-contact approved; production runs in clean-room conditions. Broad spectrum from Ø 20 mm to Ø 110 mm.",
+          "Plastic injection solutions for EV, hybrid and ICE vehicles — safety accessories, interior trim and fastening components.",
+          "Range from EV-specific egress accessories (escape hammers, seatbelt cutters, door-bypass lanyards) to standard interior trim clips.",
         ],
         stats: [
-          { label: "Diameter", value: "Ø 20 — 110 mm" },
-          { label: "Material", value: "HDPE · PP" },
-          { label: "MOQ", value: "10,000 units" },
-          { label: "Certificate", value: "FDA · EU 10/2011" },
+          { label: "Material", value: "ABS · PC · PP · TPE" },
+          { label: "Tolerance", value: "±0.05 mm" },
+          { label: "MOQ", value: "1,000 units" },
+          { label: "Certificate", value: "ISO 9001 · IATF 16949 target" },
         ],
       },
       tekstil: {
@@ -208,7 +208,7 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
     coverTitle: `Каталог продукции ${YEAR}.`,
     coverTagline: "Инженерный партнёр по литью пластмасс.",
     coverMeta: "3 СЕКТОРА · 36 ЛЕТ · ±0.02ММ",
-    coverSectors: "Мойка стекла · Крышки · Текстиль",
+    coverSectors: "Мойка стекла · Автопром · Текстиль",
     runningFooter: `KITAPLASTIK · КАТАЛОГ ${YEAR}`,
     sectorWord: "Сектор",
     sectionEyebrow: (title) => `${title.toUpperCase()} — ПРОДУКЦИЯ`,
@@ -239,17 +239,17 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
           { label: "Сертификат", value: "ISO 9001" },
         ],
       },
-      kapak: {
-        subtitle: "Упаковка продуктов и косметики",
+      otomotiv: {
+        subtitle: "Автопром & безопасность EV",
         overview: [
-          "Крышки и системы укупорки для пищевой и косметической промышленности — включая варианты с индикацией вскрытия и защитой от детей.",
-          "Сырьё одобрено для контакта с пищей; производство ведётся в условиях чистой комнаты. Спектр от Ø 20 мм до Ø 110 мм.",
+          "Решения по литью пластика для электромобилей, гибридов и авто с ДВС — аксессуары безопасности, элементы интерьера и крепёж.",
+          "От аксессуаров аварийного выхода для EV (молотки, ножи для ремней, шнуры открытия дверей) до стандартных клипс обивки.",
         ],
         stats: [
-          { label: "Диаметр", value: "Ø 20 — 110 мм" },
-          { label: "Материал", value: "HDPE · PP" },
-          { label: "MOQ", value: "10 000 шт." },
-          { label: "Сертификат", value: "FDA · EU 10/2011" },
+          { label: "Материал", value: "ABS · PC · PP · TPE" },
+          { label: "Допуск", value: "±0.05 мм" },
+          { label: "MOQ", value: "1 000 шт." },
+          { label: "Сертификат", value: "ISO 9001 · IATF 16949 (цель)" },
         ],
       },
       tekstil: {
@@ -273,7 +273,7 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
     coverTitle: `كتالوج المنتجات ${YEAR}.`,
     coverTagline: "الشريك الهندسي لحقن البلاستيك.",
     coverMeta: "3 قطاعات · 36 سنة · ±0.02مم",
-    coverSectors: "غسيل الزجاج · الأغطية · النسيج",
+    coverSectors: "غسيل الزجاج · السيارات · النسيج",
     runningFooter: `KITAPLASTIK · الكتالوج ${YEAR}`,
     sectorWord: "قطاع",
     sectionEyebrow: (title) => `منتجات ${title}`,
@@ -304,17 +304,17 @@ export const CATALOG_CHROME: Record<CatalogLocale, CatalogChrome> = {
           { label: "الشهادات", value: "ISO 9001" },
         ],
       },
-      kapak: {
-        subtitle: "تعبئة الأغذية ومستحضرات التجميل",
+      otomotiv: {
+        subtitle: "صناعة السيارات وسلامة المركبات الكهربائية",
         overview: [
-          "أغطية وأنظمة إغلاق لخطوط الأغذية ومستحضرات التجميل — بما في ذلك الأنماط الدالة على العبث والمقاومة للأطفال.",
-          "المواد الخام معتمدة للتلامس مع الغذاء؛ الإنتاج يتم في بيئة غرف نظيفة. النطاق من Ø 20 مم إلى Ø 110 مم.",
+          "حلول الحقن البلاستيكي للمركبات الكهربائية والهجينة ومركبات الاحتراق الداخلي — ملحقات السلامة والديكور الداخلي وعناصر التثبيت.",
+          "نطاق يمتد من ملحقات الخروج الطارئ المخصصة للمركبات الكهربائية (مطارق، قواطع أحزمة، حبال فتح الأبواب) إلى مشابك التنجيد القياسية.",
         ],
         stats: [
-          { label: "القطر", value: "Ø 20 — 110 مم" },
-          { label: "المادة", value: "HDPE · PP" },
-          { label: "الحد الأدنى", value: "10,000 قطعة" },
-          { label: "الشهادات", value: "FDA · EU 10/2011" },
+          { label: "المادة", value: "ABS · PC · PP · TPE" },
+          { label: "التفاوت", value: "±0.05 مم" },
+          { label: "الحد الأدنى", value: "1,000 قطعة" },
+          { label: "الشهادات", value: "ISO 9001 · IATF 16949 (مستهدف)" },
         ],
       },
       tekstil: {

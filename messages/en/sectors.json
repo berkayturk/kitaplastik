@@ -3,15 +3,15 @@
     "hero": {
       "eyebrow": "Sectors",
       "title": "Three sectors, one engineering discipline",
-      "subtitle": "36 years of manufacturing experience in the glass washing, caps and textile sectors."
+      "subtitle": "36 years of plastic injection manufacturing experience across glass washing, automotive and textile."
     },
     "camYikama": {
       "title": "Glass Washing",
       "description": "Durable plastic components used on bottling and washing lines."
     },
-    "kapak": {
-      "title": "Caps",
-      "description": "High-volume cap production for food, cosmetics and chemical packaging."
+    "otomotiv": {
+      "title": "Automotive",
+      "description": "Safety accessories, interior trim and fasteners for EV and ICE vehicles."
     },
     "tekstil": {
       "title": "Textile",
@@ -46,29 +46,39 @@
       "items": ["HDPE", "POM (acetal)", "PP", "PA6 (nylon)"]
     }
   },
-  "kapak": {
+  "otomotiv": {
     "hero": {
       "eyebrow": "Sector",
-      "title": "Scale and consistency in caps",
-      "subtitle": "High-volume serial production — cap and closure solutions for food, cosmetics and chemical packaging."
+      "title": "Reliable supplier to the automotive industry",
+      "subtitle": "Plastic injection solutions for EV, hybrid and ICE vehicles — safety accessories, interior trim and fastening components."
     },
     "solutions": {
       "title": "Solutions",
       "items": [
         {
-          "title": "Standard screw cap",
-          "description": "PP / HDPE material, 20–80 mm diameter range."
+          "title": "Emergency-egress and safety accessories",
+          "description": "Escape hammers, seatbelt cutters, door-bypass lanyards — purpose-built for laminated EV side glass."
         },
-        { "title": "Flip-top cap", "description": "For shampoo, liquid soap and edible oil." },
         {
-          "title": "Child-resistant cap",
-          "description": "Compliant with safety standards for the chemical and pharmaceutical sectors."
+          "title": "Interior trim and upholstery components",
+          "description": "Door panel clips, console elements, trim retainers and concealment parts."
+        },
+        {
+          "title": "Fastening and retention components",
+          "description": "Clips, cable holders, screw caps and engineered connectors."
         }
       ]
     },
     "materials": {
       "title": "Material options",
-      "items": ["PP", "HDPE", "LDPE"]
+      "items": [
+        "ABS",
+        "PC (polycarbonate)",
+        "PP",
+        "TPE / TPU",
+        "PA-GF (glass-reinforced nylon)",
+        "PE"
+      ]
     }
   },
   "tekstil": {

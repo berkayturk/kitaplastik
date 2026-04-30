@@ -49,7 +49,13 @@ vi.mock("@/lib/references/data", () => ({
       sectorKey: "camYikama",
       displayName: null,
     },
-    { id: "c2", key: "c2", logoPath: "/references/c2.svg", sectorKey: "kapak", displayName: null },
+    {
+      id: "c2",
+      key: "c2",
+      logoPath: "/references/c2.svg",
+      sectorKey: "otomotiv",
+      displayName: null,
+    },
     {
       id: "c3",
       key: "c3",
@@ -64,7 +70,13 @@ vi.mock("@/lib/references/data", () => ({
       sectorKey: "camYikama",
       displayName: null,
     },
-    { id: "c5", key: "c5", logoPath: "/references/c5.svg", sectorKey: "kapak", displayName: null },
+    {
+      id: "c5",
+      key: "c5",
+      logoPath: "/references/c5.svg",
+      sectorKey: "otomotiv",
+      displayName: null,
+    },
     {
       id: "c6",
       key: "c6",
@@ -79,7 +91,13 @@ vi.mock("@/lib/references/data", () => ({
       sectorKey: "camYikama",
       displayName: null,
     },
-    { id: "c8", key: "c8", logoPath: "/references/c8.svg", sectorKey: "kapak", displayName: null },
+    {
+      id: "c8",
+      key: "c8",
+      logoPath: "/references/c8.svg",
+      sectorKey: "otomotiv",
+      displayName: null,
+    },
   ]),
 }));
 
@@ -153,7 +171,7 @@ describe("ReferencesStrip — displayName fallback chain", () => {
         id: "c2",
         key: "c2",
         logoPath: "/references/c2.svg",
-        sectorKey: "kapak",
+        sectorKey: "otomotiv",
         displayName: { tr: "CUSTOM-Marmara", en: "CUSTOM-Marmara" },
       },
       {
@@ -174,7 +192,7 @@ describe("ReferencesStrip — displayName fallback chain", () => {
         id: "c5",
         key: "c5",
         logoPath: "/references/c5.svg",
-        sectorKey: "kapak",
+        sectorKey: "otomotiv",
         displayName: null,
       },
       {
@@ -195,7 +213,7 @@ describe("ReferencesStrip — displayName fallback chain", () => {
         id: "c8",
         key: "c8",
         logoPath: "/references/c8.svg",
-        sectorKey: "kapak",
+        sectorKey: "otomotiv",
         displayName: null,
       },
     ]);

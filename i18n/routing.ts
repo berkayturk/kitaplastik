@@ -58,11 +58,11 @@ export const routing = defineRouting({
       ru: "/otrasli/moyka-butylok",
       ar: "/al-qitaat/ghasil-zujajat",
     },
-    "/sectors/caps": {
-      tr: "/sektorler/kapak",
-      en: "/sectors/caps",
-      ru: "/otrasli/kryshki",
-      ar: "/al-qitaat/al-aghtiya",
+    "/sectors/automotive": {
+      tr: "/sektorler/otomotiv",
+      en: "/sectors/automotive",
+      ru: "/otrasli/avtoprom",
+      ar: "/al-qitaat/al-sayyarat",
     },
     "/sectors/textile": {
       tr: "/sektorler/tekstil",

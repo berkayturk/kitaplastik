@@ -23,7 +23,7 @@ const messages = {
       recoveryTitle: "BELKİ BUNLAR?",
       cards: {
         products: { title: "Ürünler", desc: "Tüm ürün ailesini inceleyin" },
-        sectors: { title: "Sektörler", desc: "Cam yıkama · kapak · tekstil" },
+        sectors: { title: "Sektörler", desc: "Cam yıkama · otomotiv · tekstil" },
         catalog: { title: "Katalog iste", desc: "PDF katalog talep formu" },
         contact: { title: "İletişim", desc: "Bize ulaşın" },
       },

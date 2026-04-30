@@ -3,15 +3,15 @@
     "hero": {
       "eyebrow": "Sektörler",
       "title": "Üç sektör, tek mühendislik disiplini",
-      "subtitle": "Cam yıkama, kapak ve tekstil sektörlerinde 36 yıllık üretim tecrübesi."
+      "subtitle": "Cam yıkama, otomotiv ve tekstil sektörlerinde 36 yıllık plastik enjeksiyon üretim tecrübesi."
     },
     "camYikama": {
       "title": "Cam Yıkama",
       "description": "Şişeleme ve yıkama hatlarında kullanılan dayanıklı plastik parçalar."
     },
-    "kapak": {
-      "title": "Kapak",
-      "description": "Gıda, kozmetik ve kimya ambalajı için yüksek hacimli kapak üretimi."
+    "otomotiv": {
+      "title": "Otomotiv",
+      "description": "EV ve içten yanmalı araçlar için güvenlik aksesuarları, iç trim ve bağlantı elemanları."
     },
     "tekstil": {
       "title": "Tekstil",
@@ -46,29 +46,32 @@
       "items": ["HDPE", "POM (asetal)", "PP", "PA6 (naylon)"]
     }
   },
-  "kapak": {
+  "otomotiv": {
     "hero": {
       "eyebrow": "Sektör",
-      "title": "Kapakta ölçek ve tutarlılık",
-      "subtitle": "Yüksek hacimli seri üretim — gıda, kozmetik ve kimya ambalajı için kapak ve kapatma çözümleri."
+      "title": "Otomotiv yan sanayinin güvenilir tedarikçisi",
+      "subtitle": "Elektrikli, hibrit ve içten yanmalı araçlar için plastik enjeksiyon çözümleri — güvenlik aksesuarları, iç trim ve bağlantı elemanları."
     },
     "solutions": {
       "title": "Çözümler",
       "items": [
         {
-          "title": "Standart vida kapak",
-          "description": "PP / HDPE malzemede 20–80 mm çap aralığı."
+          "title": "Acil çıkış ve güvenlik aksesuarları",
+          "description": "İmdat çekici, emniyet kemeri kesici, kapı bypass kayışları — EV-özel lamine cam çözümleri."
         },
-        { "title": "Flip-top kapak", "description": "Şampuan, sıvı sabun ve gıda yağı için." },
         {
-          "title": "Çocuk emniyetli kapak",
-          "description": "Kimya ve ilaç sektörü için güvenlik standardı uyumlu."
+          "title": "İç trim ve döşeme bileşenleri",
+          "description": "Kapı paneli klipsleri, konsol elemanları, döşeme tutucu ve gizleme parçaları."
+        },
+        {
+          "title": "Bağlantı ve tutma elemanları",
+          "description": "Klipsler, kablo tutucular, vida başlıkları ve özel mühendislik bağlantı parçaları."
         }
       ]
     },
     "materials": {
       "title": "Malzeme seçenekleri",
-      "items": ["PP", "HDPE", "LDPE"]
+      "items": ["ABS", "PC (polikarbonat)", "PP", "TPE / TPU", "PA-GF (cam elyaf takviyeli)", "PE"]
     }
   },
   "tekstil": {

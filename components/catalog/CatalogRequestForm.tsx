@@ -16,9 +16,9 @@ import { Link } from "@/i18n/navigation";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Locale = "tr" | "en" | "ru" | "ar";
-type Sector = "all" | "cam-yikama" | "kapak" | "tekstil";
+type Sector = "all" | "cam-yikama" | "otomotiv" | "tekstil";
 const LOCALES: readonly Locale[] = ["tr", "en", "ru", "ar"];
-const SECTORS: readonly Sector[] = ["all", "cam-yikama", "kapak", "tekstil"];
+const SECTORS: readonly Sector[] = ["all", "cam-yikama", "otomotiv", "tekstil"];
 
 export function CatalogRequestForm() {
   const t = useTranslations("catalog.form");

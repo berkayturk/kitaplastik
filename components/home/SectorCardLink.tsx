@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { trackPlausible } from "@/lib/analytics/plausible";
 
-type SectorSlug = "bottle-washing" | "caps" | "textile";
+type SectorSlug = "bottle-washing" | "automotive" | "textile";
 
 interface SectorCardLinkProps {
   pathname: `/sectors/${SectorSlug}`;

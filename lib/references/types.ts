@@ -1,6 +1,6 @@
 import type { Locale } from "@/i18n/routing";
 
-export type SectorKey = "camYikama" | "kapak" | "tekstil";
+export type SectorKey = "camYikama" | "otomotiv" | "tekstil";
 
 export interface Reference {
   id: string;

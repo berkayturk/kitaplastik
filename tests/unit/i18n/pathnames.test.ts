@@ -78,9 +78,13 @@ describe("next-intl pathnames per-locale mapping", () => {
     );
   });
 
-  it("/sectors/caps", () => {
-    expect(getPathname({ href: "/sectors/caps", locale: "tr" })).toBe("/tr/sektorler/kapak");
-    expect(getPathname({ href: "/sectors/caps", locale: "ar" })).toBe("/ar/al-qitaat/al-aghtiya");
+  it("/sectors/automotive", () => {
+    expect(getPathname({ href: "/sectors/automotive", locale: "tr" })).toBe(
+      "/tr/sektorler/otomotiv",
+    );
+    expect(getPathname({ href: "/sectors/automotive", locale: "ar" })).toBe(
+      "/ar/al-qitaat/al-sayyarat",
+    );
   });
 
   it("/sectors/textile", () => {

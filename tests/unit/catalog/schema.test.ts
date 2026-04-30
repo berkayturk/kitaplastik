@@ -15,7 +15,7 @@ describe("catalogRequestSchema", () => {
     if (parsed.success) expect(parsed.data.sector).toBe("all");
   });
 
-  it.each(["all", "cam-yikama", "kapak", "tekstil"])("accepts sector=%s", (s) => {
+  it.each(["all", "cam-yikama", "otomotiv", "tekstil"])("accepts sector=%s", (s) => {
     const parsed = catalogRequestSchema.safeParse({ ...base, sector: s });
     expect(parsed.success).toBe(true);
   });

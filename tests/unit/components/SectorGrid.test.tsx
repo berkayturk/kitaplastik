@@ -22,9 +22,9 @@ const messages = {
         title: "Cam Yıkama",
         description: "Şişeleme hatlarına dayanıklı yıkama ekipmanı parçaları.",
       },
-      kapak: {
-        title: "Kapak",
-        description: "Yüksek hacimli kapak üretimi.",
+      otomotiv: {
+        title: "Otomotiv",
+        description: "EV ve içten yanmalı araçlar için güvenlik aksesuarları.",
       },
       tekstil: {
         title: "Tekstil",
@@ -51,7 +51,7 @@ describe("SectorGrid", () => {
   it("3 sektör kartını render eder (çeviri mesajlarından)", () => {
     renderGrid();
     expect(screen.getByText(/^cam yıkama$/i)).toBeInTheDocument();
-    expect(screen.getByText(/^kapak$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^otomotiv$/i)).toBeInTheDocument();
     expect(screen.getByText(/^tekstil$/i)).toBeInTheDocument();
   });
 

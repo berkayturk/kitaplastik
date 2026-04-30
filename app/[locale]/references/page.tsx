@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 const SECTOR_NS_KEY = {
   camYikama: "hub.camYikama.title",
-  kapak: "hub.kapak.title",
+  otomotiv: "hub.otomotiv.title",
   tekstil: "hub.tekstil.title",
 } as const;
 

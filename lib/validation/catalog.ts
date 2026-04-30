@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 export const catalogLocales = ["tr", "en", "ru", "ar"] as const;
-export const catalogSectors = ["all", "cam-yikama", "kapak", "tekstil"] as const;
+export const catalogSectors = ["all", "cam-yikama", "otomotiv", "tekstil"] as const;
 
 export const catalogRequestSchema = z.object({
   email: z.string().trim().email().max(254),

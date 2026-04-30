@@ -23,7 +23,11 @@ import { getCatalogChrome } from "./i18n";
 import { computeDataHash } from "./hash";
 export { computeDataHash } from "./hash";
 
-const SECTOR_ORDER: Array<"cam-yikama" | "kapak" | "tekstil"> = ["cam-yikama", "kapak", "tekstil"];
+const SECTOR_ORDER: Array<"cam-yikama" | "otomotiv" | "tekstil"> = [
+  "cam-yikama",
+  "otomotiv",
+  "tekstil",
+];
 
 const PUBLIC_IMAGE_BASE = `${env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/$/, "")}/storage/v1/object/public/product-images`;
 
@@ -66,7 +70,7 @@ function extractSpec(specs: ProductRow["specs"], presetId: string): string | nul
 
 function toCatalogProduct(
   row: ProductRow,
-  sectorSlug: "cam-yikama" | "kapak" | "tekstil",
+  sectorSlug: "cam-yikama" | "otomotiv" | "tekstil",
   locale: Locale,
 ): CatalogProduct {
   return {
@@ -131,7 +135,7 @@ export async function fetchCatalogData(
 ): Promise<CatalogData> {
   const chrome = getCatalogChrome(locale);
 
-  const targetSlugs: Array<"cam-yikama" | "kapak" | "tekstil"> =
+  const targetSlugs: Array<"cam-yikama" | "otomotiv" | "tekstil"> =
     sector === "all" ? SECTOR_ORDER : [sector];
 
   const sectorMap = await loadSectors(targetSlugs);
@@ -152,8 +156,8 @@ export async function fetchCatalogData(
   }
 
   const groups: SectorGroup[] = orderedSectors.map((sectorRow, idx) => {
-    const editorial = chrome.sectors[sectorRow.slug as "cam-yikama" | "kapak" | "tekstil"];
-    const slug = sectorRow.slug as "cam-yikama" | "kapak" | "tekstil";
+    const editorial = chrome.sectors[sectorRow.slug as "cam-yikama" | "otomotiv" | "tekstil"];
+    const slug = sectorRow.slug as "cam-yikama" | "otomotiv" | "tekstil";
     const prods = (bySectorId.get(sectorRow.id) ?? []).map((p) =>
       toCatalogProduct(p, slug, locale),
     );

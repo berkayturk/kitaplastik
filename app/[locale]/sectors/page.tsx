@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 const SECTORS = [
   { pathname: "/sectors/bottle-washing" as const, nsKey: "camYikama" as const },
-  { pathname: "/sectors/caps" as const, nsKey: "kapak" as const },
+  { pathname: "/sectors/automotive" as const, nsKey: "otomotiv" as const },
   { pathname: "/sectors/textile" as const, nsKey: "tekstil" as const },
 ];
 

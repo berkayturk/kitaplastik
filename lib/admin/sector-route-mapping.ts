@@ -1,7 +1,7 @@
 // lib/admin/sector-route-mapping.ts
 export const SECTOR_DB_TO_ROUTE: Readonly<Record<string, string>> = Object.freeze({
   "cam-yikama": "bottle-washing",
-  kapak: "caps",
+  otomotiv: "automotive",
   tekstil: "textile",
 });
 

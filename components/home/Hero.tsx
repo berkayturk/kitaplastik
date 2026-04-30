@@ -52,7 +52,7 @@ export function Hero() {
             className="flex flex-col gap-8 border-s border-[var(--color-border-hairline)] ps-8 lg:col-span-5 lg:ps-10"
           >
             <Kpi value="36" unit="yıl" label="süreklilik · 1989'dan beri Bursa'da" />
-            <Kpi value="3" unit="sektör" label="cam yıkama · kapak · tekstil" />
+            <Kpi value="3" unit="sektör" label="cam yıkama · otomotiv · tekstil" />
             <Kpi value="4" unit="dil" label="TR · EN · RU · AR küresel tedarik" />
             <Kpi value="±0.02" unit="mm" label="teslim toleransı" />
           </aside>
