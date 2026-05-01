@@ -34,8 +34,8 @@ export default async function HomePage({ params }: HomePageProps) {
   return (
     <>
       <Hero />
-      <ReferencesStrip />
       <SectorGrid />
+      <ReferencesStrip />
     </>
   );
 }

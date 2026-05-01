@@ -39,7 +39,7 @@ export async function ReferencesStrip() {
 
         <ul
           role="list"
-          className="grid grid-cols-2 items-center gap-x-10 gap-y-8 sm:grid-cols-4 lg:grid-cols-8"
+          className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-12 lg:gap-x-16"
         >
           {references.map((ref) => {
             const name =
