@@ -1,8 +1,7 @@
-// app/admin/forgot-password/actions.ts
 "use server";
 
-import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { env } from "@/lib/env";
 
 interface Result {
   ok: boolean;
@@ -17,10 +16,7 @@ export async function requestReset(_prevState: Result, formData: FormData): Prom
     return { ok: false, message: "E-posta zorunludur." };
   }
 
-  const h = await headers();
-  const proto = h.get("x-forwarded-proto") ?? "https";
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
-  const origin = `${proto}://${host}`;
+  const origin = (env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com").replace(/\/$/, "");
   const redirectTo = `${origin}/admin/auth/callback?next=/admin/set-password`;
 
   const supabase = await createClient();

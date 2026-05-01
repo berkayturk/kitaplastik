@@ -60,5 +60,5 @@ export const catalogLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 3 
 export const catalogPdfLimiter = createRateLimiter({ windowMs: 60 * 60_000, max: 10 });
 
 export function ipFromHeaders(h: Headers): string {
-  return h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip")?.trim() ?? "unknown";
+  return h.get("cf-connecting-ip")?.trim() ?? h.get("x-real-ip")?.trim() ?? "unknown";
 }

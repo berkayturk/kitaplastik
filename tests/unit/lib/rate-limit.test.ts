@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { createRateLimiter } from "@/lib/rate-limit";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createRateLimiter, ipFromHeaders } from "@/lib/rate-limit";
 
 describe("createRateLimiter", () => {
   beforeEach(() => {
@@ -37,5 +37,25 @@ describe("createRateLimiter", () => {
     expect(r.allowed).toBe(false);
     expect(r.retryAfter).toBeGreaterThan(0);
     expect(r.retryAfter).toBeLessThanOrEqual(60);
+  });
+});
+
+describe("ipFromHeaders", () => {
+  it("prefers Cloudflare's normalized client IP header", () => {
+    const headers = new Headers({
+      "cf-connecting-ip": "203.0.113.10",
+      "x-real-ip": "198.51.100.20",
+      "x-forwarded-for": "192.0.2.30",
+    });
+
+    expect(ipFromHeaders(headers)).toBe("203.0.113.10");
+  });
+
+  it("does not use spoofable x-forwarded-for as the rate-limit key", () => {
+    const headers = new Headers({
+      "x-forwarded-for": "192.0.2.30",
+    });
+
+    expect(ipFromHeaders(headers)).toBe("unknown");
   });
 });
