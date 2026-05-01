@@ -30,13 +30,13 @@ test.describe("Admin sectors CRUD", () => {
     await expect(page.getByText(newName)).toBeVisible();
   });
 
-  test("public EN pathname /en/sectors/bottle-washing still returns 200", async ({ request }) => {
-    const r = await request.get("/en/sectors/bottle-washing");
+  test("public EN pathname /en/products/bottle-washing returns 200", async ({ request }) => {
+    const r = await request.get("/en/products/bottle-washing");
     expect(r.status()).toBe(200);
   });
 
-  test("public TR pathname /tr/sektorler/cam-yikama still returns 200", async ({ request }) => {
-    const r = await request.get("/tr/sektorler/cam-yikama");
+  test("public TR pathname /tr/urunler/cam-yikama returns 200", async ({ request }) => {
+    const r = await request.get("/tr/urunler/cam-yikama");
     expect(r.status()).toBe(200);
   });
 
@@ -61,7 +61,8 @@ test.describe("Admin sectors CRUD", () => {
       await expect(page).toHaveURL(/\/admin\/sectors\?success=updated/);
 
       // Public fresh render — revalidatePath propagation
-      const r = await request.get("/tr/sektorler/cam-yikama", {
+      // 2026-05-01: sektör public URL'i /products altına taşındı
+      const r = await request.get("/tr/urunler/cam-yikama", {
         headers: { "cache-control": "no-cache" },
       });
       expect(r.status()).toBe(200);

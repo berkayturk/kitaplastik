@@ -56,7 +56,6 @@ const messages = {
   },
   nav: {
     primary: "Ana navigasyon",
-    sectors: "Sektörler",
     products: "Ürünler",
     references: "Referanslar",
     about: "Hakkımızda",
@@ -104,11 +103,13 @@ describe("Footer", () => {
     renderFooter();
     // Şirket kolonundan Hakkımızda (nav.about çevirisi)
     expect(screen.getByRole("link", { name: /hakkımızda/i })).toBeInTheDocument();
-    // İletişim kolonundan Ürünler + Teklif İste
-    expect(screen.getByRole("link", { name: /ürünler/i })).toBeInTheDocument();
+    // İletişim kolonundan Teklif İste
     expect(screen.getByRole("link", { name: /teklif İste/i })).toBeInTheDocument();
-    // Sektörler kolon başlığı H3 olarak (link değil) görünmeli
-    expect(screen.getByRole("heading", { level: 3, name: /sektörler/i })).toBeInTheDocument();
+    // Ürün kategorileri kolonu (eski Sektörler kolonu) — sektörler artık /products altında
+    expect(screen.getAllByRole("link", { name: /ürünler/i }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: /cam yıkama/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /otomotiv/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /tekstil/i })).toBeInTheDocument();
   });
 
   it("renders bottom-bar legal links (privacy + cookies)", () => {

@@ -4,6 +4,8 @@ import type { Locale } from "@/i18n/routing";
 import { env } from "@/lib/env";
 import { getImageAltText } from "@/lib/products/alt-text";
 
+export type ProductSectorRoute = "bottle-washing" | "automotive" | "textile";
+
 export interface PublicProduct {
   slug: string;
   sector_label?: string | null;
@@ -15,18 +17,37 @@ interface Props {
   product: PublicProduct;
   locale: Locale;
   imageLabel: string;
+  sectorRoute: ProductSectorRoute;
 }
 
-export function ProductCard({ product, locale, imageLabel }: Props) {
+export function ProductCard({ product, locale, imageLabel, sectorRoute }: Props) {
   const first = product.images?.[0];
   const url = first
     ? `${env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/$/, "")}/storage/v1/object/public/product-images/${first.path}`
     : null;
   const alt = first ? getImageAltText({ name: product.name, locale, order: 0, imageLabel }) : "";
 
+  // sectorRoute'a göre static pathname'lerden birini seç. next-intl pathnames
+  // tüm 4 locale için doğru localized URL'i runtime'da çözer.
+  const href =
+    sectorRoute === "bottle-washing"
+      ? ({
+          pathname: "/products/bottle-washing/[slug]",
+          params: { slug: product.slug },
+        } as const)
+      : sectorRoute === "automotive"
+        ? ({
+            pathname: "/products/automotive/[slug]",
+            params: { slug: product.slug },
+          } as const)
+        : ({
+            pathname: "/products/textile/[slug]",
+            params: { slug: product.slug },
+          } as const);
+
   return (
     <Link
-      href={{ pathname: "/products/[slug]", params: { slug: product.slug } }}
+      href={href}
       className="group block overflow-hidden rounded-md border border-[var(--color-border-subtle-dark)] bg-bg-primary transition hover:border-[var(--color-accent-cobalt)]"
     >
       <div className="relative aspect-[4/3] bg-bg-elevated">

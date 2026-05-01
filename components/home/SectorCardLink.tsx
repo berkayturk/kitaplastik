@@ -7,7 +7,7 @@ import { trackPlausible } from "@/lib/analytics/plausible";
 type SectorSlug = "bottle-washing" | "automotive" | "textile";
 
 interface SectorCardLinkProps {
-  pathname: `/sectors/${SectorSlug}`;
+  pathname: `/products/${SectorSlug}`;
   slug: SectorSlug;
   children: ReactNode;
   className?: string;

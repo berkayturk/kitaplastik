@@ -59,39 +59,50 @@ describe("next-intl pathnames per-locale mapping", () => {
     expect(getPathname({ href: "/request-quote", locale: "ar" })).toBe("/ar/al-katalog");
   });
 
-  it("/sectors", () => {
-    expect(getPathname({ href: "/sectors", locale: "tr" })).toBe("/tr/sektorler");
-    expect(getPathname({ href: "/sectors", locale: "en" })).toBe("/en/sectors");
-    expect(getPathname({ href: "/sectors", locale: "ru" })).toBe("/ru/otrasli");
-    expect(getPathname({ href: "/sectors", locale: "ar" })).toBe("/ar/al-qitaat");
-  });
-
-  it("/sectors/bottle-washing", () => {
-    expect(getPathname({ href: "/sectors/bottle-washing", locale: "tr" })).toBe(
-      "/tr/sektorler/cam-yikama",
+  it("/products/bottle-washing", () => {
+    expect(getPathname({ href: "/products/bottle-washing", locale: "tr" })).toBe(
+      "/tr/urunler/cam-yikama",
     );
-    expect(getPathname({ href: "/sectors/bottle-washing", locale: "ru" })).toBe(
-      "/ru/otrasli/moyka-butylok",
+    expect(getPathname({ href: "/products/bottle-washing", locale: "en" })).toBe(
+      "/en/products/bottle-washing",
     );
-    expect(getPathname({ href: "/sectors/bottle-washing", locale: "ar" })).toBe(
-      "/ar/al-qitaat/ghasil-zujajat",
+    expect(getPathname({ href: "/products/bottle-washing", locale: "ru" })).toBe(
+      "/ru/produktsiya/moyka-butylok",
+    );
+    expect(getPathname({ href: "/products/bottle-washing", locale: "ar" })).toBe(
+      "/ar/al-muntajat/ghasil-zujajat",
     );
   });
 
-  it("/sectors/automotive", () => {
-    expect(getPathname({ href: "/sectors/automotive", locale: "tr" })).toBe(
-      "/tr/sektorler/otomotiv",
+  it("/products/automotive", () => {
+    expect(getPathname({ href: "/products/automotive", locale: "tr" })).toBe(
+      "/tr/urunler/otomotiv",
     );
-    expect(getPathname({ href: "/sectors/automotive", locale: "ar" })).toBe(
-      "/ar/al-qitaat/al-sayyarat",
+    expect(getPathname({ href: "/products/automotive", locale: "ar" })).toBe(
+      "/ar/al-muntajat/al-sayyarat",
     );
   });
 
-  it("/sectors/textile", () => {
-    expect(getPathname({ href: "/sectors/textile", locale: "tr" })).toBe("/tr/sektorler/tekstil");
-    expect(getPathname({ href: "/sectors/textile", locale: "ar" })).toBe(
-      "/ar/al-qitaat/al-mansujat",
+  it("/products/textile", () => {
+    expect(getPathname({ href: "/products/textile", locale: "tr" })).toBe("/tr/urunler/tekstil");
+    expect(getPathname({ href: "/products/textile", locale: "ar" })).toBe(
+      "/ar/al-muntajat/al-mansujat",
     );
+  });
+
+  it("/products/[sector]/[slug] dynamic — bottle-washing", () => {
+    expect(
+      getPathname({
+        href: { pathname: "/products/bottle-washing/[slug]", params: { slug: "pet-shishe" } },
+        locale: "tr",
+      }),
+    ).toBe("/tr/urunler/cam-yikama/pet-shishe");
+    expect(
+      getPathname({
+        href: { pathname: "/products/bottle-washing/[slug]", params: { slug: "pet-shishe" } },
+        locale: "ar",
+      }),
+    ).toBe("/ar/al-muntajat/ghasil-zujajat/pet-shishe");
   });
 
   it("/legal/privacy", () => {

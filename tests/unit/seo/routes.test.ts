@@ -4,18 +4,17 @@ import { PUBLIC_ROUTES, buildAlternates } from "@/lib/seo/routes";
 describe("seo routes", () => {
   it("lists all public routes", () => {
     expect(PUBLIC_ROUTES).toContain("/");
-    expect(PUBLIC_ROUTES).toContain("/sectors");
-    expect(PUBLIC_ROUTES).toContain("/sectors/bottle-washing");
-    expect(PUBLIC_ROUTES).toContain("/sectors/automotive");
-    expect(PUBLIC_ROUTES).toContain("/sectors/textile");
     expect(PUBLIC_ROUTES).toContain("/products");
+    expect(PUBLIC_ROUTES).toContain("/products/bottle-washing");
+    expect(PUBLIC_ROUTES).toContain("/products/automotive");
+    expect(PUBLIC_ROUTES).toContain("/products/textile");
     expect(PUBLIC_ROUTES).toContain("/about");
     expect(PUBLIC_ROUTES).toContain("/contact");
     expect(PUBLIC_ROUTES).toContain("/references");
     expect(PUBLIC_ROUTES).toContain("/request-quote");
     expect(PUBLIC_ROUTES).toContain("/legal/privacy");
     expect(PUBLIC_ROUTES).toContain("/legal/cookies");
-    expect(PUBLIC_ROUTES).toHaveLength(12);
+    expect(PUBLIC_ROUTES).toHaveLength(11);
   });
 
   it("buildAlternates produces hreflang map with x-default (native URLs)", () => {

@@ -22,7 +22,6 @@ export function Header() {
           </Link>
 
           <nav aria-label={t("primary")} className="hidden items-center gap-8 lg:flex">
-            <HeaderLink href="/sectors">{t("sectors")}</HeaderLink>
             <HeaderLink href="/products">{t("products")}</HeaderLink>
             <HeaderLink href="/references">{t("references")}</HeaderLink>
             <HeaderLink href="/about">{t("about")}</HeaderLink>

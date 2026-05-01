@@ -1,18 +1,17 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
-type CardSlug = "products" | "sectors" | "catalog" | "contact";
+type CardSlug = "products" | "catalog" | "contact";
 
-type RouteHref = "/products" | "/sectors" | "/request-quote" | "/contact";
+type RouteHref = "/products" | "/request-quote" | "/contact";
 
 const CARD_HREFS: Record<CardSlug, RouteHref> = {
   products: "/products",
-  sectors: "/sectors",
   catalog: "/request-quote",
   contact: "/contact",
 };
 
-const ORDER: CardSlug[] = ["products", "sectors", "catalog", "contact"];
+const ORDER: CardSlug[] = ["products", "catalog", "contact"];
 
 export function RecoveryCards() {
   const t = useTranslations("common.notFound");
@@ -22,7 +21,7 @@ export function RecoveryCards() {
       <p id="nf-recovery-title" className="eyebrow">
         {t("recoveryTitle")}
       </p>
-      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {ORDER.map((slug) => (
           <li key={slug}>
             <Link

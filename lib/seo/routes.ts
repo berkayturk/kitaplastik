@@ -3,11 +3,10 @@ import { getPathname } from "@/i18n/navigation";
 
 export const PUBLIC_ROUTES = [
   "/",
-  "/sectors",
-  "/sectors/bottle-washing",
-  "/sectors/automotive",
-  "/sectors/textile",
   "/products",
+  "/products/bottle-washing",
+  "/products/automotive",
+  "/products/textile",
   "/about",
   "/contact",
   "/references",
@@ -52,13 +51,30 @@ export function languagesWithDefault(alt: Alternates): Record<Locale | "x-defaul
   return { ...alt.languages, "x-default": alt["x-default"] };
 }
 
-export function buildProductAlternates(slug: string, origin: string): Alternates {
+export type ProductSectorRoute = "bottle-washing" | "automotive" | "textile";
+
+export function buildProductAlternates(
+  sectorRoute: ProductSectorRoute,
+  slug: string,
+  origin: string,
+): Alternates {
   const languages = locales.reduce<Record<Locale, string>>(
     (acc, locale) => {
-      const pathname = getPathname({
-        href: { pathname: "/products/[slug]", params: { slug } },
-        locale,
-      });
+      const pathname =
+        sectorRoute === "bottle-washing"
+          ? getPathname({
+              href: { pathname: "/products/bottle-washing/[slug]", params: { slug } },
+              locale,
+            })
+          : sectorRoute === "automotive"
+            ? getPathname({
+                href: { pathname: "/products/automotive/[slug]", params: { slug } },
+                locale,
+              })
+            : getPathname({
+                href: { pathname: "/products/textile/[slug]", params: { slug } },
+                locale,
+              });
       acc[locale] = `${origin}${pathname}`;
       return acc;
     },

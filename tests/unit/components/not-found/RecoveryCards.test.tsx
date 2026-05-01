@@ -23,7 +23,6 @@ const messages = {
       recoveryTitle: "BELKİ BUNLAR?",
       cards: {
         products: { title: "Ürünler", desc: "Tüm ürün ailesini inceleyin" },
-        sectors: { title: "Sektörler", desc: "Cam yıkama · otomotiv · tekstil" },
         catalog: { title: "Katalog iste", desc: "PDF katalog talep formu" },
         contact: { title: "İletişim", desc: "Bize ulaşın" },
       },
@@ -40,21 +39,20 @@ function renderCards() {
 }
 
 describe("<RecoveryCards />", () => {
-  it("renders exactly 4 recovery links", () => {
+  it("renders exactly 3 recovery links (sectors removed, merged into products)", () => {
     renderCards();
-    expect(screen.getAllByRole("link")).toHaveLength(4);
+    expect(screen.getAllByRole("link")).toHaveLength(3);
   });
 
   it("wires each card href to the correct internal route", () => {
     renderCards();
     const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href"));
-    expect(hrefs).toEqual(["/products", "/sectors", "/request-quote", "/contact"]);
+    expect(hrefs).toEqual(["/products", "/request-quote", "/contact"]);
   });
 
   it("renders translated titles and descriptions for the tr locale", () => {
     renderCards();
     expect(screen.getByText("Ürünler")).toBeInTheDocument();
-    expect(screen.getByText("Sektörler")).toBeInTheDocument();
     expect(screen.getByText("Katalog iste")).toBeInTheDocument();
     expect(screen.getByText("İletişim")).toBeInTheDocument();
     expect(screen.getByText("PDF katalog talep formu")).toBeInTheDocument();

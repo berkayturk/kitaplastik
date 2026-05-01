@@ -38,7 +38,7 @@ export function Hero() {
                 {t("primaryCta")} →
               </Link>
               <Link
-                href="/sectors"
+                href="/products"
                 className={buttonVariants({ variant: "secondary", size: "lg" })}
               >
                 {t("secondaryCta")}

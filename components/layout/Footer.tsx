@@ -36,11 +36,12 @@ export function Footer({ company }: FooterProps) {
             </div>
           </div>
 
-          {/* Sektörler */}
-          <FooterColumn title={tNav("sectors")}>
-            <FooterLink href="/sectors/bottle-washing">Cam Yıkama</FooterLink>
-            <FooterLink href="/sectors/automotive">Otomotiv</FooterLink>
-            <FooterLink href="/sectors/textile">Tekstil</FooterLink>
+          {/* Ürün kategorileri */}
+          <FooterColumn title={tNav("products")}>
+            <FooterLink href="/products">{tNav("products")}</FooterLink>
+            <FooterLink href="/products/bottle-washing">Cam Yıkama</FooterLink>
+            <FooterLink href="/products/automotive">Otomotiv</FooterLink>
+            <FooterLink href="/products/textile">Tekstil</FooterLink>
           </FooterColumn>
 
           {/* Şirket */}
@@ -53,7 +54,6 @@ export function Footer({ company }: FooterProps) {
           <FooterColumn title={tNav("contact")}>
             <FooterLink href="/contact">{tNav("contact")}</FooterLink>
             <FooterLink href="/request-quote">{tCommon("cta.requestQuote")}</FooterLink>
-            <FooterLink href="/products">{tNav("products")}</FooterLink>
           </FooterColumn>
         </div>
 

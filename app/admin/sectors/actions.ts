@@ -23,10 +23,11 @@ function parseJson<T>(raw: FormDataEntryValue | null, fallback: T): T {
 }
 
 function revalidatePublicSectors(dbSlug: string): void {
+  // Sektör yönetimi public tarafta /products kategori URL'lerine map ediliyor.
   const routeSlug = dbSlugToRouteSlug(dbSlug);
   for (const loc of LOCALES) {
-    revalidatePath(`/${loc}/sectors`, "layout");
-    revalidatePath(`/${loc}/sectors/${routeSlug}`, "page");
+    revalidatePath(`/${loc}/products`, "layout");
+    revalidatePath(`/${loc}/products/${routeSlug}`, "page");
   }
 }
 

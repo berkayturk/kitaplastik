@@ -3,7 +3,7 @@ import { Container } from "../layout/Container";
 import { Card, CardEyebrow, CardTitle, CardBody, CardFooter } from "@/components/ui";
 import { SectorCardLink } from "./SectorCardLink";
 
-type SectorPathname = "/sectors/bottle-washing" | "/sectors/automotive" | "/sectors/textile";
+type SectorPathname = "/products/bottle-washing" | "/products/automotive" | "/products/textile";
 
 interface SectorDef {
   pathname: SectorPathname;
@@ -14,19 +14,19 @@ interface SectorDef {
 
 const SECTORS: readonly SectorDef[] = [
   {
-    pathname: "/sectors/bottle-washing",
+    pathname: "/products/bottle-washing",
     nsKey: "camYikama",
     number: "01",
     spec: "Ø 80–320 mm · 12–480 g",
   },
   {
-    pathname: "/sectors/automotive",
+    pathname: "/products/automotive",
     nsKey: "otomotiv",
     number: "02",
     spec: "ABS · PC · PP · TPE — EV güvenlik aksesuarları",
   },
   {
-    pathname: "/sectors/textile",
+    pathname: "/products/textile",
     nsKey: "tekstil",
     number: "03",
     spec: "POM · PA6 · abrasif aşınmaya dayanıklı",
@@ -58,7 +58,7 @@ export function SectorGrid() {
               key={sector.pathname}
               pathname={sector.pathname}
               slug={
-                sector.pathname.replace("/sectors/", "") as
+                sector.pathname.replace("/products/", "") as
                   | "bottle-washing"
                   | "automotive"
                   | "textile"

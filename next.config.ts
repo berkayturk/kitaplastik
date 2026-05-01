@@ -74,7 +74,6 @@ const nextConfig: NextConfig = {
       },
       // Plan 4a legacy EN-canonical → new per-locale native (TR)
       { source: "/tr/products", destination: "/tr/urunler", permanent: true },
-      { source: "/tr/products/:slug", destination: "/tr/urunler/:slug", permanent: true },
       { source: "/tr/about", destination: "/tr/hakkimizda", permanent: true },
       { source: "/tr/contact", destination: "/tr/iletisim", permanent: true },
       { source: "/tr/references", destination: "/tr/referanslar", permanent: true },
@@ -84,20 +83,38 @@ const nextConfig: NextConfig = {
         destination: "/tr/katalog",
         permanent: true,
       },
+      // 2026-05-01: /sectors → /products kategori yapısı taşıması
+      // Eski sektör hub'ı ve detayları artık /products altında — TR locale
+      { source: "/tr/sectors", destination: "/tr/urunler", permanent: true },
+      { source: "/tr/sektorler", destination: "/tr/urunler", permanent: true },
       {
         source: "/tr/sectors/bottle-washing",
-        destination: "/tr/sektorler/cam-yikama",
+        destination: "/tr/urunler/cam-yikama",
         permanent: true,
       },
-      // /sectors/caps deprecated 2026-04-30 — sektör kaldırıldı, hub'a yönlendir
-      { source: "/tr/sectors/caps", destination: "/tr/sektorler", permanent: true },
-      { source: "/tr/sektorler/kapak", destination: "/tr/sektorler", permanent: true },
-      { source: "/tr/sectors/textile", destination: "/tr/sektorler/tekstil", permanent: true },
-      { source: "/tr/sectors", destination: "/tr/sektorler", permanent: true },
+      {
+        source: "/tr/sektorler/cam-yikama",
+        destination: "/tr/urunler/cam-yikama",
+        permanent: true,
+      },
+      {
+        source: "/tr/sectors/automotive",
+        destination: "/tr/urunler/otomotiv",
+        permanent: true,
+      },
+      { source: "/tr/sektorler/otomotiv", destination: "/tr/urunler/otomotiv", permanent: true },
+      {
+        source: "/tr/sectors/textile",
+        destination: "/tr/urunler/tekstil",
+        permanent: true,
+      },
+      { source: "/tr/sektorler/tekstil", destination: "/tr/urunler/tekstil", permanent: true },
+      // /sectors/caps deprecated 2026-04-30 (preserved)
+      { source: "/tr/sectors/caps", destination: "/tr/urunler", permanent: true },
+      { source: "/tr/sektorler/kapak", destination: "/tr/urunler", permanent: true },
 
       // Plan 4a legacy EN-canonical → new per-locale native (RU)
       { source: "/ru/products", destination: "/ru/produktsiya", permanent: true },
-      { source: "/ru/products/:slug", destination: "/ru/produktsiya/:slug", permanent: true },
       { source: "/ru/about", destination: "/ru/o-nas", permanent: true },
       { source: "/ru/contact", destination: "/ru/kontakty", permanent: true },
       { source: "/ru/references", destination: "/ru/otzyvy", permanent: true },
@@ -107,19 +124,36 @@ const nextConfig: NextConfig = {
         destination: "/ru/katalog",
         permanent: true,
       },
+      // 2026-05-01: /sectors → /products taşıması (RU)
+      { source: "/ru/sectors", destination: "/ru/produktsiya", permanent: true },
+      { source: "/ru/otrasli", destination: "/ru/produktsiya", permanent: true },
       {
         source: "/ru/sectors/bottle-washing",
-        destination: "/ru/otrasli/moyka-butylok",
+        destination: "/ru/produktsiya/moyka-butylok",
         permanent: true,
       },
-      { source: "/ru/sectors/caps", destination: "/ru/otrasli", permanent: true },
-      { source: "/ru/otrasli/kryshki", destination: "/ru/otrasli", permanent: true },
-      { source: "/ru/sectors/textile", destination: "/ru/otrasli/tekstil", permanent: true },
-      { source: "/ru/sectors", destination: "/ru/otrasli", permanent: true },
+      {
+        source: "/ru/otrasli/moyka-butylok",
+        destination: "/ru/produktsiya/moyka-butylok",
+        permanent: true,
+      },
+      {
+        source: "/ru/sectors/automotive",
+        destination: "/ru/produktsiya/avtoprom",
+        permanent: true,
+      },
+      { source: "/ru/otrasli/avtoprom", destination: "/ru/produktsiya/avtoprom", permanent: true },
+      {
+        source: "/ru/sectors/textile",
+        destination: "/ru/produktsiya/tekstil",
+        permanent: true,
+      },
+      { source: "/ru/otrasli/tekstil", destination: "/ru/produktsiya/tekstil", permanent: true },
+      { source: "/ru/sectors/caps", destination: "/ru/produktsiya", permanent: true },
+      { source: "/ru/otrasli/kryshki", destination: "/ru/produktsiya", permanent: true },
 
       // Plan 4a legacy EN-canonical → new per-locale native (AR)
       { source: "/ar/products", destination: "/ar/al-muntajat", permanent: true },
-      { source: "/ar/products/:slug", destination: "/ar/al-muntajat/:slug", permanent: true },
       { source: "/ar/about", destination: "/ar/man-nahnu", permanent: true },
       { source: "/ar/contact", destination: "/ar/ittisal", permanent: true },
       { source: "/ar/references", destination: "/ar/maraji", permanent: true },
@@ -129,19 +163,60 @@ const nextConfig: NextConfig = {
         destination: "/ar/al-katalog",
         permanent: true,
       },
+      // 2026-05-01: /sectors → /products taşıması (AR)
+      { source: "/ar/sectors", destination: "/ar/al-muntajat", permanent: true },
+      { source: "/ar/al-qitaat", destination: "/ar/al-muntajat", permanent: true },
       {
         source: "/ar/sectors/bottle-washing",
-        destination: "/ar/al-qitaat/ghasil-zujajat",
+        destination: "/ar/al-muntajat/ghasil-zujajat",
         permanent: true,
       },
-      { source: "/ar/sectors/caps", destination: "/ar/al-qitaat", permanent: true },
-      { source: "/ar/al-qitaat/al-aghtiya", destination: "/ar/al-qitaat", permanent: true },
+      {
+        source: "/ar/al-qitaat/ghasil-zujajat",
+        destination: "/ar/al-muntajat/ghasil-zujajat",
+        permanent: true,
+      },
+      {
+        source: "/ar/sectors/automotive",
+        destination: "/ar/al-muntajat/al-sayyarat",
+        permanent: true,
+      },
+      {
+        source: "/ar/al-qitaat/al-sayyarat",
+        destination: "/ar/al-muntajat/al-sayyarat",
+        permanent: true,
+      },
       {
         source: "/ar/sectors/textile",
-        destination: "/ar/al-qitaat/al-mansujat",
+        destination: "/ar/al-muntajat/al-mansujat",
         permanent: true,
       },
-      { source: "/ar/sectors", destination: "/ar/al-qitaat", permanent: true },
+      {
+        source: "/ar/al-qitaat/al-mansujat",
+        destination: "/ar/al-muntajat/al-mansujat",
+        permanent: true,
+      },
+      { source: "/ar/sectors/caps", destination: "/ar/al-muntajat", permanent: true },
+      { source: "/ar/al-qitaat/al-aghtiya", destination: "/ar/al-muntajat", permanent: true },
+
+      // EN locale: /sectors taşıma (yeni — daha önce yoktu)
+      { source: "/en/sectors", destination: "/en/products", permanent: true },
+      {
+        source: "/en/sectors/bottle-washing",
+        destination: "/en/products/bottle-washing",
+        permanent: true,
+      },
+      {
+        source: "/en/sectors/automotive",
+        destination: "/en/products/automotive",
+        permanent: true,
+      },
+      {
+        source: "/en/sectors/textile",
+        destination: "/en/products/textile",
+        permanent: true,
+      },
+      { source: "/en/sectors/caps", destination: "/en/products", permanent: true },
 
       // Admin (preserved from Plan 4a)
       {

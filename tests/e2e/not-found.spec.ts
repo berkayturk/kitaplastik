@@ -51,7 +51,8 @@ for (const c of LOCALES) {
 
     const recoveryNav = page.getByRole("navigation", { name: c.recoveryName });
     await expect(recoveryNav).toBeVisible();
-    await expect(recoveryNav.getByRole("link")).toHaveCount(4);
+    // 2026-05-01: sectors taşıması sonrası 4 → 3 kart (products / catalog / contact)
+    await expect(recoveryNav.getByRole("link")).toHaveCount(3);
 
     const productsLink = recoveryNav.getByRole("link").first();
     await expect(productsLink).toHaveAttribute("href", c.productsLocalizedHref);

@@ -1,87 +1,59 @@
-import { notFound } from "next/navigation";
-import { setRequestLocale, getTranslations } from "next-intl/server";
-import type { Metadata } from "next";
+// Legacy: eski flat /products/[slug] URL'leri yeni sector-aware route'a 301 redirect
+// eder. Yeni canonical: /products/[sector]/[slug]. DB'den ürünün sector_id'sini
+// bulup slug'ını çözer; sektör eşleşmezse 404'e düşer.
+
+import { permanentRedirect, notFound } from "next/navigation";
+import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { buildProductAlternates, languagesWithDefault } from "@/lib/seo/routes";
-import { env } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
-import { ProductDetail } from "@/components/public/products/ProductDetail";
+import { SECTOR_ROUTE_TO_DB, type SectorRouteSlug } from "@/components/public/sectors/SectorDetail";
 
 interface PageProps {
   params: Promise<{ locale: Locale; slug: string }>;
 }
 
-async function loadProduct(locale: Locale, slug: string) {
+const DB_TO_ROUTE: Record<string, SectorRouteSlug> = Object.fromEntries(
+  (Object.entries(SECTOR_ROUTE_TO_DB) as Array<[SectorRouteSlug, string]>).map(([k, v]) => [v, k]),
+);
+
+export default async function LegacyProductRedirect({ params }: PageProps) {
+  const { locale, slug } = await params;
   const svc = await createClient();
-  const nameKey = `name->>${locale}`;
-  const { data, error } = await svc
+
+  const { data: product } = await svc
     .from("products")
-    .select("slug, name, description, images, specs, active")
+    .select("slug, sector_id, active")
     .eq("slug", slug)
     .eq("active", true)
-    .not(nameKey, "is", null)
-    .neq(nameKey, "")
     .maybeSingle();
-  if (error) throw new Error(error.message);
-  return data;
-}
+  if (!product?.sector_id) notFound();
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { locale, slug } = await params;
-  const product = await loadProduct(locale, slug);
-  if (!product) return { title: "Ürün bulunamadı" };
-  const origin = env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com";
-  const name = (product.name as Record<string, string>)[locale];
-  const description = (product.description as Record<string, string> | null)?.[locale];
-  const alternates = buildProductAlternates(slug, origin);
-  return {
-    title: `${name} | Kıta Plastik`,
-    description: description?.slice(0, 160),
-    alternates: {
-      canonical: alternates.languages[locale],
-      languages: languagesWithDefault(alternates),
-    },
-  };
-}
+  const { data: sector } = await svc
+    .from("sectors")
+    .select("slug")
+    .eq("id", product.sector_id)
+    .eq("active", true)
+    .maybeSingle();
+  if (!sector) notFound();
 
-export default async function ProductDetailPage({ params }: PageProps) {
-  const { locale, slug } = await params;
-  setRequestLocale(locale);
+  const routeSlug = DB_TO_ROUTE[sector.slug];
+  if (!routeSlug) notFound();
 
-  const product = await loadProduct(locale, slug);
-  if (!product) notFound();
+  const pathname =
+    routeSlug === "bottle-washing"
+      ? getPathname({
+          href: { pathname: "/products/bottle-washing/[slug]", params: { slug } },
+          locale,
+        })
+      : routeSlug === "automotive"
+        ? getPathname({
+            href: { pathname: "/products/automotive/[slug]", params: { slug } },
+            locale,
+          })
+        : getPathname({
+            href: { pathname: "/products/textile/[slug]", params: { slug } },
+            locale,
+          });
 
-  const [tCta, tCommon, tDetail] = await Promise.all([
-    getTranslations({ locale, namespace: "common.cta" }),
-    getTranslations({ locale, namespace: "common" }),
-    getTranslations({ locale, namespace: "pages.products.detail" }),
-  ]);
-
-  return (
-    <section className="container mx-auto px-6 py-16 md:py-24">
-      <ProductDetail
-        product={{
-          slug: product.slug,
-          name: product.name as Record<Locale, string>,
-          description: (product.description as Record<Locale, string> | null) ?? {
-            tr: "",
-            en: "",
-            ru: "",
-            ar: "",
-          },
-          images:
-            (product.images as Array<{
-              path: string;
-              order: number;
-              alt_text: Record<Locale, string>;
-            }> | null) ?? [],
-          specs: (product.specs as Array<{ preset_id: string; value: string }> | null) ?? [],
-        }}
-        locale={locale}
-        ctaLabel={tCta("requestQuote")}
-        imageLabel={tCommon("productImageLabel")}
-        specsLabel={tDetail("specsLabel")}
-      />
-    </section>
-  );
+  permanentRedirect(pathname);
 }

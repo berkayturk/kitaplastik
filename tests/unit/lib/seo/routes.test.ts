@@ -35,17 +35,20 @@ describe("buildAlternates — per-locale native URLs", () => {
     expect(alt["x-default"]).toBe("https://kitaplastik.com/tr");
   });
 
-  it("/sectors/bottle-washing nested", () => {
-    const alt = buildAlternates("/sectors/bottle-washing", ORIGIN);
-    expect(alt.languages.tr).toBe("https://kitaplastik.com/tr/sektorler/cam-yikama");
-    expect(alt.languages.ar).toBe("https://kitaplastik.com/ar/al-qitaat/ghasil-zujajat");
+  it("/products/bottle-washing nested", () => {
+    const alt = buildAlternates("/products/bottle-washing", ORIGIN);
+    expect(alt.languages.tr).toBe("https://kitaplastik.com/tr/urunler/cam-yikama");
+    expect(alt.languages.ar).toBe("https://kitaplastik.com/ar/al-muntajat/ghasil-zujajat");
   });
 
-  it("PUBLIC_ROUTES contains all 12 canonical keys", () => {
-    expect(PUBLIC_ROUTES).toHaveLength(12);
+  it("PUBLIC_ROUTES contains all 11 canonical keys (sectors taşındı /products altına)", () => {
+    expect(PUBLIC_ROUTES).toHaveLength(11);
     expect(PUBLIC_ROUTES).toContain("/");
     expect(PUBLIC_ROUTES).toContain("/request-quote");
-    expect(PUBLIC_ROUTES).toContain("/sectors/bottle-washing");
+    expect(PUBLIC_ROUTES).toContain("/products");
+    expect(PUBLIC_ROUTES).toContain("/products/bottle-washing");
+    expect(PUBLIC_ROUTES).toContain("/products/automotive");
+    expect(PUBLIC_ROUTES).toContain("/products/textile");
     expect(PUBLIC_ROUTES).toContain("/legal/privacy");
     expect(PUBLIC_ROUTES).toContain("/legal/cookies");
   });

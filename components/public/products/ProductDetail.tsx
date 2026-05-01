@@ -1,9 +1,10 @@
-import { Link } from "@/i18n/navigation";
+import { Link, getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { ProductGallery } from "./ProductGallery";
 import { ProductSpecTable } from "./ProductSpecTable";
 import { env } from "@/lib/env";
 import { toSafeLdJson } from "@/lib/products/json-ld";
+import type { ProductSectorRoute } from "./ProductCard";
 
 interface Product {
   slug: string;
@@ -19,11 +20,35 @@ interface Props {
   ctaLabel: string;
   imageLabel: string;
   specsLabel: string;
+  sectorRoute: ProductSectorRoute;
 }
 
-export function ProductDetail({ product, locale, ctaLabel, imageLabel, specsLabel }: Props) {
+export function ProductDetail({
+  product,
+  locale,
+  ctaLabel,
+  imageLabel,
+  specsLabel,
+  sectorRoute,
+}: Props) {
   const siteUrl = (env.NEXT_PUBLIC_SITE_URL ?? "https://kitaplastik.com").replace(/\/$/, "");
   const imageBase = `${env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/$/, "")}/storage/v1/object/public/product-images`;
+
+  const productPath =
+    sectorRoute === "bottle-washing"
+      ? getPathname({
+          href: { pathname: "/products/bottle-washing/[slug]", params: { slug: product.slug } },
+          locale,
+        })
+      : sectorRoute === "automotive"
+        ? getPathname({
+            href: { pathname: "/products/automotive/[slug]", params: { slug: product.slug } },
+            locale,
+          })
+        : getPathname({
+            href: { pathname: "/products/textile/[slug]", params: { slug: product.slug } },
+            locale,
+          });
 
   const schema = {
     "@context": "https://schema.org",
@@ -33,7 +58,7 @@ export function ProductDetail({ product, locale, ctaLabel, imageLabel, specsLabe
     image: product.images.map((i) => `${imageBase}/${i.path}`),
     sku: product.slug,
     brand: { "@type": "Brand", name: "Kıta Plastik" },
-    url: `${siteUrl}/${locale}/products/${product.slug}`,
+    url: `${siteUrl}${productPath}`,
   };
 
   // JSON-LD: JSON.stringify içerik HTML context'ine girdiği için toSafeLdJson ile </script, <!-- ve U+2028/9 escape edilir

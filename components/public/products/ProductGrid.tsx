@@ -1,20 +1,38 @@
 import type { Locale } from "@/i18n/routing";
-import { ProductCard, type PublicProduct } from "./ProductCard";
+import { ProductCard, type ProductSectorRoute, type PublicProduct } from "./ProductCard";
 
 interface Props {
   products: PublicProduct[];
   locale: Locale;
   imageLabel: string;
+  sectorRoute: ProductSectorRoute;
+  emptyMessage?: string;
 }
 
-export function ProductGrid({ products, locale, imageLabel }: Props) {
+export function ProductGrid({
+  products,
+  locale,
+  imageLabel,
+  sectorRoute,
+  emptyMessage,
+}: Props) {
   if (products.length === 0) {
-    return <p className="py-16 text-center text-text-secondary">Henüz yayında ürün yok.</p>;
+    return (
+      <p className="py-16 text-center text-text-secondary">
+        {emptyMessage ?? "Henüz yayında ürün yok."}
+      </p>
+    );
   }
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((p) => (
-        <ProductCard key={p.slug} product={p} locale={locale} imageLabel={imageLabel} />
+        <ProductCard
+          key={p.slug}
+          product={p}
+          locale={locale}
+          imageLabel={imageLabel}
+          sectorRoute={sectorRoute}
+        />
       ))}
     </div>
   );

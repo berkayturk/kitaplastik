@@ -24,8 +24,8 @@ describe("sitemap.ts — native URL generation", () => {
     urls = entries.map((e) => e.url);
   });
 
-  it("generates 48 URLs (12 routes × 4 locales)", () => {
-    expect(entries).toHaveLength(48);
+  it("generates 44 URLs (11 routes × 4 locales)", () => {
+    expect(entries).toHaveLength(44);
   });
 
   it("includes TR native slugs", () => {
@@ -33,7 +33,7 @@ describe("sitemap.ts — native URL generation", () => {
     expect(urls).toContain("https://kitaplastik.com/tr/hakkimizda");
     expect(urls).toContain("https://kitaplastik.com/tr/iletisim");
     expect(urls).toContain("https://kitaplastik.com/tr/katalog");
-    expect(urls).toContain("https://kitaplastik.com/tr/sektorler/cam-yikama");
+    expect(urls).toContain("https://kitaplastik.com/tr/urunler/cam-yikama");
   });
 
   it("includes RU native slugs", () => {
@@ -41,7 +41,7 @@ describe("sitemap.ts — native URL generation", () => {
     expect(urls).toContain("https://kitaplastik.com/ru/kontakty");
     expect(urls).toContain("https://kitaplastik.com/ru/o-nas");
     expect(urls).toContain("https://kitaplastik.com/ru/katalog");
-    expect(urls).toContain("https://kitaplastik.com/ru/otrasli/moyka-butylok");
+    expect(urls).toContain("https://kitaplastik.com/ru/produktsiya/moyka-butylok");
   });
 
   it("includes AR native slugs", () => {
@@ -49,14 +49,14 @@ describe("sitemap.ts — native URL generation", () => {
     expect(urls).toContain("https://kitaplastik.com/ar/man-nahnu");
     expect(urls).toContain("https://kitaplastik.com/ar/ittisal");
     expect(urls).toContain("https://kitaplastik.com/ar/al-katalog");
-    expect(urls).toContain("https://kitaplastik.com/ar/al-qitaat/ghasil-zujajat");
+    expect(urls).toContain("https://kitaplastik.com/ar/al-muntajat/ghasil-zujajat");
   });
 
   it("keeps EN canonical slugs", () => {
     expect(urls).toContain("https://kitaplastik.com/en/products");
     expect(urls).toContain("https://kitaplastik.com/en/about");
     expect(urls).toContain("https://kitaplastik.com/en/catalog");
-    expect(urls).toContain("https://kitaplastik.com/en/sectors/bottle-washing");
+    expect(urls).toContain("https://kitaplastik.com/en/products/bottle-washing");
   });
 
   it("root URLs have no trailing slash", () => {

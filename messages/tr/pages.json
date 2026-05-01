@@ -2,8 +2,13 @@
   "products": {
     "hero": {
       "eyebrow": "Ürünler",
-      "title": "Standart ürün katalogumuz",
-      "subtitle": "Üç sektör için stoklu ve hızlı teslim edilebilen standart parçalarımız. Detaylı katalog için iletişime geçiniz."
+      "title": "Sektörlere göre ürünlerimiz",
+      "subtitle": "Cam yıkama, otomotiv ve tekstil sektörleri için 36 yıllık plastik enjeksiyon birikimiyle üretilen standart parçalar. Bir sektör seçerek o alandaki ürünlerimizi inceleyin."
+    },
+    "sectorDetail": {
+      "productsHeading": "Bu sektördeki ürünler",
+      "emptyState": "Bu sektör için henüz yayında ürün yok. Talepleriniz için bizimle iletişime geçin.",
+      "backToHub": "Tüm sektörler"
     },
     "notice": "Tam kataloğumuz Plan 3 kapsamında eklenecektir — şu anda talepleri iletişim formundan alıyoruz.",
     "detail": {

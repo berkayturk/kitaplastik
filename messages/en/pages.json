@@ -2,8 +2,13 @@
   "products": {
     "hero": {
       "eyebrow": "Products",
-      "title": "Our standard product catalogue",
-      "subtitle": "Our in-stock, quickly deliverable standard parts for three sectors. Please contact us for the detailed catalogue."
+      "title": "Our products by sector",
+      "subtitle": "Standard parts for bottle washing, automotive, and textile industries — 36 years of plastic injection expertise. Choose a sector to explore our products in that field."
+    },
+    "sectorDetail": {
+      "productsHeading": "Products in this sector",
+      "emptyState": "No products are currently published for this sector. Please contact us for inquiries.",
+      "backToHub": "All sectors"
     },
     "notice": "Our full catalogue will be added as part of Plan 3 — we currently accept requests via the contact form.",
     "detail": {

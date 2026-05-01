@@ -28,11 +28,49 @@ export const routing = defineRouting({
       ru: "/produktsiya",
       ar: "/al-muntajat",
     },
+    // Eski (legacy) flat ürün URL'leri — DB lookup ile sector-aware route'a 301 redirect.
+    // Yeni canonical: /products/[sector]/[slug]
     "/products/[slug]": {
       tr: "/urunler/[slug]",
       en: "/products/[slug]",
       ru: "/produktsiya/[slug]",
       ar: "/al-muntajat/[slug]",
+    },
+    "/products/bottle-washing": {
+      tr: "/urunler/cam-yikama",
+      en: "/products/bottle-washing",
+      ru: "/produktsiya/moyka-butylok",
+      ar: "/al-muntajat/ghasil-zujajat",
+    },
+    "/products/bottle-washing/[slug]": {
+      tr: "/urunler/cam-yikama/[slug]",
+      en: "/products/bottle-washing/[slug]",
+      ru: "/produktsiya/moyka-butylok/[slug]",
+      ar: "/al-muntajat/ghasil-zujajat/[slug]",
+    },
+    "/products/automotive": {
+      tr: "/urunler/otomotiv",
+      en: "/products/automotive",
+      ru: "/produktsiya/avtoprom",
+      ar: "/al-muntajat/al-sayyarat",
+    },
+    "/products/automotive/[slug]": {
+      tr: "/urunler/otomotiv/[slug]",
+      en: "/products/automotive/[slug]",
+      ru: "/produktsiya/avtoprom/[slug]",
+      ar: "/al-muntajat/al-sayyarat/[slug]",
+    },
+    "/products/textile": {
+      tr: "/urunler/tekstil",
+      en: "/products/textile",
+      ru: "/produktsiya/tekstil",
+      ar: "/al-muntajat/al-mansujat",
+    },
+    "/products/textile/[slug]": {
+      tr: "/urunler/tekstil/[slug]",
+      en: "/products/textile/[slug]",
+      ru: "/produktsiya/tekstil/[slug]",
+      ar: "/al-muntajat/al-mansujat/[slug]",
     },
     "/references": {
       tr: "/referanslar",
@@ -45,30 +83,6 @@ export const routing = defineRouting({
       en: "/catalog",
       ru: "/katalog",
       ar: "/al-katalog",
-    },
-    "/sectors": {
-      tr: "/sektorler",
-      en: "/sectors",
-      ru: "/otrasli",
-      ar: "/al-qitaat",
-    },
-    "/sectors/bottle-washing": {
-      tr: "/sektorler/cam-yikama",
-      en: "/sectors/bottle-washing",
-      ru: "/otrasli/moyka-butylok",
-      ar: "/al-qitaat/ghasil-zujajat",
-    },
-    "/sectors/automotive": {
-      tr: "/sektorler/otomotiv",
-      en: "/sectors/automotive",
-      ru: "/otrasli/avtoprom",
-      ar: "/al-qitaat/al-sayyarat",
-    },
-    "/sectors/textile": {
-      tr: "/sektorler/tekstil",
-      en: "/sectors/textile",
-      ru: "/otrasli/tekstil",
-      ar: "/al-qitaat/al-mansujat",
     },
     "/legal/privacy": {
       tr: "/yasal/gizlilik",
