@@ -8,6 +8,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { AtmosphereScene } from "@/components/three/AtmosphereScene";
 import { WhatsAppFab } from "@/components/contact/WhatsAppFab";
+import { TelegramFab } from "@/components/contact/TelegramFab";
 import { getDir } from "@/lib/rtl";
 import { cn } from "@/lib/utils";
 import { fraunces, hankenGrotesk, jetbrainsMono } from "@/lib/fonts";
@@ -75,6 +76,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer company={company} />
           <WhatsAppFab wa={company.whatsapp.wa} />
+          <TelegramFab handle={company.telegram.handle} />
         </NextIntlClientProvider>
       </body>
     </html>
